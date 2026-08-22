@@ -1,13 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stickero Platformer - GooseyWorks</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #status {
+            padding: 15px;
+            font-size: 18px;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 
 <body>
 
-    <script type="module" src="./main.js"></script>
+<div id="status">🟡 Loading Stickero...</div>
+
+<script>
+    const status = document.getElementById("status");
+
+    window.addEventListener("error", (event) => {
+        status.textContent =
+            "🔴 STICKERO ERROR:\n\n" +
+            event.message +
+            "\n\nFile: " +
+            (event.filename || "unknown") +
+            "\nLine: " +
+            (event.lineno || "unknown");
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+        status.textContent =
+            "🔴 STICKERO ERROR:\n\n" +
+            event.reason;
+    });
+</script>
+
+<script type="module">
+    try {
+        await import("./main.js");
+
+        document.getElementById("status").textContent =
+            "🟢 Stickero JavaScript loaded!";
+    } catch (error) {
+        document.getElementById("status").textContent =
+            "🔴 STICKERO FAILED TO LOAD:\n\n" +
+            error;
+    }
+</script>
 
 </body>
 </html>
