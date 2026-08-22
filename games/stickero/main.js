@@ -1,4 +1,3 @@
-import "./kaplay.js";
 import "./assets.js";
 import "./scenes/game.js"
 
