@@ -140,6 +140,22 @@
     </div>
 
 </div>
+<section class="panel">
+    <h2>Original Python Code</h2>
 
+    <pre><code id="ham-code"></code></pre>
+</section>
+
+<script>
+fetch("ham1.py")
+    .then(response => response.text())
+    .then(code => {
+        document.getElementById("ham-code").textContent = code;
+    })
+    .catch(() => {
+        document.getElementById("ham-code").textContent =
+            "Could not load the archived Python file.";
+    });
+</script>
 </body>
 </html>
