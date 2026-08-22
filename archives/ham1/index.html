@@ -1,1 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ham 1 - GooseyWorks Archives</title>
 
+    <link rel="icon" type="image/png" href="../../logo.png">
+
+    <style>
+        :root {
+            --bg: #08111f;
+            --panel: #101c30;
+            --text: #f5f7fb;
+            --muted: #aebbd0;
+            --accent: #72e5ff;
+            --border: rgba(255,255,255,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+            line-height: 1.6;
+        }
+
+        .page {
+            width: min(900px, calc(100% - 40px));
+            margin: auto;
+            padding: 70px 0;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: var(--text);
+        }
+
+        .eyebrow {
+            color: var(--accent);
+            font-size: .8rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            line-height: 1;
+            margin: 8px 0 20px;
+        }
+
+        .intro {
+            color: var(--muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+        }
+
+        .panel {
+            margin-top: 40px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--panel);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+        }
+
+        .archive-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,.15);
+            background: #18243a;
+            color: white;
+            font-weight: 900;
+            text-decoration: none;
+            box-shadow: 0 5px 0 #080d16;
+            transition: .15s ease;
+        }
+
+        .archive-button:hover {
+            transform: translateY(-4px);
+            background: #243653;
+            box-shadow: 0 9px 0 #080d16;
+        }
+
+        .archive-button:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #080d16;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <a class="back" href="../../#archives">← Back to GooseyWorks Archives</a>
+
+    <div class="eyebrow">GOOSEYWORKS ARCHIVES</div>
+
+    <h1>🐢 Ham 1</h1>
+
+    <p class="intro">
+        The original Python/Turtle Ham simulation.
+        This is where the Ham saga began.
+    </p>
+
+    <div class="panel">
+        <h2>About this project</h2>
+
+        <p>
+            Ham 1 is a Python Turtle pet simulation where your turtle
+            gets hungry, sleepy, happy, levels up, plays with toys,
+            finds food, gets zoomies, and eventually changes color
+            as it levels up.
+        </p>
+
+        <p>
+            This version is preserved as part of the GooseyWorks archives.
+        </p>
+
+        <a class="archive-button" href="#">
+            🐢 Open Original Ham 1
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>
