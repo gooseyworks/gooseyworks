@@ -1,4 +1,3 @@
-alert("GOOSEY CODE LOADED!!!");
 kaplay({
     width: 800,
     height: 450,
