@@ -440,7 +440,150 @@ canvas {
     <script src="https://unpkg.com/kaplay@4000.0.0-alpha.27.1/dist/kaplay.js"></script>
 
     <script src="main.js"></script>
+<script>
 
+    const gameBackground =
+        document.getElementById(
+            "gameBackground"
+        );
+
+    function updateGooseyBackground() {
+
+        if (!gameBackground) {
+            return;
+        }
+
+        /* ==========================================
+           🎮 CHARACTER SELECT
+           ========================================== */
+
+        if (
+            window.gooseyScene ===
+            "characterSelect"
+        ) {
+
+            gameBackground.style.background =
+                `
+                radial-gradient(
+                    circle at 50% 45%,
+                    #274d72 0%,
+                    #10283f 45%,
+                    #08111f 100%
+                )
+                `;
+
+        }
+
+        /* ==========================================
+           ⚔️ FIGHT
+           ========================================== */
+
+        else if (
+            window.gooseyScene ===
+            "fight"
+        ) {
+
+            const map =
+                window.gooseyMap;
+
+            if (map === 0) {
+
+                // 🌱 GRASSLAND
+                gameBackground.style.background =
+                    `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #4fa84f 0%,
+                        #214f30 45%,
+                        #08111f 100%
+                    )
+                    `;
+
+            } else if (map === 1) {
+
+                // 🏃 PARKOUR
+                gameBackground.style.background =
+                    `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #26794c 0%,
+                        #123d2d 45%,
+                        #08111f 100%
+                    )
+                    `;
+
+            } else if (map === 2) {
+
+                // 💀 NIGHTMARE
+                gameBackground.style.background =
+                    `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #4c294f 0%,
+                        #211329 45%,
+                        #05050b 100%
+                    )
+                    `;
+
+            } else if (map === 3) {
+
+                // 🌀 GRAVITY CHAOS
+                gameBackground.style.background =
+                    `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #6b35a5 0%,
+                        #29154d 45%,
+                        #080512 100%
+                    )
+                    `;
+
+            } else if (map === 4) {
+
+                // 🌀🏃 PARKOUR GRAVITY
+                gameBackground.style.background =
+                    `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #2c77aa 0%,
+                        #152d50 45%,
+                        #08111f 100%
+                    )
+                    `;
+
+            }
+
+        }
+
+        /* ==========================================
+           🏆 WIN
+           ========================================== */
+
+        else if (
+            window.gooseyScene ===
+            "win"
+        ) {
+
+            gameBackground.style.background =
+                `
+                radial-gradient(
+                    circle at 50% 45%,
+                    #a67c20 0%,
+                    #4f3510 45%,
+                    #120e05 100%
+                )
+                `;
+        }
+    }
+
+    setInterval(
+        updateGooseyBackground,
+        100
+    );
+
+    updateGooseyBackground();
+
+</script>
 </body>
 
 </html>
