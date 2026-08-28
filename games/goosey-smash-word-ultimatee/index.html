@@ -5,8 +5,10 @@
 
     <meta charset="utf-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
 
     <title>Goosey Smash World Ultimate</title>
 
@@ -22,12 +24,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-        }
-
-        body {
             background: #08111f;
-            color: white;
-            font-family: system-ui, sans-serif;
         }
 
         /* ==================================================
@@ -35,57 +32,48 @@
            ================================================== */
 
         #smashPage {
-            position: relative;
+            position: fixed;
+            inset: 0;
 
             width: 100vw;
             height: 100vh;
-
-            display: flex;
-            flex-direction: column;
-
-            overflow: hidden;
 
             background: #08111f;
         }
 
         /* ==================================================
-           ✨ ANIMATED BACKGROUND
+           🌌 LIVE GAME BACKGROUND
            ================================================== */
 
         #ambientCanvas {
-            position: absolute;
+            position: fixed;
+            inset: -10%;
 
-            inset: -8%;
-
-            width: 116%;
-            height: 116%;
+            width: 120vw;
+            height: 120vh;
 
             z-index: 0;
 
-            opacity: 0.65;
+            opacity: 0.55;
 
             filter:
-                blur(28px)
-                saturate(1.35);
-
-            transform: scale(1.08);
+                blur(35px)
+                saturate(1.4);
 
             pointer-events: none;
         }
 
-        /* Darkens the ambient copy so the game stays readable */
         #ambientShade {
-            position: absolute;
-
+            position: fixed;
             inset: 0;
 
             z-index: 1;
 
             background:
                 radial-gradient(
-                    circle at center,
-                    rgba(8, 17, 31, 0.15),
-                    rgba(8, 17, 31, 0.72)
+                    circle,
+                    rgba(8, 17, 31, 0.05),
+                    rgba(8, 17, 31, 0.7)
                 );
 
             pointer-events: none;
@@ -96,43 +84,40 @@
            ================================================== */
 
         #topBar {
-            position: relative;
+            position: fixed;
 
-            z-index: 5;
+            top: 0;
+            left: 0;
 
             width: 100%;
 
-            padding:
-                12px
-                20px
-                8px;
+            padding: 10px;
 
             text-align: center;
+
+            z-index: 20;
+
+            pointer-events: none;
 
             background:
                 linear-gradient(
                     to bottom,
-                    rgba(8, 17, 31, 0.92),
-                    rgba(8, 17, 31, 0.55),
+                    rgba(8,17,31,0.95),
+                    rgba(8,17,31,0.35),
                     transparent
                 );
-
-            pointer-events: none;
         }
 
         #topBar h1 {
             margin: 0;
 
-            font-size: clamp(
-                1.2rem,
-                3vw,
-                2.2rem
-            );
+            font-size:
+                clamp(1.2rem, 3vw, 2rem);
 
             font-weight: 900;
 
             text-shadow:
-                0 0 12px rgba(114, 229, 255, 0.5);
+                0 0 15px rgba(114,229,255,0.5);
         }
 
         #topBar p {
@@ -140,94 +125,53 @@
 
             color: #b9c6da;
 
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         /* ==================================================
-           🎮 GAME AREA
+           🎮 KAPLAY GAME CANVAS
            ================================================== */
 
-        #gameStage {
-            position: relative;
+        /*
+           Kaplay creates the canvas itself.
+           It is NOT necessarily inside #game.
 
-            z-index: 4;
+           So target the actual canvas directly.
+        */
 
-            flex: 1;
+        body > canvas {
+            position: fixed !important;
 
-            min-height: 0;
+            left: 50% !important;
+            top: 52% !important;
 
-            width: 100%;
+            transform:
+                translate(-50%, -50%) !important;
 
-            display: flex;
+            width: min(
+                96vw,
+                calc(92vh * 1.7777778)
+            ) !important;
 
-            justify-content: center;
-            align-items: center;
+            height: auto !important;
 
-            padding: 4px 8px 12px;
-        }
+            aspect-ratio: 800 / 450 !important;
 
-        #game {
-            position: relative;
+            z-index: 10 !important;
 
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Kaplay's actual canvas */
-        #game canvas {
-            display: block;
-
-            width: auto;
-            height: auto;
-
-            max-width: 100%;
-            max-height: 100%;
-
-            aspect-ratio: 800 / 450;
-
-            image-rendering: auto;
+            display: block !important;
 
             border-radius: 12px;
 
             box-shadow:
-                0 0 0 2px rgba(255, 255, 255, 0.14),
-                0 0 30px rgba(0, 0, 0, 0.45),
-                0 20px 60px rgba(0, 0, 0, 0.45);
+                0 0 0 2px rgba(255,255,255,0.15),
+                0 0 35px rgba(0,0,0,0.6),
+                0 20px 70px rgba(0,0,0,0.5);
         }
 
-        /* ==================================================
-           📱 SMALL SCREENS
-           ================================================== */
-
-        @media (max-width: 600px) {
-
-            #topBar {
-                padding-top: 8px;
-            }
-
-            #topBar h1 {
-                font-size: 1.15rem;
-            }
-
-            #topBar p {
-                font-size: 0.75rem;
-            }
-
-            #gameStage {
-                padding:
-                    2px
-                    4px
-                    6px;
-            }
-
-            #game canvas {
-                border-radius: 8px;
-            }
+        /* Hide the unused container */
+        #game {
+            display: none;
         }
 
     </style>
@@ -238,17 +182,9 @@
 
     <div id="smashPage">
 
-        <!-- ==================================================
-             🌌 AMBIENT GAME-WORLD BACKGROUND
-             ================================================== -->
-
         <canvas id="ambientCanvas"></canvas>
 
         <div id="ambientShade"></div>
-
-        <!-- ==================================================
-             🪿 TITLE
-             ================================================== -->
 
         <div id="topBar">
 
@@ -262,15 +198,7 @@
 
         </div>
 
-        <!-- ==================================================
-             🎮 GAME
-             ================================================== -->
-
-        <div id="gameStage">
-
-            <div id="game"></div>
-
-        </div>
+        <div id="game"></div>
 
     </div>
 
@@ -283,7 +211,7 @@
     <script src="game.js"></script>
 
     <!-- ==================================================
-         🌌 COPY THE ACTUAL GAME INTO THE BACKGROUND
+         🌌 LIVE BACKGROUND MIRROR
          ================================================== -->
 
     <script>
@@ -292,7 +220,7 @@
 
             const gameCanvas =
                 document.querySelector(
-                    "#game canvas"
+                    "body > canvas"
                 );
 
             const ambientCanvas =
@@ -313,21 +241,24 @@
             }
 
             const ctx =
-                ambientCanvas.getContext(
-                    "2d"
-                );
+                ambientCanvas.getContext("2d");
 
-            function resizeAmbient() {
+            function resize() {
 
                 const dpr =
-                    window.devicePixelRatio ||
-                    1;
+                    window.devicePixelRatio || 1;
 
                 ambientCanvas.width =
                     window.innerWidth * dpr;
 
                 ambientCanvas.height =
                     window.innerHeight * dpr;
+
+                ambientCanvas.style.width =
+                    window.innerWidth + "px";
+
+                ambientCanvas.style.height =
+                    window.innerHeight + "px";
 
                 ctx.setTransform(
                     dpr,
@@ -339,14 +270,14 @@
                 );
             }
 
-            resizeAmbient();
+            resize();
 
             window.addEventListener(
                 "resize",
-                resizeAmbient
+                resize
             );
 
-            function drawAmbient() {
+            function draw() {
 
                 ctx.clearRect(
                     0,
@@ -375,39 +306,37 @@
                                 sourceHeight
                         );
 
-                    const drawWidth =
+                    const width =
                         sourceWidth * scale;
 
-                    const drawHeight =
+                    const height =
                         sourceHeight * scale;
 
-                    const drawX =
+                    const x =
                         (
                             window.innerWidth -
-                            drawWidth
+                            width
                         ) / 2;
 
-                    const drawY =
+                    const y =
                         (
                             window.innerHeight -
-                            drawHeight
+                            height
                         ) / 2;
 
                     ctx.drawImage(
                         gameCanvas,
-                        drawX,
-                        drawY,
-                        drawWidth,
-                        drawHeight
+                        x,
+                        y,
+                        width,
+                        height
                     );
                 }
 
-                requestAnimationFrame(
-                    drawAmbient
-                );
+                requestAnimationFrame(draw);
             }
 
-            drawAmbient();
+            draw();
         }
 
         startAmbientMirror();
