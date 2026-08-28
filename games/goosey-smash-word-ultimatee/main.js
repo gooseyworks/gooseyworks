@@ -2,7 +2,6 @@ kaplay({
     width: 800,
     height: 450,
     background: [135, 206, 235],
-    canvas: document.getElementById("gameCanvas"),
 });
 setGravity(1800);
 // ==================================================
