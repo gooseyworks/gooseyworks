@@ -286,7 +286,141 @@ canvas {
                         0.45
                     );
         }
+/* ==================================================
+   🌌 GOOSEY SMASH AMBIENT BACKGROUND
+   ================================================== */
 
+#gameBackground {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #274d72 0%,
+            #10283f 45%,
+            #08111f 100%
+        );
+
+    overflow: hidden;
+
+    transition:
+        background 0.8s ease,
+        filter 0.8s ease;
+}
+
+/* Animated glow blobs */
+#gameBackground::before,
+#gameBackground::after {
+    content: "";
+
+    position: absolute;
+
+    width: 45vw;
+    height: 45vw;
+
+    border-radius: 50%;
+
+    filter: blur(70px);
+
+    opacity: 0.45;
+
+    animation:
+        gooseyFloat 7s ease-in-out infinite;
+}
+
+#gameBackground::before {
+    left: -10vw;
+    top: 20vh;
+
+    background: #3478b8;
+}
+
+#gameBackground::after {
+    right: -10vw;
+    bottom: 10vh;
+
+    background: #7547b8;
+
+    animation-delay: -3.5s;
+}
+
+@keyframes gooseyFloat {
+
+    0%, 100% {
+        transform:
+            translate(
+                0,
+                0
+            )
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(
+                5vw,
+                -4vh
+            )
+            scale(1.15);
+    }
+}
+
+/* ==================================================
+   🎮 KEEP GAME ABOVE BACKGROUND
+   ================================================== */
+
+#game {
+    position: relative;
+    z-index: 10;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kaplay canvas */
+canvas {
+    position: relative;
+
+    z-index: 10;
+
+    display: block;
+
+    width:
+        min(
+            96vw,
+            calc(82vh * 1.7777778)
+        );
+
+    height: auto;
+
+    aspect-ratio: 800 / 450;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 0 0 2px
+            rgba(
+                255,
+                255,
+                255,
+                0.15
+            ),
+
+        0 0 35px
+            rgba(
+                0,
+                0,
+                0,
+                0.55
+            );
+}
     </style>
 
 </head>
@@ -302,7 +436,7 @@ canvas {
     </p>
 
     <div id="game"></div>
-
+<div id="gameBackground"></div>
     <script src="https://unpkg.com/kaplay@4000.0.0-alpha.27.1/dist/kaplay.js"></script>
 
     <script src="main.js"></script>
