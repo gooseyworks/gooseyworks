@@ -5,6 +5,12 @@ kaplay({
 });
 setGravity(1800);
 // ==================================================
+// 🌌 WEBSITE BACKGROUND SCENE BRIDGE
+// ==================================================
+
+window.gooseyScene = "characterSelect";
+window.gooseyMap = 0;
+// ==================================================
 // LOAD SPRITES
 // ==================================================
 
@@ -1975,7 +1981,7 @@ scene("cpuSelect", () => {
 // ==================================================
 
 scene("characterSelect", () => {
-
+window.gooseyScene = "characterSelect";
     // Reset gravity whenever we enter character select.
     // This prevents Mark's Void World from carrying over.
     setGravity(1800);
@@ -2674,6 +2680,7 @@ scene("characterSelect", () => {
 // ==================================================
 
 scene("fight", (data) => {
+    window.gooseyScene = "fight";
         // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 5);
@@ -7871,7 +7878,7 @@ onUpdate(() => {
 // ==================================================
 
 scene("win", (data) => {
-
+window.gooseyScene = "win";
     add([
         text("WINNER!!!"),
         pos(400, 50),
