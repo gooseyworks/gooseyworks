@@ -169,29 +169,77 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
 }
 .ai-button {
     display: inline-block;
-    margin: 25px auto;
-    padding: 16px 32px;
+    position: relative;
 
-    background: linear-gradient(135deg, #72e5ff, #8b7cff);
-    color: #08111f;
+    margin: 30px auto;
+    padding: 20px 40px;
 
-    font-size: 1.15rem;
+    background: linear-gradient(
+        135deg,
+        #00e5ff,
+        #7a5cff,
+        #ff4fd8
+    );
+
+    color: white;
+
+    font-size: 1.25rem;
     font-weight: 900;
+    letter-spacing: 1px;
+
     text-decoration: none;
 
-    border-radius: 14px;
+    border: 3px solid white;
+    border-radius: 18px;
 
     box-shadow:
-        0 8px 25px rgba(114, 229, 255, 0.3);
+        0 0 15px rgba(0, 229, 255, 0.6),
+        0 0 30px rgba(122, 92, 255, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.35);
+
+    overflow: hidden;
 
     transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+/* Shiny animated streak */
+.ai-button::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: -120%;
+
+    width: 80%;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.25);
+
+    transform: skewX(-25deg);
+
+    transition: left 0.5s ease;
+}
+
+/* Hover */
 .ai-button:hover {
-    transform: translateY(-3px) scale(1.04);
+    transform:
+        translateY(-5px)
+        scale(1.06)
+        rotate(-1deg);
 
     box-shadow:
-        0 12px 30px rgba(114, 229, 255, 0.5);
+        0 0 20px rgba(0, 229, 255, 0.9),
+        0 0 45px rgba(255, 79, 216, 0.7),
+        0 15px 35px rgba(0, 0, 0, 0.45);
+}
+
+.ai-button:hover::before {
+    left: 130%;
+}
+
+/* Click */
+.ai-button:active {
+    transform: scale(0.98);
 }
