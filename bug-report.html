@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>GooseyWorks Bug Report</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #08111f;
+            color: white;
+            font-family: system-ui, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #aebbd0;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background: #101d31;
+            border: 2px solid #263b5a;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #405778;
+            background: #08111f;
+            color: white;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #72e5ff;
+            color: #08111f;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 25px;
+            color: #72e5ff;
+            text-decoration: none;
+        }
+
+        .note {
+            margin-top: 18px;
+            color: #7f91aa;
+            font-size: 0.9rem;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🐛 GooseyWorks Bug Report</h1>
+
+        <p class="subtitle">
+            Found something broken? Tell GooseyWorks!
+        </p>
+
+        <!--
+            IMPORTANT:
+            Replace YOUR_FORMSPREE_ID with the ID
+            Formspree gives you.
+        -->
+
+        <form
+            action="https://formspree.io/f/YOUR_FORMSPREE_ID"
+            method="POST"
+        >
+
+            <input
+                type="hidden"
+                name="subject"
+                value="New GooseyWorks Bug Report"
+            >
+
+            <label for="name">
+                Your name
+            </label>
+
+            <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Your name"
+                required
+            >
+
+            <label for="email">
+                Your email
+            </label>
+
+            <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+            >
+
+            <label for="game">
+                What game/site has the bug?
+            </label>
+
+            <select
+                id="game"
+                name="game"
+                required
+            >
+
+                <option value="">
+                    Choose one...
+                </option>
+
+                <option>
+                    Goosey Smash World Ultimate
+                </option>
+
+                <option>
+                    Reaper
+                </option>
+
+                <option>
+                    GooseyWorks Website
+                </option>
+
+                <option>
+                    Other
+                </option>
+
+            </select>
+
+            <label for="severity">
+                How serious is it?
+            </label>
+
+            <select
+                id="severity"
+                name="severity"
+                required
+            >
+
+                <option>
+                    Small / annoying
+                </option>
+
+                <option>
+                    Noticeable
+                </option>
+
+                <option>
+                    Game-breaking
+                </option>
+
+                <option>
+                    WEBSITE BROKEN
+                </option>
+
+            </select>
+
+            <label for="bug">
+                What happened?
+            </label>
+
+            <textarea
+                id="bug"
+                name="bug"
+                placeholder="Describe the bug..."
+                required
+            ></textarea>
+
+            <label for="steps">
+                How can I reproduce it?
+            </label>
+
+            <textarea
+                id="steps"
+                name="steps"
+                placeholder="Tell me the steps to make the bug happen..."
+            ></textarea>
+
+            <button type="submit">
+                🐛 SEND BUG REPORT
+            </button>
+
+        </form>
+
+        <p class="note">
+            Please don't submit passwords or other private information.
+        </p>
+
+        <a
+            class="back"
+            href="index.html"
+        >
+            ← Back to GooseyWorks
+        </a>
+
+    </div>
+
+</body>
+
+</html>
