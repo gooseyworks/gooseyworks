@@ -95,17 +95,17 @@
         /* ==================================================
            🎮 GAME
            ================================================== */
-#gameCanvas {
+canvas {
     position: fixed;
 
     left: 50%;
-    top: 52%;
+    top: 54%;
 
     transform: translate(-50%, -50%);
 
     width: min(
         96vw,
-        calc(92vh * 1.7777778)
+        calc(88vh * 1.7777778)
     );
 
     height: auto;
@@ -114,13 +114,13 @@
 
     display: block;
 
+    z-index: 10;
+
     border-radius: 12px;
 
     box-shadow:
-        0 0 0 2px rgba(255,255,255,0.15),
-        0 0 35px rgba(0,0,0,0.6);
-
-    z-index: 10;
+        0 0 0 2px rgba(255, 255, 255, 0.15),
+        0 0 35px rgba(0, 0, 0, 0.6);
 }
     </style>
 
