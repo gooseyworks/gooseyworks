@@ -132,3 +132,38 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
     transform: translateY(-4px);
     background: #15243d;
 }
+.bug-button {
+    display: inline-block;
+    margin: 25px auto;
+    padding: 16px 32px;
+
+    background: linear-gradient(135deg, #ff4d4d, #ff8c42);
+    color: white;
+
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+
+    text-decoration: none;
+
+    border: 2px solid #ffb36b;
+    border-radius: 14px;
+
+    box-shadow:
+        0 8px 25px rgba(255, 80, 50, 0.35);
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.bug-button:hover {
+    transform: translateY(-3px) scale(1.04);
+
+    box-shadow:
+        0 12px 30px rgba(255, 80, 50, 0.55);
+}
+
+.bug-button:active {
+    transform: scale(0.98);
+}
