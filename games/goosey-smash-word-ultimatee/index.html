@@ -24,59 +24,31 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+        }
+
+        body {
             background: #08111f;
+            color: white;
+            font-family: system-ui, sans-serif;
         }
 
         /* ==================================================
-           🌌 FULL PAGE
+           🌌 PAGE
            ================================================== */
 
         #smashPage {
-            position: fixed;
-            inset: 0;
-
             width: 100vw;
             height: 100vh;
 
-            background: #08111f;
-        }
-
-        /* ==================================================
-           🌌 LIVE GAME BACKGROUND
-           ================================================== */
-
-        #ambientCanvas {
-            position: fixed;
-            inset: -10%;
-
-            width: 120vw;
-            height: 120vh;
-
-            z-index: 0;
-
-            opacity: 0.55;
-
-            filter:
-                blur(35px)
-                saturate(1.4);
-
-            pointer-events: none;
-        }
-
-        #ambientShade {
-            position: fixed;
-            inset: 0;
-
-            z-index: 1;
-
             background:
                 radial-gradient(
-                    circle,
-                    rgba(8, 17, 31, 0.05),
-                    rgba(8, 17, 31, 0.7)
+                    circle at center,
+                    #18304d 0%,
+                    #08111f 70%
                 );
 
-            pointer-events: none;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ==================================================
@@ -84,40 +56,32 @@
            ================================================== */
 
         #topBar {
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-
-            padding: 10px;
+            flex-shrink: 0;
 
             text-align: center;
 
-            z-index: 20;
-
-            pointer-events: none;
+            padding: 10px;
 
             background:
                 linear-gradient(
                     to bottom,
-                    rgba(8,17,31,0.95),
-                    rgba(8,17,31,0.35),
-                    transparent
+                    rgba(8, 17, 31, 0.95),
+                    rgba(8, 17, 31, 0.4)
                 );
+
+            z-index: 10;
         }
 
         #topBar h1 {
             margin: 0;
 
             font-size:
-                clamp(1.2rem, 3vw, 2rem);
+                clamp(1.2rem, 3vw, 2.2rem);
 
             font-weight: 900;
 
             text-shadow:
-                0 0 15px rgba(114,229,255,0.5);
+                0 0 15px rgba(114, 229, 255, 0.6);
         }
 
         #topBar p {
@@ -129,49 +93,44 @@
         }
 
         /* ==================================================
-           🎮 KAPLAY GAME CANVAS
+           🎮 GAME
            ================================================== */
 
-        /*
-           Kaplay creates the canvas itself.
-           It is NOT necessarily inside #game.
+        #game {
+            flex: 1;
 
-           So target the actual canvas directly.
-        */
+            min-height: 0;
 
-        body > canvas {
-            position: fixed !important;
+            width: 100%;
+            height: 100%;
 
-            left: 50% !important;
-            top: 52% !important;
+            display: flex;
 
-            transform:
-                translate(-50%, -50%) !important;
+            justify-content: center;
+            align-items: center;
+
+            padding: 5px;
+        }
+
+        #game canvas {
+            display: block;
 
             width: min(
-                96vw,
-                calc(92vh * 1.7777778)
-            ) !important;
+                100%,
+                calc(100vh * 1.7777778)
+            );
 
-            height: auto !important;
+            height: auto;
 
-            aspect-ratio: 800 / 450 !important;
+            max-height: 100%;
 
-            z-index: 10 !important;
-
-            display: block !important;
+            aspect-ratio: 800 / 450;
 
             border-radius: 12px;
 
             box-shadow:
                 0 0 0 2px rgba(255,255,255,0.15),
-                0 0 35px rgba(0,0,0,0.6),
-                0 20px 70px rgba(0,0,0,0.5);
-        }
-
-        /* Hide the unused container */
-        #game {
-            display: none;
+                0 0 35px rgba(0,0,0,0.6);
         }
 
     </style>
@@ -181,10 +140,6 @@
 <body>
 
     <div id="smashPage">
-
-        <canvas id="ambientCanvas"></canvas>
-
-        <div id="ambientShade"></div>
 
         <div id="topBar">
 
@@ -202,146 +157,9 @@
 
     </div>
 
-    <!-- ==================================================
-         🎮 KAPLAY
-         ================================================== -->
-
     <script src="https://unpkg.com/kaplay@4000.0.0-alpha.27.1/dist/kaplay.js"></script>
 
     <script src="game.js"></script>
-
-    <!-- ==================================================
-         🌌 LIVE BACKGROUND MIRROR
-         ================================================== -->
-
-    <script>
-
-        function startAmbientMirror() {
-
-            const gameCanvas =
-                document.querySelector(
-                    "body > canvas"
-                );
-
-            const ambientCanvas =
-                document.getElementById(
-                    "ambientCanvas"
-                );
-
-            if (
-                !gameCanvas ||
-                !ambientCanvas
-            ) {
-
-                requestAnimationFrame(
-                    startAmbientMirror
-                );
-
-                return;
-            }
-
-            const ctx =
-                ambientCanvas.getContext("2d");
-
-            function resize() {
-
-                const dpr =
-                    window.devicePixelRatio || 1;
-
-                ambientCanvas.width =
-                    window.innerWidth * dpr;
-
-                ambientCanvas.height =
-                    window.innerHeight * dpr;
-
-                ambientCanvas.style.width =
-                    window.innerWidth + "px";
-
-                ambientCanvas.style.height =
-                    window.innerHeight + "px";
-
-                ctx.setTransform(
-                    dpr,
-                    0,
-                    0,
-                    dpr,
-                    0,
-                    0
-                );
-            }
-
-            resize();
-
-            window.addEventListener(
-                "resize",
-                resize
-            );
-
-            function draw() {
-
-                ctx.clearRect(
-                    0,
-                    0,
-                    window.innerWidth,
-                    window.innerHeight
-                );
-
-                const sourceWidth =
-                    gameCanvas.width;
-
-                const sourceHeight =
-                    gameCanvas.height;
-
-                if (
-                    sourceWidth > 0 &&
-                    sourceHeight > 0
-                ) {
-
-                    const scale =
-                        Math.max(
-                            window.innerWidth /
-                                sourceWidth,
-
-                            window.innerHeight /
-                                sourceHeight
-                        );
-
-                    const width =
-                        sourceWidth * scale;
-
-                    const height =
-                        sourceHeight * scale;
-
-                    const x =
-                        (
-                            window.innerWidth -
-                            width
-                        ) / 2;
-
-                    const y =
-                        (
-                            window.innerHeight -
-                            height
-                        ) / 2;
-
-                    ctx.drawImage(
-                        gameCanvas,
-                        x,
-                        y,
-                        width,
-                        height
-                    );
-                }
-
-                requestAnimationFrame(draw);
-            }
-
-            draw();
-        }
-
-        startAmbientMirror();
-
-    </script>
 
 </body>
 
