@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>GooseyWorks AI Game Decider</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #08111f;
+            color: white;
+            font-family: system-ui, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #aebbd0;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #101d31;
+            border: 2px solid #263b5a;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            border-radius: 10px;
+            border: 1px solid #405778;
+            background: #08111f;
+            color: white;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #72e5ff, #8b7cff);
+            color: #08111f;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+        }
+
+        #result {
+            display: none;
+        }
+
+        .game-name {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .reason {
+            color: #c7d3e6;
+            line-height: 1.6;
+        }
+
+        .again {
+            margin-top: 20px;
+            background: #263b5a;
+            color: white;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #72e5ff;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🤖🪿 AI Game Decider</h1>
+
+        <p class="subtitle">
+            Don't know what to play? Let GooseyWorks decide.
+        </p>
+
+        <div class="card" id="questionCard">
+
+            <label for="players">
+                How many players?
+            </label>
+
+            <select id="players">
+                <option value="1">1 player</option>
+                <option value="2">2 players</option>
+                <option value="any">Doesn't matter</option>
+            </select>
+
+            <label for="style">
+                What kind of game do you want?
+            </label>
+
+            <select id="style">
+                <option value="chaotic">
+                    Chaotic
+                </option>
+
+                <option value="action">
+                    Action
+                </option>
+
+                <option value="fun">
+                    Just something fun
+                </option>
+
+                <option value="random">
+                    Surprise me
+                </option>
+            </select>
+
+            <label for="mood">
+                How ridiculous should it be?
+            </label>
+
+            <select id="mood">
+                <option value="normal">
+                    Normal
+                </option>
+
+                <option value="crazy">
+                    Pretty crazy
+                </option>
+
+                <option value="insane">
+                    ABSOLUTELY UNHINGED
+                </option>
+            </select>
+
+            <button id="decideButton">
+                🤖 LET THE GOOSEY AI DECIDE
+            </button>
+
+        </div>
+
+        <div class="card" id="result">
+
+            <div class="game-name" id="gameName">
+                Game
+            </div>
+
+            <p class="reason" id="gameReason">
+                Reason
+            </p>
+
+            <button
+                class="again"
+                id="againButton"
+            >
+                🔄 DECIDE AGAIN
+            </button>
+
+        </div>
+
+        <a
+            class="back"
+            href="index.html"
+        >
+            ← Back to GooseyWorks
+        </a>
+
+    </div>
+
+    <script>
+
+        const games = [
+
+            {
+                name: "Goosey Smash World Ultimate",
+                players: 2,
+                styles: ["chaotic", "action", "fun"],
+                moods: ["crazy", "insane", "normal"],
+                reason:
+                    "You want action and chaos. With wild characters, strange powers, and ridiculous maps, Goosey Smash is the obvious choice."
+            },
+
+            {
+                name: "Reaper",
+                players: 1,
+                styles: ["action", "fun"],
+                moods: ["normal", "crazy"],
+                reason:
+                    "You want something more focused and strategic. Reaper is a great pick when you want action without going completely insane."
+            },
+
+            {
+                name: "Scratch Projects",
+                players: 1,
+                styles: ["fun", "random"],
+                moods: ["normal", "crazy"],
+                reason:
+                    "You want something different. Time to explore one of the other GooseyWorks creations."
+            },
+
+            {
+                name: "Legends of Bob",
+                players: 1,
+                styles: ["action", "fun"],
+                moods: ["normal", "crazy", "insane"],
+                reason:
+                    "You want an adventure. Legends of Bob is the pick for a more traditional game experience."
+            }
+
+        ];
+
+        function scoreGame(game, players, style, mood) {
+
+            let score = 0;
+
+            if (
+                players === "any" ||
+                game.players === players
+            ) {
+                score += 5;
+            }
+
+            if (
+                game.styles.includes(style)
+            ) {
+                score += 4;
+            }
+
+            if (
+                game.moods.includes(mood)
+            ) {
+                score += 3;
+            }
+
+            return score;
+        }
+
+        function chooseGame() {
+
+            const players =
+                document.getElementById("players").value;
+
+            const style =
+                document.getElementById("style").value;
+
+            const mood =
+                document.getElementById("mood").value;
+
+            let bestGames = [];
+            let bestScore = -1;
+
+            for (const game of games) {
+
+                const score =
+                    scoreGame(
+                        game,
+                        players,
+                        style,
+                        mood
+                    );
+
+                if (score > bestScore) {
+
+                    bestScore = score;
+                    bestGames = [game];
+
+                } else if (score === bestScore) {
+
+                    bestGames.push(game);
+                }
+            }
+
+            const chosen =
+                bestGames[
+                    Math.floor(
+                        Math.random() *
+                        bestGames.length
+                    )
+                ];
+
+            document.getElementById(
+                "gameName"
+            ).textContent =
+                chosen.name;
+
+            document.getElementById(
+                "gameReason"
+            ).textContent =
+                chosen.reason;
+
+            document.getElementById(
+                "questionCard"
+            ).style.display = "none";
+
+            document.getElementById(
+                "result"
+            ).style.display = "block";
+        }
+
+        document.getElementById(
+            "decideButton"
+        ).addEventListener(
+            "click",
+            chooseGame
+        );
+
+        document.getElementById(
+            "againButton"
+        ).addEventListener(
+            "click",
+            () => {
+
+                document.getElementById(
+                    "result"
+                ).style.display = "none";
+
+                document.getElementById(
+                    "questionCard"
+                ).style.display = "block";
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
