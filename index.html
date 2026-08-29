@@ -1,9 +1,12 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>GooseyWorks</title>
+
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="logo.png">
 </head>
@@ -17,62 +20,121 @@
   >
 
   <header class="hero">
+
     <nav class="nav">
+
       <div class="logo">GooseyWorks</div>
 
       <div class="nav-links">
-        <a href="#arcade">Games</a>
-        <a href="#projects">Projects</a>
-        <a href="#about">About</a>
+
+        <a href="#arcade" data-i18n="navGames">Games</a>
+        <a href="#projects" data-i18n="navProjects">Projects</a>
+        <a href="#about" data-i18n="navAbout">About</a>
+
+        <!-- LANGUAGE SELECTOR -->
+        <select
+          id="languageSelect"
+          class="language-select"
+          aria-label="Language"
+        >
+          <option value="en">🌐 English</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="nl">🇳🇱 Nederlands</option>
+
+          <option value="zh-CN">🇨🇳 中文 — 简体中文（普通话）</option>
+          <option value="zh-TW">🇹🇼 中文 — 繁體中文（國語）</option>
+
+          <option value="yue-CN">🇨🇳 粤语 — 简体中文</option>
+          <option value="yue-TW">🇭🇰 粵語 — 繁體中文</option>
+
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="ko">🇰🇷 한국어</option>
+        </select>
+
       </div>
+
     </nav>
 
+
     <div class="hero-content">
-      <div class="eyebrow">WELCOME TO</div>
+
+      <div class="eyebrow" data-i18n="welcome">
+        WELCOME TO
+      </div>
 
       <h1>GooseyWorks</h1>
 
-      <p>
+      <p data-i18n="heroDescription">
         Games, experiments, and chaotic code made by Goosey.
       </p>
 
-      <a class="button" href="#arcade">
+      <a
+        class="button"
+        href="#arcade"
+        data-i18n="enterArcade"
+      >
         ENTER THE ARCADE
       </a>
+
     </div>
+
   </header>
+
 
   <main>
 
+
+    <!-- ========================= -->
+    <!-- ANNOUNCEMENTS -->
+    <!-- ========================= -->
+
     <section id="announcements" class="section">
 
-      <div class="eyebrow">Announcements</div>
+      <div class="eyebrow" data-i18n="announcements">
+        Announcements
+      </div>
 
-      <h2>Gooseyworks</h2>
+      <h2>GooseyWorks</h2>
 
-      <p class="section-intro">
+      <p
+        class="section-intro"
+        data-i18n="announcementIntro"
+      >
         A home for all the games you make.
       </p>
 
+
       <div class="grid">
 
+
+        <!-- GOOSEY SMASH -->
 
         <article class="card featured">
 
           <div class="icon">💥</div>
 
-          <div class="tag">OUT NOW!</div>
+          <div
+            class="tag"
+            data-i18n="outNow"
+          >
+            OUT NOW!
+          </div>
 
-          <h3>Goosey Smash World Ultimate</h3>
+          <h3>
+            Goosey Smash World Ultimate
+          </h3>
 
-          <p>
+          <p data-i18n="smashDescription">
             Chaotic fighting, crazy specials,
             and way too much knockback.
           </p>
 
           <a
             class="card-button"
-            href="games/goosey-smash-word-ultimatee"
+            href="games/goosey-smash-word-ultimatee/"
+            data-i18n="playGooseySmash"
           >
             PLAY GOOSEY SMASH
           </a>
@@ -80,38 +142,62 @@
         </article>
 
 
+        <!-- HAM -->
+
         <article class="card">
 
           <div class="icon">🐢</div>
 
-          <div class="tag">PROJECT</div>
+          <div
+            class="tag"
+            data-i18n="projectTag"
+          >
+            PROJECT
+          </div>
 
           <h3>Ham</h3>
 
-          <p>
+          <p data-i18n="hamDescription">
             Your turtle project from the GooseyWorks archives.
           </p>
 
-          <a class="card-button" href="#archives">
+          <a
+            class="card-button"
+            href="#archives"
+            data-i18n="viewArchive"
+          >
             VIEW ARCHIVE
           </a>
 
         </article>
 
 
+        <!-- NEXT GAME -->
+
         <article class="card">
 
           <div class="icon">🎮</div>
 
-          <div class="tag">NEW GAME</div>
+          <div
+            class="tag"
+            data-i18n="newGame"
+          >
+            NEW GAME
+          </div>
 
-          <h3>Your Next Game</h3>
+          <h3 data-i18n="nextGame">
+            Your Next Game
+          </h3>
 
-          <p>
+          <p data-i18n="nextGameDescription">
             A ready-made slot for the next game you build.
           </p>
 
-          <a class="card-button" href="#">
+          <a
+            class="card-button"
+            href="#"
+            data-i18n="comingSoon"
+          >
             COMING SOON
           </a>
 
@@ -122,26 +208,43 @@
     </section>
 
 
+    <!-- ========================= -->
+    <!-- PROJECTS -->
+    <!-- ========================= -->
+
     <section id="projects" class="section alt">
 
-      <div class="eyebrow">THE WORKSHOP</div>
+      <div
+        class="eyebrow"
+        data-i18n="workshop"
+      >
+        THE WORKSHOP
+      </div>
 
-      <h2>Projects</h2>
+      <h2 data-i18n="projectsTitle">
+        Projects
+      </h2>
+
 
       <div class="project-list">
+
 
         <div class="project">
 
           <div class="number">01</div>
 
           <div>
-            <h3>Kaplay Fighting Game</h3>
 
-            <p>
+            <h3 data-i18n="kaplayTitle">
+              Kaplay Fighting Game
+            </h3>
+
+            <p data-i18n="kaplayDescription">
               Building a Smash-style game with Goosey,
               Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy,
               Mark, and Chat.
             </p>
+
           </div>
 
         </div>
@@ -152,36 +255,47 @@
           <div class="number">02</div>
 
           <div>
-            <h3>Code Lab</h3>
 
-            <p>
+            <h3 data-i18n="codeLab">
+              Code Lab
+            </h3>
+
+            <p data-i18n="codeLabDescription">
               A place for experiments, prototypes,
               and weird ideas that might become games.
             </p>
+
           </div>
 
         </div>
+
 
       </div>
 
     </section>
 
 
+    <!-- ========================= -->
+    <!-- ABOUT -->
+    <!-- ========================= -->
 
     <section id="about" class="section">
 
       <div class="about-box">
 
-        <div class="eyebrow">
+        <div
+          class="eyebrow"
+          data-i18n="aboutGooseyworks"
+        >
           ABOUT GOOSEYWORKS
         </div>
 
-        <h2>
+        <h2 data-i18n="aboutTitle">
           Make games. Break things.
           Fix them. Make them cooler.
         </h2>
 
-        <p>
+        <p data-i18n="aboutDescription">
           GooseyWorks is the home for Goosey's
           games and coding projects.
         </p>
@@ -189,51 +303,90 @@
       </div>
 
     </section>
-<a href="ai-game-decider.html"
-   class="ai-button">
-    🤖 LET THE GOOSEY AI DECIDE
-</a>
-    <section id="arcade" class="games-section">
 
-      <p class="eyebrow">THE ARCADE</p>
 
-      <h2>🎮 MY GAMES</h2>
-
-      <div class="games-grid">
-<div class="game-card">
-
-    <div class="game-card-icon">💥</div>
-
-    <h3>Goosey Smash World Ultimate</h3>
-
-    <p>
-        The ultimate GooseyWorks fighting game.
-        Crazy characters, special powers, random worlds,
-        and ridiculous knockback.
-    </p>
+    <!-- ========================= -->
+    <!-- GOOSEY AI -->
+    <!-- ========================= -->
 
     <a
-        href="games/goosey-smash-word-ultimatee/"
-        class="game-button"
+      href="ai-game-decider.html"
+      class="ai-button"
+      data-i18n="aiButton"
     >
-        PLAY GOOSEY SMASH
+      🤖 LET THE GOOSEY AI DECIDE
     </a>
 
-</div>
+
+    <!-- ========================= -->
+    <!-- ARCADE -->
+    <!-- ========================= -->
+
+    <section
+      id="arcade"
+      class="games-section"
+    >
+
+      <p
+        class="eyebrow"
+        data-i18n="arcade"
+      >
+        THE ARCADE
+      </p>
+
+      <h2 data-i18n="myGames">
+        🎮 MY GAMES
+      </h2>
+
+
+      <div class="games-grid">
+
+
+        <!-- GOOSEY SMASH -->
+
+        <div class="game-card">
+
+          <div class="game-card-icon">💥</div>
+
+          <h3>
+            Goosey Smash World Ultimate
+          </h3>
+
+          <p data-i18n="smashFullDescription">
+            The ultimate GooseyWorks fighting game.
+            Crazy characters, special powers, random worlds,
+            and ridiculous knockback.
+          </p>
+
+          <a
+            href="games/goosey-smash-word-ultimatee/"
+            class="game-button"
+            data-i18n="playGooseySmash"
+          >
+            PLAY GOOSEY SMASH
+          </a>
+
+        </div>
+
+
+        <!-- STICKERO -->
 
         <div class="game-card">
 
           <div class="game-card-icon">🟨</div>
 
-          <h3>Stickero Platformer</h3>
+          <h3>
+            Stickero Platformer
+          </h3>
 
-          <p>
+          <p data-i18n="stickeroDescription">
             Starts easy. Gets absolutely ragebaiting.
           </p>
 
           <a
             href="games/stickero/"
             class="game-button"
+            data-i18n="playStickero"
           >
             PLAY STICKERO
           </a>
@@ -249,7 +402,7 @@
 
           <h3>Ham 1</h3>
 
-          <p>
+          <p data-i18n="ham1Description">
             Original Python/Turtle pet simulation
             from the GooseyWorks archives.
           </p>
@@ -257,6 +410,7 @@
           <a
             href="#archives"
             class="game-button"
+            data-i18n="viewArchive"
           >
             VIEW ARCHIVE
           </a>
@@ -272,7 +426,7 @@
 
           <h3>Ham 2</h3>
 
-          <p>
+          <p data-i18n="ham2Description">
             Upgraded Python/Turtle pet simulation
             with evolution and weather.
           </p>
@@ -280,503 +434,574 @@
           <a
             href="#archives"
             class="game-button"
+            data-i18n="viewArchive"
           >
             VIEW ARCHIVE
           </a>
 
         </div>
-<!-- ========================= -->
-<!-- MORE GAMES -->
-<!-- ========================= -->
 
-<div class="more-games">
 
-  <div class="eyebrow">MORE GAMES</div>
-
-  <h2>🎲 More Games</h2>
-
-  <p class="section-intro">
-    More games from GooseyWorks and awesome creators!
-  </p>
-
-  <div class="games-grid">
-
-    <!-- REAPER -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">☠️</div>
-
-      <h3>Reaper</h3>
-
-      <p>
-        The chaotic game of timing,
-        strategy, and sniping.
-      </p>
-
-      <p>
-        By <strong>Goosey</strong>
-      </p>
-
-      <a
-        href="https://artofproblemsolving.com/reaper"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY REAPER
-      </a>
-
-    </div>
-
-
-    <!-- BALLISTIC CHICKENS 2 -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">☢️</div>
-
-      <h3>Ballistic Chickens 2</h3>
-
-      <p>
-        By <strong>-ezbreez-</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/969222313"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- LEGENDS OF BOB 1 -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">📖</div>
-
-      <h3>Legends of Bob 1</h3>
-
-      <p>
-        By <strong>Goosey</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1314746023/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- LEGENDS OF BOB 2 -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">📖</div>
-
-      <h3>Legends of Bob 2</h3>
-
-      <p>
-        By <strong>Goosey</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1330134065/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- LEGENDS OF BOB 3 -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">📖</div>
-
-      <h3>Legends of Bob 3</h3>
-
-      <p>
-        By <strong>Goosey</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1330191852/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- THUMB FIGHT -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">👍</div>
-
-      <h3>Thumb Fight</h3>
-
-      <p>
-        By <strong>HowIDidThat</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1366892438"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- MINECRAFT CLICKER -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">⛏️</div>
-
-      <h3>Minecraft Clicker</h3>
-
-      <p>
-        By <strong>MineBlox13</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/21610188"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- PRISON -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🔒</div>
-
-      <h3>Prison — A Platformer</h3>
-
-      <p>
-        By <strong>Furonice</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1351042859/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- GAMES -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🎮</div>
-
-      <h3>Games</h3>
-
-      <p>
-        By <strong>2009723</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/153271852/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- THE LEGEND OF BOB -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">📖</div>
-
-      <h3>THE LEGEND OF BOB</h3>
-
-      <p>
-        By <strong>Gifdeddigitalbee</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1313802609/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- THE SCATFORMER -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🐱</div>
-
-      <h3>THE SCATFORMER (WIP)</h3>
-
-      <p>
-        By <strong>Gifdeddigitalbee</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1291443111/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- GDASH WAVE -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🌊</div>
-
-      <h3>Gdash wave</h3>
-
-      <p>
-        By <strong>Gifdeddigitalbee</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1290977606/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- MR.SCAT -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">💃</div>
-
-      <h3>Mr.Scat Vs. the ballerinas!</h3>
-
-      <p>
-        By <strong>Gifdeddigitalbee</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1289963235/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- MONKEYTYPE -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🐒</div>
-
-      <h3>Monkeytype || ver. ALPHA</h3>
-
-      <p>
-        By <strong>_-_-F4F_-_-</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1367797117/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- RAINBOW STACK -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🌈</div>
-
-      <h3>Rainbow Stack [UPDATE!]</h3>
-
-      <p>
-        By <strong>THEBLOXGUY</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1067960461/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- ICE BIRD -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🐦</div>
-
-      <h3>Ice Bird</h3>
-
-      <p>
-        By <strong>Cool_ScratcherDude</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/1012918268/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- APPS PLATFORMER -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🧩</div>
-
-      <h3>Apps — Platformer</h3>
-
-      <p>
-        By <strong>diggerboy12</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/335935823/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- PLATFORMER -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🏃</div>
-
-      <h3>PLATFORMER!!</h3>
-
-      <p>
-        By <strong>goriraf0612</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/853110869/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-
-    <!-- APPS 2 -->
-
-    <div class="game-card">
-
-      <div class="game-card-icon">🧩</div>
-
-      <h3>Apps 2 — Platformer</h3>
-
-      <p>
-        By <strong>diggerboy12</strong>
-      </p>
-
-      <a
-        href="https://scratch.mit.edu/projects/429827250/"
-        class="game-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        PLAY GAME
-      </a>
-
-    </div>
-
-  </div>
-
-</div>
         <!-- ========================= -->
+        <!-- MORE GAMES -->
+        <!-- ========================= -->
+
+        <div class="more-games">
+
+          <div
+            class="eyebrow"
+            data-i18n="moreGamesEyebrow"
+          >
+            MORE GAMES
+          </div>
+
+          <h2 data-i18n="moreGamesTitle">
+            🎲 More Games
+          </h2>
+
+          <p
+            class="section-intro"
+            data-i18n="moreGamesDescription"
+          >
+            More games from GooseyWorks and awesome creators!
+          </p>
+
+
+          <div class="games-grid">
+
+
+            <!-- REAPER -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">☠️</div>
+
+              <h3>Reaper</h3>
+
+              <p data-i18n="reaperDescription">
+                The chaotic game of timing,
+                strategy, and sniping.
+              </p>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Goosey</strong>
+              </p>
+
+              <a
+                href="https://artofproblemsolving.com/reaper"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playReaper"
+              >
+                PLAY REAPER
+              </a>
+
+            </div>
+
+
+            <!-- BALLISTIC CHICKENS 2 -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">☢️</div>
+
+              <h3>Ballistic Chickens 2</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>-ezbreez-</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/969222313"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- LEGENDS OF BOB 1 -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">📖</div>
+
+              <h3>Legends of Bob 1</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Goosey</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1314746023/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- LEGENDS OF BOB 2 -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">📖</div>
+
+              <h3>Legends of Bob 2</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Goosey</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1330134065/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- LEGENDS OF BOB 3 -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">📖</div>
+
+              <h3>Legends of Bob 3</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Goosey</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1330191852/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- THUMB FIGHT -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">👍</div>
+
+              <h3>Thumb Fight</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>HowIDidThat</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1366892438"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- MINECRAFT CLICKER -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">⛏️</div>
+
+              <h3>Minecraft Clicker</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>MineBlox13</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/21610188"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- PRISON -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🔒</div>
+
+              <h3>Prison — A Platformer</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Furonice</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1351042859/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- GAMES -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🎮</div>
+
+              <h3>Games</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>2009723</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/153271852/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- THE LEGEND OF BOB -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">📖</div>
+
+              <h3>THE LEGEND OF BOB</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Gifdeddigitalbee</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1313802609/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- THE SCATFORMER -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🐱</div>
+
+              <h3>THE SCATFORMER (WIP)</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Gifdeddigitalbee</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1291443111/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- GDASH WAVE -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🌊</div>
+
+              <h3>Gdash wave</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Gifdeddigitalbee</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1290977606/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- MR SCAT -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">💃</div>
+
+              <h3>Mr.Scat Vs. the ballerinas!</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Gifdeddigitalbee</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1289963235/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- MONKEYTYPE -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🐒</div>
+
+              <h3>Monkeytype || ver. ALPHA</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>_-_-F4F_-_-</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1367797117/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- RAINBOW STACK -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🌈</div>
+
+              <h3>Rainbow Stack [UPDATE!]</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>THEBLOXGUY</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1067960461/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- ICE BIRD -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🐦</div>
+
+              <h3>Ice Bird</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>Cool_ScratcherDude</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/1012918268/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- APPS PLATFORMER -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🧩</div>
+
+              <h3>Apps — Platformer</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>diggerboy12</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/335935823/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- PLATFORMER -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🏃</div>
+
+              <h3>PLATFORMER!!</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>goriraf0612</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/853110869/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+            <!-- APPS 2 -->
+
+            <div class="game-card">
+
+              <div class="game-card-icon">🧩</div>
+
+              <h3>Apps 2 — Platformer</h3>
+
+              <p>
+                <span data-i18n="by">By</span>
+                <strong>diggerboy12</strong>
+              </p>
+
+              <a
+                href="https://scratch.mit.edu/projects/429827250/"
+                class="game-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="playGame"
+              >
+                PLAY GAME
+              </a>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================= -->
     <!-- ARCHIVES -->
     <!-- ========================= -->
 
-    <section id="archives" class="section alt">
+    <section
+      id="archives"
+      class="section alt"
+    >
 
-      <div class="eyebrow">
+      <div
+        class="eyebrow"
+        data-i18n="archives"
+      >
         THE ARCHIVES
       </div>
 
-      <h2>📁 GooseyWorks Archives</h2>
+      <h2 data-i18n="archivesTitle">
+        📁 GooseyWorks Archives
+      </h2>
 
-      <p class="section-intro">
+      <p
+        class="section-intro"
+        data-i18n="archivesDescription"
+      >
         Old projects, experiments, animations,
         and other GooseyWorks history.
       </p>
@@ -798,7 +1023,7 @@
 
             <h3>🐢 Ham 1</h3>
 
-            <p>
+            <p data-i18n="archiveHam1">
               The original Python/Turtle simulation.
             </p>
 
@@ -820,7 +1045,7 @@
 
             <h3>🐢 Ham 2</h3>
 
-            <p>
+            <p data-i18n="archiveHam2">
               The upgraded Python/Turtle simulation
               with weather, personality, health,
               and turtle evolution.
@@ -829,152 +1054,173 @@
           </div>
 
         </a>
+
+
         <!-- SCRATCH ANIMATIONS -->
 
-<div class="project">
+        <div class="project">
 
-  <div class="number">03</div>
+          <div class="number">03</div>
 
-  <div>
+          <div>
 
-    <h3>🎬 Scratch Animations</h3>
+            <h3 data-i18n="scratchAnimations">
+              🎬 Scratch Animations
+            </h3>
 
-    <p>
-      Animations and experiments created in Scratch.
-    </p>
-
-    <div class="archive-games">
-
-      <!-- IMAGINATION -->
-
-      <div class="game-card">
-
-        <div class="game-card-icon">🐱</div>
-
-        <h3>
-          Imagination, Stories, and Weird Dreams
-          (with a weird cat)
-        </h3>
-
-        <p>
-          By <strong>Goosey</strong>
-        </p>
-
-        <a
-          href="https://scratch.mit.edu/projects/1331407830"
-          class="game-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WATCH ANIMATION
-        </a>
-
-      </div>
+            <p data-i18n="scratchAnimationsDescription">
+              Animations and experiments created in Scratch.
+            </p>
 
 
-      <!-- THING I HATE -->
-
-      <div class="game-card">
-
-        <div class="game-card-icon">😡</div>
-
-        <h3>
-          Thing I, and probably the entire
-          population of the USA hates
-        </h3>
-
-        <p>
-          By <strong>Goosey</strong>
-        </p>
-
-        <a
-          href="https://scratch.mit.edu/projects/1330515370/"
-          class="game-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WATCH ANIMATION
-        </a>
-
-      </div>
+            <div class="archive-games">
 
 
-      <!-- PROBLEM WITH REMIXING -->
+              <!-- IMAGINATION -->
 
-      <div class="game-card">
+              <div class="game-card">
 
-        <div class="game-card-icon">🧠</div>
+                <div class="game-card-icon">🐱</div>
 
-        <h3>The Problem with REMIXING</h3>
+                <h3>
+                  Imagination, Stories, and Weird Dreams
+                  (with a weird cat)
+                </h3>
 
-        <p>
-          By <strong>vincent1142013</strong>
-        </p>
+                <p>
+                  <span data-i18n="by">By</span>
+                  <strong>Goosey</strong>
+                </p>
 
-        <a
-          href="https://scratch.mit.edu/projects/1351011063/"
-          class="game-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WATCH ANIMATION
-        </a>
+                <a
+                  href="https://scratch.mit.edu/projects/1331407830"
+                  class="game-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-i18n="watchAnimation"
+                >
+                  WATCH ANIMATION
+                </a>
 
-      </div>
-
-
-      <!-- AURA MOMENT -->
-
-      <div class="game-card">
-
-        <div class="game-card-icon">✨</div>
-
-        <h3>Aura moment</h3>
-
-        <p>
-          By <strong>Gifdeddigitalbee</strong>
-        </p>
-
-        <a
-          href="https://scratch.mit.edu/projects/1046604803/"
-          class="game-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WATCH ANIMATION
-        </a>
-
-      </div>
+              </div>
 
 
-      <!-- SOCCER IN A NUTSHELL -->
+              <!-- THING I HATE -->
 
-      <div class="game-card">
+              <div class="game-card">
 
-        <div class="game-card-icon">⚽</div>
+                <div class="game-card-icon">😡</div>
 
-        <h3>Soccer in a nutshell</h3>
+                <h3>
+                  Thing I, and probably the entire
+                  population of the USA hates
+                </h3>
 
-        <p>
-          By <strong>ChewingFruitGum</strong>
-        </p>
+                <p>
+                  <span data-i18n="by">By</span>
+                  <strong>Goosey</strong>
+                </p>
 
-        <a
-          href="https://scratch.mit.edu/projects/450116968/"
-          class="game-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WATCH ANIMATION
-        </a>
+                <a
+                  href="https://scratch.mit.edu/projects/1330515370/"
+                  class="game-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-i18n="watchAnimation"
+                >
+                  WATCH ANIMATION
+                </a>
 
-      </div>
+              </div>
 
-    </div>
 
-  </div>
+              <!-- PROBLEM WITH REMIXING -->
 
-</div>
+              <div class="game-card">
+
+                <div class="game-card-icon">🧠</div>
+
+                <h3>
+                  The Problem with REMIXING
+                </h3>
+
+                <p>
+                  <span data-i18n="by">By</span>
+                  <strong>vincent1142013</strong>
+                </p>
+
+                <a
+                  href="https://scratch.mit.edu/projects/1351011063/"
+                  class="game-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-i18n="watchAnimation"
+                >
+                  WATCH ANIMATION
+                </a>
+
+              </div>
+
+
+              <!-- AURA MOMENT -->
+
+              <div class="game-card">
+
+                <div class="game-card-icon">✨</div>
+
+                <h3>Aura moment</h3>
+
+                <p>
+                  <span data-i18n="by">By</span>
+                  <strong>Gifdeddigitalbee</strong>
+                </p>
+
+                <a
+                  href="https://scratch.mit.edu/projects/1046604803/"
+                  class="game-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-i18n="watchAnimation"
+                >
+                  WATCH ANIMATION
+                </a>
+
+              </div>
+
+
+              <!-- SOCCER -->
+
+              <div class="game-card">
+
+                <div class="game-card-icon">⚽</div>
+
+                <h3>Soccer in a nutshell</h3>
+
+                <p>
+                  <span data-i18n="by">By</span>
+                  <strong>ChewingFruitGum</strong>
+                </p>
+
+                <a
+                  href="https://scratch.mit.edu/projects/450116968/"
+                  class="game-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-i18n="watchAnimation"
+                >
+                  WATCH ANIMATION
+                </a>
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+
         <!-- EXPERIMENTS -->
 
         <div class="project">
@@ -983,9 +1229,11 @@
 
           <div>
 
-            <h3>🧪 Old Experiments</h3>
+            <h3 data-i18n="oldExperiments">
+              🧪 Old Experiments
+            </h3>
 
-            <p>
+            <p data-i18n="oldExperimentsDescription">
               Random coding projects, prototypes,
               and weird ideas from the GooseyWorks archives.
               Currently unavailable.
@@ -995,125 +1243,6 @@
 
         </div>
 
-      </div>
-
-    </section>
-    <!-- ========================= -->
-    <!-- UPDATE HISTORY -->
-    <!-- ========================= -->
-
-    <section id="updates" class="section alt">
-
-      <div class="eyebrow">
-        GOOSEYWORKS HISTORY
-      </div>
-
-      <h2>📜 Update History</h2>
-
-      <p class="section-intro">
-        See what has happened at GooseyWorks over time!
-      </p>
-
-      <div class="project-list">
-
-        <!-- VERSION 1.0.0 -->
-
-        <div class="project">
-
-          <div class="number">1.0</div>
-
-          <div>
-
-            <h3>🪿 GooseyWorks 1.0.0</h3>
-
-            <p>
-              GooseyWorks officially launches!
-            </p>
-
-            <p>
-              🎮 Goosey Smash World Ultimate released.
-            </p>
-
-            <p>
-              🎲 More Games section added with games
-              from Goosey and other awesome creators.
-            </p>
-
-            <p>
-              🎬 Scratch Animations archive added.
-            </p>
-
-            <p>
-              📁 GooseyWorks Archives added.
-            </p>
-
-            <p>
-              🐢 Ham 1 and Ham 2 added to the archives.
-            </p>
-
-            <p>
-              🧪 Old Experiments section added.
-            </p>
-
-            <p>
-              🏆 GooseyWorks website officially becomes
-              the home of Goosey's games and projects.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <!-- GOOSEY SMASH -->
-
-        <div class="project">
-
-          <div class="number">GSU</div>
-
-          <div>
-
-            <h3>💥 Goosey Smash World Ultimate</h3>
-
-            <p>
-              The first major GooseyWorks game is released!
-            </p>
-
-            <p>
-              Added characters including Goosey, Ghosty,
-              Greg, Angy-Cat, Angy-Cap, Penguy, Mark,
-              and Chat.
-            </p>
-
-            <p>
-              Added special abilities, special worlds,
-              Ice World, nightmare parkour, character
-              selection, knockback, stocks, and much more.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <!-- WEBSITE -->
-
-        <div class="project">
-
-          <div class="number">WEB</div>
-
-          <div>
-
-            <h3>🌐 GooseyWorks Website</h3>
-
-            <p>
-              The GooseyWorks website goes live with
-              games, projects, archives, and more.
-            </p>
-
-          </div>
-
-        </div>
 
       </div>
 
@@ -1121,28 +1250,32 @@
 
 
     <!-- ========================= -->
-    <!-- UPDATE BUTTON -->
+    <!-- UPDATE HISTORY BUTTON -->
     <!-- ========================= -->
 
     <section class="section">
 
       <div class="about-box">
 
-        <div class="eyebrow">
+        <div
+          class="eyebrow"
+          data-i18n="keepWatching"
+        >
           KEEP WATCHING
         </div>
 
-        <h2>
+        <h2 data-i18n="moreChaos">
           More chaos is coming.
         </h2>
 
-        <p>
+        <p data-i18n="justGettingStarted">
           GooseyWorks is just getting started.
         </p>
 
         <a
           class="button"
           href="updates.html"
+          data-i18n="viewUpdateHistory"
         >
           📜 VIEW UPDATE HISTORY
         </a>
@@ -1150,11 +1283,27 @@
       </div>
 
     </section>
-<a href="bug-report.html" class="bug-button">
-    🐛 REPORT A BUG
-</a>
+
+
+    <!-- ========================= -->
+    <!-- BUG REPORT -->
+    <!-- ========================= -->
+
+    <a
+      href="bug-report.html"
+      class="bug-button"
+      data-i18n="reportBug"
+    >
+      🐛 REPORT A BUG
+    </a>
+
 
   </main>
+
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
 
   <footer>
 
@@ -1162,11 +1311,1695 @@
       © 2026 GooseyWorks
     </span>
 
-    <span>
+    <span data-i18n="builtWith">
       Built with code and chaos.
     </span>
 
   </footer>
 
+
+  <!-- ========================= -->
+  <!-- LANGUAGE SYSTEM -->
+  <!-- ========================= -->
+
+  <script>
+
+    const translations = {
+
+      en: {
+        navGames: "Games",
+        navProjects: "Projects",
+        navAbout: "About",
+
+        welcome: "WELCOME TO",
+        heroDescription:
+          "Games, experiments, and chaotic code made by Goosey.",
+        enterArcade: "ENTER THE ARCADE",
+
+        announcements: "Announcements",
+        announcementIntro:
+          "A home for all the games you make.",
+
+        outNow: "OUT NOW!",
+        projectTag: "PROJECT",
+        newGame: "NEW GAME",
+        nextGame: "Your Next Game",
+        nextGameDescription:
+          "A ready-made slot for the next game you build.",
+        comingSoon: "COMING SOON",
+
+        smashDescription:
+          "Chaotic fighting, crazy specials, and way too much knockback.",
+
+        playGooseySmash:
+          "PLAY GOOSEY SMASH",
+
+        hamDescription:
+          "Your turtle project from the GooseyWorks archives.",
+
+        viewArchive:
+          "VIEW ARCHIVE",
+
+        workshop: "THE WORKSHOP",
+        projectsTitle: "Projects",
+
+        kaplayTitle:
+          "Kaplay Fighting Game",
+
+        kaplayDescription:
+          "Building a Smash-style game with Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark, and Chat.",
+
+        codeLab: "Code Lab",
+
+        codeLabDescription:
+          "A place for experiments, prototypes, and weird ideas that might become games.",
+
+        aboutGooseyworks:
+          "ABOUT GOOSEYWORKS",
+
+        aboutTitle:
+          "Make games. Break things. Fix them. Make them cooler.",
+
+        aboutDescription:
+          "GooseyWorks is the home for Goosey's games and coding projects.",
+
+        aiButton:
+          "🤖 LET THE GOOSEY AI DECIDE",
+
+        arcade: "THE ARCADE",
+        myGames: "🎮 MY GAMES",
+
+        smashFullDescription:
+          "The ultimate GooseyWorks fighting game. Crazy characters, special powers, random worlds, and ridiculous knockback.",
+
+        stickeroDescription:
+          "Starts easy. Gets absolutely ragebaiting.",
+
+        playStickero:
+          "PLAY STICKERO",
+
+        ham1Description:
+          "Original Python/Turtle pet simulation from the GooseyWorks archives.",
+
+        ham2Description:
+          "Upgraded Python/Turtle pet simulation with evolution and weather.",
+
+        moreGamesEyebrow:
+          "MORE GAMES",
+
+        moreGamesTitle:
+          "🎲 More Games",
+
+        moreGamesDescription:
+          "More games from GooseyWorks and awesome creators!",
+
+        by: "By",
+
+        playReaper:
+          "PLAY REAPER",
+
+        playGame:
+          "PLAY GAME",
+
+        archives:
+          "THE ARCHIVES",
+
+        archivesTitle:
+          "📁 GooseyWorks Archives",
+
+        archivesDescription:
+          "Old projects, experiments, animations, and other GooseyWorks history.",
+
+        archiveHam1:
+          "The original Python/Turtle simulation.",
+
+        archiveHam2:
+          "The upgraded Python/Turtle simulation with weather, personality, health, and turtle evolution.",
+
+        scratchAnimations:
+          "🎬 Scratch Animations",
+
+        scratchAnimationsDescription:
+          "Animations and experiments created in Scratch.",
+
+        watchAnimation:
+          "WATCH ANIMATION",
+
+        oldExperiments:
+          "🧪 Old Experiments",
+
+        oldExperimentsDescription:
+          "Random coding projects, prototypes, and weird ideas from the GooseyWorks archives. Currently unavailable.",
+
+        keepWatching:
+          "KEEP WATCHING",
+
+        moreChaos:
+          "More chaos is coming.",
+
+        justGettingStarted:
+          "GooseyWorks is just getting started.",
+
+        viewUpdateHistory:
+          "📜 VIEW UPDATE HISTORY",
+
+        reportBug:
+          "🐛 REPORT A BUG",
+
+        builtWith:
+          "Built with code and chaos."
+      },
+
+
+      es: {
+        navGames: "Juegos",
+        navProjects: "Proyectos",
+        navAbout: "Acerca de",
+
+        welcome: "BIENVENIDO A",
+        heroDescription:
+          "Juegos, experimentos y código caótico hechos por Goosey.",
+        enterArcade: "ENTRAR A LA ARCADE",
+
+        announcements: "Anuncios",
+        announcementIntro:
+          "Un hogar para todos tus juegos.",
+
+        outNow: "¡YA DISPONIBLE!",
+        projectTag: "PROYECTO",
+        newGame: "NUEVO JUEGO",
+        nextGame: "Tu próximo juego",
+        nextGameDescription:
+          "Un espacio listo para el próximo juego que construyas.",
+        comingSoon: "PRÓXIMAMENTE",
+
+        smashDescription:
+          "Combates caóticos, especiales increíbles y demasiado retroceso.",
+
+        playGooseySmash:
+          "JUGAR GOOSEY SMASH",
+
+        hamDescription:
+          "Tu proyecto de tortuga de los archivos de GooseyWorks.",
+
+        viewArchive:
+          "VER ARCHIVO",
+
+        workshop: "EL TALLER",
+        projectsTitle: "Proyectos",
+
+        kaplayTitle:
+          "Juego de lucha con Kaplay",
+
+        kaplayDescription:
+          "Construyendo un juego estilo Smash con Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark y Chat.",
+
+        codeLab: "Laboratorio de Código",
+
+        codeLabDescription:
+          "Un lugar para experimentos, prototipos e ideas extrañas que podrían convertirse en juegos.",
+
+        aboutGooseyworks:
+          "SOBRE GOOSEYWORKS",
+
+        aboutTitle:
+          "Haz juegos. Rompe cosas. Arréglalas. Hazlas más geniales.",
+
+        aboutDescription:
+          "GooseyWorks es el hogar de los juegos y proyectos de programación de Goosey.",
+
+        aiButton:
+          "🤖 DEJA QUE GOOSEY AI DECIDA",
+
+        arcade: "LA ARCADE",
+        myGames: "🎮 MIS JUEGOS",
+
+        smashFullDescription:
+          "El juego de lucha definitivo de GooseyWorks. Personajes locos, poderes especiales, mundos aleatorios y retroceso ridículo.",
+
+        stickeroDescription:
+          "Empieza fácil. Luego se vuelve absolutamente frustrante.",
+
+        playStickero:
+          "JUGAR STICKERO",
+
+        ham1Description:
+          "Simulación original de mascota hecha con Python/Turtle de los archivos de GooseyWorks.",
+
+        ham2Description:
+          "Simulación mejorada de mascota con Python/Turtle, evolución y clima.",
+
+        moreGamesEyebrow:
+          "MÁS JUEGOS",
+
+        moreGamesTitle:
+          "🎲 Más juegos",
+
+        moreGamesDescription:
+          "¡Más juegos de GooseyWorks y de increíbles creadores!",
+
+        by: "Por",
+
+        playReaper:
+          "JUGAR REAPER",
+
+        playGame:
+          "JUGAR",
+
+        archives:
+          "LOS ARCHIVOS",
+
+        archivesTitle:
+          "📁 Archivos de GooseyWorks",
+
+        archivesDescription:
+          "Proyectos antiguos, experimentos, animaciones y más historia de GooseyWorks.",
+
+        archiveHam1:
+          "La simulación original de Python/Turtle.",
+
+        archiveHam2:
+          "La simulación mejorada de Python/Turtle con clima, personalidad, salud y evolución de tortuga.",
+
+        scratchAnimations:
+          "🎬 Animaciones de Scratch",
+
+        scratchAnimationsDescription:
+          "Animaciones y experimentos creados en Scratch.",
+
+        watchAnimation:
+          "VER ANIMACIÓN",
+
+        oldExperiments:
+          "🧪 Experimentos antiguos",
+
+        oldExperimentsDescription:
+          "Proyectos de código, prototipos e ideas extrañas de los archivos de GooseyWorks. Actualmente no disponibles.",
+
+        keepWatching:
+          "SIGUE MIRANDO",
+
+        moreChaos:
+          "Se acerca más caos.",
+
+        justGettingStarted:
+          "GooseyWorks apenas está comenzando.",
+
+        viewUpdateHistory:
+          "📜 VER HISTORIAL DE ACTUALIZACIONES",
+
+        reportBug:
+          "🐛 REPORTAR UN ERROR",
+
+        builtWith:
+          "Creado con código y caos."
+      },
+
+
+      fr: {
+        navGames: "Jeux",
+        navProjects: "Projets",
+        navAbout: "À propos",
+
+        welcome: "BIENVENUE À",
+        heroDescription:
+          "Jeux, expériences et code chaotique créés par Goosey.",
+        enterArcade: "ENTRER DANS L'ARCADE",
+
+        announcements: "Annonces",
+        announcementIntro:
+          "Un endroit pour tous les jeux que tu crées.",
+
+        outNow: "DISPONIBLE !",
+        projectTag: "PROJET",
+        newGame: "NOUVEAU JEU",
+        nextGame: "Ton prochain jeu",
+        nextGameDescription:
+          "Un emplacement prêt pour le prochain jeu que tu créeras.",
+        comingSoon: "BIENTÔT",
+
+        smashDescription:
+          "Des combats chaotiques, des pouvoirs fous et beaucoup trop de recul.",
+
+        playGooseySmash:
+          "JOUER À GOOSEY SMASH",
+
+        hamDescription:
+          "Ton projet de tortue dans les archives de GooseyWorks.",
+
+        viewArchive:
+          "VOIR LES ARCHIVES",
+
+        workshop: "L'ATELIER",
+        projectsTitle: "Projets",
+
+        kaplayTitle:
+          "Jeu de combat Kaplay",
+
+        kaplayDescription:
+          "Création d'un jeu de combat façon Smash avec Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark et Chat.",
+
+        codeLab: "Laboratoire de code",
+
+        codeLabDescription:
+          "Un endroit pour les expériences, prototypes et idées étranges qui pourraient devenir des jeux.",
+
+        aboutGooseyworks:
+          "À PROPOS DE GOOSEYWORKS",
+
+        aboutTitle:
+          "Crée des jeux. Casse des choses. Répare-les. Rends-les encore plus cool.",
+
+        aboutDescription:
+          "GooseyWorks est la maison des jeux et projets de programmation de Goosey.",
+
+        aiButton:
+          "🤖 LAISSE GOOSEY AI DÉCIDER",
+
+        arcade: "L'ARCADE",
+        myGames: "🎮 MES JEUX",
+
+        smashFullDescription:
+          "Le jeu de combat ultime de GooseyWorks. Personnages fous, pouvoirs spéciaux, mondes aléatoires et recul ridicule.",
+
+        stickeroDescription:
+          "Commence facilement. Devient absolument rageant.",
+
+        playStickero:
+          "JOUER À STICKERO",
+
+        ham1Description:
+          "Simulation originale de tortue en Python/Turtle des archives de GooseyWorks.",
+
+        ham2Description:
+          "Simulation améliorée de tortue en Python/Turtle avec évolution et météo.",
+
+        moreGamesEyebrow:
+          "PLUS DE JEUX",
+
+        moreGamesTitle:
+          "🎲 Plus de jeux",
+
+        moreGamesDescription:
+          "Plus de jeux de GooseyWorks et d'incroyables créateurs !",
+
+        by: "Par",
+
+        playReaper:
+          "JOUER À REAPER",
+
+        playGame:
+          "JOUER",
+
+        archives:
+          "LES ARCHIVES",
+
+        archivesTitle:
+          "📁 Archives de GooseyWorks",
+
+        archivesDescription:
+          "Anciens projets, expériences, animations et autres souvenirs de GooseyWorks.",
+
+        archiveHam1:
+          "La simulation originale en Python/Turtle.",
+
+        archiveHam2:
+          "La simulation améliorée en Python/Turtle avec météo, personnalité, santé et évolution de tortue.",
+
+        scratchAnimations:
+          "🎬 Animations Scratch",
+
+        scratchAnimationsDescription:
+          "Animations et expériences créées dans Scratch.",
+
+        watchAnimation:
+          "REGARDER L'ANIMATION",
+
+        oldExperiments:
+          "🧪 Anciens expériences",
+
+        oldExperimentsDescription:
+          "Projets de code, prototypes et idées étranges des archives de GooseyWorks. Actuellement indisponibles.",
+
+        keepWatching:
+          "RESTEZ À L'ÉCOUTE",
+
+        moreChaos:
+          "Plus de chaos arrive.",
+
+        justGettingStarted:
+          "GooseyWorks ne fait que commencer.",
+
+        viewUpdateHistory:
+          "📜 VOIR L'HISTORIQUE DES MISES À JOUR",
+
+        reportBug:
+          "🐛 SIGNALER UN BUG",
+
+        builtWith:
+          "Créé avec du code et du chaos."
+      },
+
+
+      de: {
+        navGames: "Spiele",
+        navProjects: "Projekte",
+        navAbout: "Über uns",
+
+        welcome: "WILLKOMMEN BEI",
+        heroDescription:
+          "Spiele, Experimente und chaotischer Code von Goosey.",
+        enterArcade: "ARCADE BETRETEN",
+
+        announcements: "Ankündigungen",
+        announcementIntro:
+          "Ein Zuhause für alle Spiele, die du machst.",
+
+        outNow: "JETZT VERFÜGBAR!",
+        projectTag: "PROJEKT",
+        newGame: "NEUES SPIEL",
+        nextGame: "Dein nächstes Spiel",
+        nextGameDescription:
+          "Ein fertiger Platz für das nächste Spiel, das du baust.",
+        comingSoon: "BALD VERFÜGBAR",
+
+        smashDescription:
+          "Chaotische Kämpfe, verrückte Spezialfähigkeiten und viel zu viel Rückstoß.",
+
+        playGooseySmash:
+          "GOOSEY SMASH SPIELEN",
+
+        hamDescription:
+          "Dein Schildkrötenprojekt aus dem GooseyWorks-Archiv.",
+
+        viewArchive:
+          "ARCHIV ANSEHEN",
+
+        workshop: "DIE WERKSTATT",
+        projectsTitle: "Projekte",
+
+        kaplayTitle:
+          "Kaplay-Kampfspiel",
+
+        kaplayDescription:
+          "Ein Smash-ähnliches Spiel mit Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark und Chat.",
+
+        codeLab: "Code-Labor",
+
+        codeLabDescription:
+          "Ein Ort für Experimente, Prototypen und seltsame Ideen, die zu Spielen werden könnten.",
+
+        aboutGooseyworks:
+          "ÜBER GOOSEYWORKS",
+
+        aboutTitle:
+          "Spiele machen. Dinge kaputt machen. Reparieren. Cooler machen.",
+
+        aboutDescription:
+          "GooseyWorks ist das Zuhause für Gooseys Spiele und Programmierprojekte.",
+
+        aiButton:
+          "🤖 GOOSEY AI ENTSCHEIDEN LASSEN",
+
+        arcade: "DIE ARCADE",
+        myGames: "🎮 MEINE SPIELE",
+
+        smashFullDescription:
+          "Das ultimative GooseyWorks-Kampfspiel. Verrückte Charaktere, Spezialkräfte, zufällige Welten und absurdes Zurückstoßen.",
+
+        stickeroDescription:
+          "Beginnt einfach. Wird absolut frustrierend.",
+
+        playStickero:
+          "STICKERO SPIELEN",
+
+        ham1Description:
+          "Originale Python/Turtle-Haustiersimulation aus dem GooseyWorks-Archiv.",
+
+        ham2Description:
+          "Verbesserte Python/Turtle-Haustiersimulation mit Evolution und Wetter.",
+
+        moreGamesEyebrow:
+          "MEHR SPIELE",
+
+        moreGamesTitle:
+          "🎲 Mehr Spiele",
+
+        moreGamesDescription:
+          "Mehr Spiele von GooseyWorks und großartigen Entwicklern!",
+
+        by: "Von",
+
+        playReaper:
+          "REAPER SPIELEN",
+
+        playGame:
+          "SPIELEN",
+
+        archives:
+          "DIE ARCHIVE",
+
+        archivesTitle:
+          "📁 GooseyWorks-Archive",
+
+        archivesDescription:
+          "Alte Projekte, Experimente, Animationen und andere GooseyWorks-Geschichte.",
+
+        archiveHam1:
+          "Die originale Python/Turtle-Simulation.",
+
+        archiveHam2:
+          "Die verbesserte Python/Turtle-Simulation mit Wetter, Persönlichkeit, Gesundheit und Schildkröten-Evolution.",
+
+        scratchAnimations:
+          "🎬 Scratch-Animationen",
+
+        scratchAnimationsDescription:
+          "Animationen und Experimente, die in Scratch erstellt wurden.",
+
+        watchAnimation:
+          "ANIMATION ANSEHEN",
+
+        oldExperiments:
+          "🧪 Alte Experimente",
+
+        oldExperimentsDescription:
+          "Zufällige Coding-Projekte, Prototypen und seltsame Ideen aus den GooseyWorks-Archiven. Derzeit nicht verfügbar.",
+
+        keepWatching:
+          "BLEIB DRAN",
+
+        moreChaos:
+          "Mehr Chaos kommt.",
+
+        justGettingStarted:
+          "GooseyWorks fängt gerade erst an.",
+
+        viewUpdateHistory:
+          "📜 UPDATE-VERLAUF ANSEHEN",
+
+        reportBug:
+          "🐛 FEHLER MELDEN",
+
+        builtWith:
+          "Mit Code und Chaos gebaut."
+      },
+
+
+      nl: {
+        navGames: "Games",
+        navProjects: "Projecten",
+        navAbout: "Over",
+
+        welcome: "WELKOM BIJ",
+        heroDescription:
+          "Games, experimenten en chaotische code gemaakt door Goosey.",
+        enterArcade: "DE ARCADE BINNENGAAN",
+
+        announcements: "Aankondigingen",
+        announcementIntro:
+          "Een thuis voor alle games die je maakt.",
+
+        outNow: "NU BESCHIKBAAR!",
+        projectTag: "PROJECT",
+        newGame: "NIEUWE GAME",
+        nextGame: "Je volgende game",
+        nextGameDescription:
+          "Een kant-en-klare plek voor de volgende game die je bouwt.",
+        comingSoon: "BINNENKORT",
+
+        smashDescription:
+          "Chaotische gevechten, gekke specials en veel te veel terugslag.",
+
+        playGooseySmash:
+          "GOOSEY SMASH SPELEN",
+
+        hamDescription:
+          "Je schildpadproject uit de GooseyWorks-archieven.",
+
+        viewArchive:
+          "ARCHIEF BEKIJKEN",
+
+        workshop: "DE WERKPLAATS",
+        projectsTitle: "Projecten",
+
+        kaplayTitle:
+          "Kaplay-vechtgame",
+
+        kaplayDescription:
+          "Een Smash-achtige game bouwen met Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark en Chat.",
+
+        codeLab: "Code Lab",
+
+        codeLabDescription:
+          "Een plek voor experimenten, prototypes en vreemde ideeën die games kunnen worden.",
+
+        aboutGooseyworks:
+          "OVER GOOSEYWORKS",
+
+        aboutTitle:
+          "Games maken. Dingen breken. Ze repareren. Ze cooler maken.",
+
+        aboutDescription:
+          "GooseyWorks is de thuisbasis van Goosey's games en codeprojecten.",
+
+        aiButton:
+          "🤖 LAAT GOOSEY AI BESLISSEN",
+
+        arcade: "DE ARCADE",
+        myGames: "🎮 MIJN GAMES",
+
+        smashFullDescription:
+          "De ultieme GooseyWorks-vechtgame. Gekke personages, speciale krachten, willekeurige werelden en belachelijke terugslag.",
+
+        stickeroDescription:
+          "Begint makkelijk. Wordt absoluut frustrerend.",
+
+        playStickero:
+          "STICKERO SPELEN",
+
+        ham1Description:
+          "Originele Python/Turtle-huisdiersimulatie uit de GooseyWorks-archieven.",
+
+        ham2Description:
+          "Verbeterde Python/Turtle-huisdiersimulatie met evolutie en weer.",
+
+        moreGamesEyebrow:
+          "MEER GAMES",
+
+        moreGamesTitle:
+          "🎲 Meer games",
+
+        moreGamesDescription:
+          "Meer games van GooseyWorks en geweldige makers!",
+
+        by: "Door",
+
+        playReaper:
+          "REAPER SPELEN",
+
+        playGame:
+          "GAME SPELEN",
+
+        archives:
+          "DE ARCHIEVEN",
+
+        archivesTitle:
+          "📁 GooseyWorks-archieven",
+
+        archivesDescription:
+          "Oude projecten, experimenten, animaties en andere GooseyWorks-geschiedenis.",
+
+        archiveHam1:
+          "De originele Python/Turtle-simulatie.",
+
+        archiveHam2:
+          "De verbeterde Python/Turtle-simulatie met weer, persoonlijkheid, gezondheid en schildpadevolutie.",
+
+        scratchAnimations:
+          "🎬 Scratch-animaties",
+
+        scratchAnimationsDescription:
+          "Animaties en experimenten gemaakt in Scratch.",
+
+        watchAnimation:
+          "ANIMATIE BEKIJKEN",
+
+        oldExperiments:
+          "🧪 Oude experimenten",
+
+        oldExperimentsDescription:
+          "Willekeurige codeprojecten, prototypes en vreemde ideeën uit de GooseyWorks-archieven. Momenteel niet beschikbaar.",
+
+        keepWatching:
+          "BLIJF KIJKEN",
+
+        moreChaos:
+          "Er komt meer chaos aan.",
+
+        justGettingStarted:
+          "GooseyWorks is nog maar net begonnen.",
+
+        viewUpdateHistory:
+          "📜 UPDATEGESCHIEDENIS BEKIJKEN",
+
+        reportBug:
+          "🐛 BUG MELDEN",
+
+        builtWith:
+          "Gebouwd met code en chaos."
+      },
+
+
+      "zh-CN": {
+        navGames: "游戏",
+        navProjects: "项目",
+        navAbout: "关于",
+
+        welcome: "欢迎来到",
+        heroDescription:
+          "Goosey 制作的游戏、实验和混乱代码。",
+        enterArcade: "进入街机厅",
+
+        announcements: "公告",
+        announcementIntro:
+          "这里是你所有游戏的家。",
+
+        outNow: "现已推出！",
+        projectTag: "项目",
+        newGame: "新游戏",
+        nextGame: "你的下一款游戏",
+        nextGameDescription:
+          "为你下一款游戏准备好的位置。",
+        comingSoon: "即将推出",
+
+        smashDescription:
+          "混乱的战斗、疯狂的特殊能力，以及多得离谱的击退。",
+
+        playGooseySmash:
+          "游玩 GOOSEY SMASH",
+
+        hamDescription:
+          "来自 GooseyWorks 档案馆的你的乌龟项目。",
+
+        viewArchive:
+          "查看档案",
+
+        workshop: "工作室",
+        projectsTitle: "项目",
+
+        kaplayTitle:
+          "Kaplay 格斗游戏",
+
+        kaplayDescription:
+          "正在制作一款 Smash 风格的游戏，包含 Goosey、Ghosty、Greg、Angy-Cat、Angy-Cap、Penguy、Mark 和 Chat。",
+
+        codeLab: "代码实验室",
+
+        codeLabDescription:
+          "用于实验、原型和可能变成游戏的奇怪想法。",
+
+        aboutGooseyworks:
+          "关于 GOOSEYWORKS",
+
+        aboutTitle:
+          "制作游戏。搞坏东西。修好它们。让它们更酷。",
+
+        aboutDescription:
+          "GooseyWorks 是 Goosey 的游戏和编程项目之家。",
+
+        aiButton:
+          "🤖 让 GOOSEY AI 决定",
+
+        arcade: "街机厅",
+        myGames: "🎮 我的游戏",
+
+        smashFullDescription:
+          "终极 GooseyWorks 格斗游戏。疯狂的角色、特殊能力、随机世界和离谱的击退效果。",
+
+        stickeroDescription:
+          "开始很简单。然后变得超级折磨人。",
+
+        playStickero:
+          "游玩 STICKERO",
+
+        ham1Description:
+          "来自 GooseyWorks 档案馆的原版 Python/Turtle 宠物模拟器。",
+
+        ham2Description:
+          "升级版 Python/Turtle 宠物模拟器，加入了进化和天气。",
+
+        moreGamesEyebrow:
+          "更多游戏",
+
+        moreGamesTitle:
+          "🎲 更多游戏",
+
+        moreGamesDescription:
+          "来自 GooseyWorks 和其他优秀创作者的更多游戏！",
+
+        by: "作者",
+
+        playReaper:
+          "游玩 REAPER",
+
+        playGame:
+          "游玩游戏",
+
+        archives:
+          "档案馆",
+
+        archivesTitle:
+          "📁 GooseyWorks 档案馆",
+
+        archivesDescription:
+          "旧项目、实验、动画以及 GooseyWorks 的其他历史。",
+
+        archiveHam1:
+          "最初的 Python/Turtle 模拟器。",
+
+        archiveHam2:
+          "升级版 Python/Turtle 模拟器，加入天气、个性、健康和乌龟进化。",
+
+        scratchAnimations:
+          "🎬 Scratch 动画",
+
+        scratchAnimationsDescription:
+          "使用 Scratch 制作的动画和实验。",
+
+        watchAnimation:
+          "观看动画",
+
+        oldExperiments:
+          "🧪 旧实验",
+
+        oldExperimentsDescription:
+          "来自 GooseyWorks 档案馆的随机代码项目、原型和奇怪想法。目前不可用。",
+
+        keepWatching:
+          "继续关注",
+
+        moreChaos:
+          "更多混乱即将到来。",
+
+        justGettingStarted:
+          "GooseyWorks 才刚刚开始。",
+
+        viewUpdateHistory:
+          "📜 查看更新历史",
+
+        reportBug:
+          "🐛 报告错误",
+
+        builtWith:
+          "用代码和混乱打造。"
+      },
+
+
+      "zh-TW": {
+        navGames: "遊戲",
+        navProjects: "專案",
+        navAbout: "關於",
+
+        welcome: "歡迎來到",
+        heroDescription:
+          "Goosey 製作的遊戲、實驗與混亂程式碼。",
+        enterArcade: "進入遊樂場",
+
+        announcements: "公告",
+        announcementIntro:
+          "這裡是你所有遊戲的家。",
+
+        outNow: "現已推出！",
+        projectTag: "專案",
+        newGame: "新遊戲",
+        nextGame: "你的下一款遊戲",
+        nextGameDescription:
+          "為你的下一款遊戲準備好的位置。",
+        comingSoon: "即將推出",
+
+        smashDescription:
+          "混亂的戰鬥、瘋狂的特殊能力，以及多得離譜的擊退。",
+
+        playGooseySmash:
+          "遊玩 GOOSEY SMASH",
+
+        hamDescription:
+          "來自 GooseyWorks 檔案館的你的烏龜專案。",
+
+        viewArchive:
+          "查看檔案",
+
+        workshop: "工作室",
+        projectsTitle: "專案",
+
+        kaplayTitle:
+          "Kaplay 格鬥遊戲",
+
+        kaplayDescription:
+          "正在製作一款 Smash 風格的遊戲，包含 Goosey、Ghosty、Greg、Angy-Cat、Angy-Cap、Penguy、Mark 和 Chat。",
+
+        codeLab: "程式實驗室",
+
+        codeLabDescription:
+          "用於實驗、原型和可能變成遊戲的奇怪想法。",
+
+        aboutGooseyworks:
+          "關於 GOOSEYWORKS",
+
+        aboutTitle:
+          "製作遊戲。搞壞東西。修好它們。讓它們更酷。",
+
+        aboutDescription:
+          "GooseyWorks 是 Goosey 的遊戲與程式設計專案之家。",
+
+        aiButton:
+          "🤖 讓 GOOSEY AI 決定",
+
+        arcade: "遊樂場",
+        myGames: "🎮 我的遊戲",
+
+        smashFullDescription:
+          "終極 GooseyWorks 格鬥遊戲。瘋狂的角色、特殊能力、隨機世界和離譜的擊退效果。",
+
+        stickeroDescription:
+          "開始很簡單。然後變得超級折磨人。",
+
+        playStickero:
+          "遊玩 STICKERO",
+
+        ham1Description:
+          "來自 GooseyWorks 檔案館的原版 Python/Turtle 寵物模擬器。",
+
+        ham2Description:
+          "升級版 Python/Turtle 寵物模擬器，加入進化和天氣。",
+
+        moreGamesEyebrow:
+          "更多遊戲",
+
+        moreGamesTitle:
+          "🎲 更多遊戲",
+
+        moreGamesDescription:
+          "來自 GooseyWorks 和其他優秀創作者的更多遊戲！",
+
+        by: "作者",
+
+        playReaper:
+          "遊玩 REAPER",
+
+        playGame:
+          "遊玩遊戲",
+
+        archives:
+          "檔案館",
+
+        archivesTitle:
+          "📁 GooseyWorks 檔案館",
+
+        archivesDescription:
+          "舊專案、實驗、動畫以及 GooseyWorks 的其他歷史。",
+
+        archiveHam1:
+          "最初的 Python/Turtle 模擬器。",
+
+        archiveHam2:
+          "升級版 Python/Turtle 模擬器，加入天氣、個性、健康和烏龜進化。",
+
+        scratchAnimations:
+          "🎬 Scratch 動畫",
+
+        scratchAnimationsDescription:
+          "使用 Scratch 製作的動畫和實驗。",
+
+        watchAnimation:
+          "觀看動畫",
+
+        oldExperiments:
+          "🧪 舊實驗",
+
+        oldExperimentsDescription:
+          "來自 GooseyWorks 檔案館的隨機程式專案、原型和奇怪想法。目前不可用。",
+
+        keepWatching:
+          "繼續關注",
+
+        moreChaos:
+          "更多混亂即將到來。",
+
+        justGettingStarted:
+          "GooseyWorks 才剛剛開始。",
+
+        viewUpdateHistory:
+          "📜 查看更新歷史",
+
+        reportBug:
+          "🐛 回報錯誤",
+
+        builtWith:
+          "用程式碼與混亂打造。"
+      },
+
+
+      "yue-CN": {
+        navGames: "游戏",
+        navProjects: "项目",
+        navAbout: "关于",
+
+        welcome: "欢迎来到",
+        heroDescription:
+          "Goosey 整嘅游戏、实验同混乱代码。",
+        enterArcade: "进入游戏厅",
+
+        announcements: "公告",
+        announcementIntro:
+          "呢度係你所有游戏嘅屋企。",
+
+        outNow: "而家推出！",
+        projectTag: "项目",
+        newGame: "新游戏",
+        nextGame: "你下一款游戏",
+        nextGameDescription:
+          "为你下一款游戏准备好嘅位置。",
+        comingSoon: "即将推出",
+
+        smashDescription:
+          "混乱嘅战斗、疯狂嘅特殊能力，同埋多到离谱嘅击退。",
+
+        playGooseySmash:
+          "玩 GOOSEY SMASH",
+
+        hamDescription:
+          "来自 GooseyWorks 档案馆嘅你嘅乌龟项目。",
+
+        viewArchive:
+          "睇档案",
+
+        workshop: "工作室",
+        projectsTitle: "项目",
+
+        kaplayTitle:
+          "Kaplay 格斗游戏",
+
+        kaplayDescription:
+          "制作紧一款 Smash 风格游戏，有 Goosey、Ghosty、Greg、Angy-Cat、Angy-Cap、Penguy、Mark 同 Chat。",
+
+        codeLab: "代码实验室",
+
+        codeLabDescription:
+          "用嚟做实验、原型，同埋可能变成游戏嘅奇怪点子。",
+
+        aboutGooseyworks:
+          "关于 GOOSEYWORKS",
+
+        aboutTitle:
+          "整游戏。整烂嘢。修返佢哋。令佢哋更加型。",
+
+        aboutDescription:
+          "GooseyWorks 係 Goosey 嘅游戏同编程项目之家。",
+
+        aiButton:
+          "🤖 等 GOOSEY AI 决定",
+
+        arcade: "游戏厅",
+        myGames: "🎮 我嘅游戏",
+
+        smashFullDescription:
+          "终极 GooseyWorks 格斗游戏。疯狂角色、特殊能力、随机世界同离谱击退。",
+
+        stickeroDescription:
+          "开始好简单。之后会变到超级折磨人。",
+
+        playStickero:
+          "玩 STICKERO",
+
+        ham1Description:
+          "来自 GooseyWorks 档案馆嘅原版 Python/Turtle 宠物模拟器。",
+
+        ham2Description:
+          "升级版 Python/Turtle 宠物模拟器，有进化同天气。",
+
+        moreGamesEyebrow:
+          "更多游戏",
+
+        moreGamesTitle:
+          "🎲 更多游戏",
+
+        moreGamesDescription:
+          "来自 GooseyWorks 同其他优秀创作者嘅更多游戏！",
+
+        by: "作者",
+
+        playReaper:
+          "玩 REAPER",
+
+        playGame:
+          "玩游戏",
+
+        archives:
+          "档案馆",
+
+        archivesTitle:
+          "📁 GooseyWorks 档案馆",
+
+        archivesDescription:
+          "旧项目、实验、动画，同其他 GooseyWorks 历史。",
+
+        archiveHam1:
+          "最初嘅 Python/Turtle 模拟器。",
+
+        archiveHam2:
+          "升级版 Python/Turtle 模拟器，有天气、个性、健康同乌龟进化。",
+
+        scratchAnimations:
+          "🎬 Scratch 动画",
+
+        scratchAnimationsDescription:
+          "用 Scratch 整嘅动画同实验。",
+
+        watchAnimation:
+          "睇动画",
+
+        oldExperiments:
+          "🧪 旧实验",
+
+        oldExperimentsDescription:
+          "来自 GooseyWorks 档案馆嘅随机代码项目、原型同奇怪点子。目前不可用。",
+
+        keepWatching:
+          "继续关注",
+
+        moreChaos:
+          "更多混乱就快嚟啦。",
+
+        justGettingStarted:
+          "GooseyWorks 先至啱啱开始。",
+
+        viewUpdateHistory:
+          "📜 睇更新历史",
+
+        reportBug:
+          "🐛 报告错误",
+
+        builtWith:
+          "用代码同混乱打造。"
+      },
+
+
+      "yue-TW": {
+        navGames: "遊戲",
+        navProjects: "專案",
+        navAbout: "關於",
+
+        welcome: "歡迎來到",
+        heroDescription:
+          "Goosey 整嘅遊戲、實驗同混亂程式碼。",
+        enterArcade: "進入遊戲廳",
+
+        announcements: "公告",
+        announcementIntro:
+          "呢度係你所有遊戲嘅屋企。",
+
+        outNow: "而家推出！",
+        projectTag: "專案",
+        newGame: "新遊戲",
+        nextGame: "你下一款遊戲",
+        nextGameDescription:
+          "為你下一款遊戲準備好嘅位置。",
+        comingSoon: "即將推出",
+
+        smashDescription:
+          "混亂嘅戰鬥、瘋狂嘅特殊能力，同埋多到離譜嘅擊退。",
+
+        playGooseySmash:
+          "玩 GOOSEY SMASH",
+
+        hamDescription:
+          "來自 GooseyWorks 檔案館嘅你嘅烏龜專案。",
+
+        viewArchive:
+          "睇檔案",
+
+        workshop: "工作室",
+        projectsTitle: "專案",
+
+        kaplayTitle:
+          "Kaplay 格鬥遊戲",
+
+        kaplayDescription:
+          "製作緊一款 Smash 風格遊戲，有 Goosey、Ghosty、Greg、Angy-Cat、Angy-Cap、Penguy、Mark 同 Chat。",
+
+        codeLab: "程式實驗室",
+
+        codeLabDescription:
+          "用嚟做實驗、原型，同埋可能變成遊戲嘅奇怪點子。",
+
+        aboutGooseyworks:
+          "關於 GOOSEYWORKS",
+
+        aboutTitle:
+          "整遊戲。整爛嘢。修返佢哋。令佢哋更加型。",
+
+        aboutDescription:
+          "GooseyWorks 係 Goosey 嘅遊戲同編程專案之家。",
+
+        aiButton:
+          "🤖 等 GOOSEY AI 決定",
+
+        arcade: "遊戲廳",
+        myGames: "🎮 我嘅遊戲",
+
+        smashFullDescription:
+          "終極 GooseyWorks 格鬥遊戲。瘋狂角色、特殊能力、隨機世界同離譜擊退。",
+
+        stickeroDescription:
+          "開始好簡單。之後會變到超級折磨人。",
+
+        playStickero:
+          "玩 STICKERO",
+
+        ham1Description:
+          "來自 GooseyWorks 檔案館嘅原版 Python/Turtle 寵物模擬器。",
+
+        ham2Description:
+          "升級版 Python/Turtle 寵物模擬器，有進化同天氣。",
+
+        moreGamesEyebrow:
+          "更多遊戲",
+
+        moreGamesTitle:
+          "🎲 更多遊戲",
+
+        moreGamesDescription:
+          "來自 GooseyWorks 同其他優秀創作者嘅更多遊戲！",
+
+        by: "作者",
+
+        playReaper:
+          "玩 REAPER",
+
+        playGame:
+          "玩遊戲",
+
+        archives:
+          "檔案館",
+
+        archivesTitle:
+          "📁 GooseyWorks 檔案館",
+
+        archivesDescription:
+          "舊專案、實驗、動畫，同其他 GooseyWorks 歷史。",
+
+        archiveHam1:
+          "最初嘅 Python/Turtle 模擬器。",
+
+        archiveHam2:
+          "升級版 Python/Turtle 模擬器，有天氣、個性、健康同烏龜進化。",
+
+        scratchAnimations:
+          "🎬 Scratch 動畫",
+
+        scratchAnimationsDescription:
+          "用 Scratch 整嘅動畫同實驗。",
+
+        watchAnimation:
+          "睇動畫",
+
+        oldExperiments:
+          "🧪 舊實驗",
+
+        oldExperimentsDescription:
+          "來自 GooseyWorks 檔案館嘅隨機程式專案、原型同奇怪點子。目前不可用。",
+
+        keepWatching:
+          "繼續關注",
+
+        moreChaos:
+          "更多混亂就快嚟啦。",
+
+        justGettingStarted:
+          "GooseyWorks 先至啱啱開始。",
+
+        viewUpdateHistory:
+          "📜 睇更新歷史",
+
+        reportBug:
+          "🐛 報告錯誤",
+
+        builtWith:
+          "用程式碼同混亂打造。"
+      },
+
+
+      ja: {
+        navGames: "ゲーム",
+        navProjects: "プロジェクト",
+        navAbout: "概要",
+
+        welcome: "ようこそ",
+        heroDescription:
+          "Gooseyが作るゲーム、実験、そしてカオスなコード。",
+        enterArcade: "アーケードへ",
+
+        announcements: "お知らせ",
+        announcementIntro:
+          "あなたが作るすべてのゲームのホーム。",
+
+        outNow: "公開中！",
+        projectTag: "プロジェクト",
+        newGame: "新作ゲーム",
+        nextGame: "次のゲーム",
+        nextGameDescription:
+          "次に作るゲームのためのスペースです。",
+        comingSoon: "近日公開",
+
+        smashDescription:
+          "カオスなバトル、ぶっ飛んだ必殺技、そして強すぎるノックバック。",
+
+        playGooseySmash:
+          "GOOSEY SMASHをプレイ",
+
+        hamDescription:
+          "GooseyWorksアーカイブのカメプロジェクト。",
+
+        viewArchive:
+          "アーカイブを見る",
+
+        workshop: "ワークショップ",
+        projectsTitle: "プロジェクト",
+
+        kaplayTitle:
+          "Kaplay格闘ゲーム",
+
+        kaplayDescription:
+          "Goosey、Ghosty、Greg、Angy-Cat、Angy-Cap、Penguy、Mark、Chatが登場するSmash風ゲームを制作中。",
+
+        codeLab: "コードラボ",
+
+        codeLabDescription:
+          "実験、プロトタイプ、ゲームになるかもしれない変なアイデアのための場所。",
+
+        aboutGooseyworks:
+          "GOOSEYWORKSについて",
+
+        aboutTitle:
+          "ゲームを作る。壊す。直す。もっとクールにする。",
+
+        aboutDescription:
+          "GooseyWorksはGooseyのゲームとコーディングプロジェクトのホームです。",
+
+        aiButton:
+          "🤖 GOOSEY AIに決めてもらう",
+
+        arcade: "アーケード",
+        myGames: "🎮 MY GAMES",
+
+        smashFullDescription:
+          "究極のGooseyWorks格闘ゲーム。個性的なキャラクター、特殊能力、ランダムな世界、そしてとんでもないノックバック。",
+
+        stickeroDescription:
+          "最初は簡単。でもどんどん鬼畜になります。",
+
+        playStickero:
+          "STICKEROをプレイ",
+
+        ham1Description:
+          "GooseyWorksアーカイブにあるオリジナルPython/Turtleペットシミュレーション。",
+
+        ham2Description:
+          "進化と天気を追加したアップグレード版Python/Turtleペットシミュレーション。",
+
+        moreGamesEyebrow:
+          "その他のゲーム",
+
+        moreGamesTitle:
+          "🎲 その他のゲーム",
+
+        moreGamesDescription:
+          "GooseyWorksと素晴らしいクリエイターたちのゲーム！",
+
+        by: "作者",
+
+        playReaper:
+          "REAPERをプレイ",
+
+        playGame:
+          "ゲームをプレイ",
+
+        archives:
+          "アーカイブ",
+
+        archivesTitle:
+          "📁 GooseyWorksアーカイブ",
+
+        archivesDescription:
+          "古いプロジェクト、実験、アニメーション、その他のGooseyWorksの歴史。",
+
+        archiveHam1:
+          "オリジナルのPython/Turtleシミュレーション。",
+
+        archiveHam2:
+          "天気、性格、健康、カメの進化を追加したアップグレード版Python/Turtleシミュレーション。",
+
+        scratchAnimations:
+          "🎬 Scratchアニメーション",
+
+        scratchAnimationsDescription:
+          "Scratchで作成したアニメーションと実験。",
+
+        watchAnimation:
+          "アニメーションを見る",
+
+        oldExperiments:
+          "🧪 古い実験",
+
+        oldExperimentsDescription:
+          "GooseyWorksアーカイブのランダムなコードプロジェクト、プロトタイプ、変なアイデア。現在利用できません。",
+
+        keepWatching:
+          "これからもチェック",
+
+        moreChaos:
+          "さらなるカオスがやってきます。",
+
+        justGettingStarted:
+          "GooseyWorksはまだ始まったばかりです。",
+
+        viewUpdateHistory:
+          "📜 更新履歴を見る",
+
+        reportBug:
+          "🐛 バグを報告",
+
+        builtWith:
+          "コードとカオスで作られています。"
+      },
+
+
+      ko: {
+        navGames: "게임",
+        navProjects: "프로젝트",
+        navAbout: "소개",
+
+        welcome: "환영합니다",
+        heroDescription:
+          "Goosey가 만든 게임, 실험, 그리고 혼돈의 코드.",
+        enterArcade: "아케이드 입장",
+
+        announcements: "공지",
+        announcementIntro:
+          "여러분이 만드는 모든 게임의 집.",
+
+        outNow: "지금 출시!",
+        projectTag: "프로젝트",
+        newGame: "새 게임",
+        nextGame: "다음 게임",
+        nextGameDescription:
+          "다음에 만들 게임을 위한 자리입니다.",
+        comingSoon: "COMING SOON",
+
+        smashDescription:
+          "혼돈의 전투, 미친 특수 능력, 그리고 지나치게 강한 넉백.",
+
+        playGooseySmash:
+          "GOOSEY SMASH 플레이",
+
+        hamDescription:
+          "GooseyWorks 아카이브에 있는 거북이 프로젝트.",
+
+        viewArchive:
+          "아카이브 보기",
+
+        workshop: "작업실",
+        projectsTitle: "프로젝트",
+
+        kaplayTitle:
+          "Kaplay 격투 게임",
+
+        kaplayDescription:
+          "Goosey, Ghosty, Greg, Angy-Cat, Angy-Cap, Penguy, Mark, Chat이 등장하는 Smash 스타일 게임을 제작하고 있습니다.",
+
+        codeLab: "코드 연구소",
+
+        codeLabDescription:
+          "실험, 프로토타입, 그리고 게임이 될 수도 있는 이상한 아이디어를 위한 공간.",
+
+        aboutGooseyworks:
+          "GOOSEYWORKS 소개",
+
+        aboutTitle:
+          "게임을 만든다. 망가뜨린다. 고친다. 더 멋지게 만든다.",
+
+        aboutDescription:
+          "GooseyWorks는 Goosey의 게임과 코딩 프로젝트를 위한 공간입니다.",
+
+        aiButton:
+          "🤖 GOOSEY AI에게 결정 맡기기",
+
+        arcade: "아케이드",
+        myGames: "🎮 내 게임",
+
+        smashFullDescription:
+          "GooseyWorks의 궁극적인 격투 게임. 미친 캐릭터, 특수 능력, 랜덤 세계, 그리고 엄청난 넉백.",
+
+        stickeroDescription:
+          "처음에는 쉽습니다. 하지만 점점 극악이 됩니다.",
+
+        playStickero:
+          "STICKERO 플레이",
+
+        ham1Description:
+          "GooseyWorks 아카이브의 오리지널 Python/Turtle 펫 시뮬레이션.",
+
+        ham2Description:
+          "진화와 날씨가 추가된 업그레이드 Python/Turtle 펫 시뮬레이션.",
+
+        moreGamesEyebrow:
+          "더 많은 게임",
+
+        moreGamesTitle:
+          "🎲 더 많은 게임",
+
+        moreGamesDescription:
+          "GooseyWorks와 멋진 크리에이터들의 더 많은 게임!",
+
+        by: "제작",
+
+        playReaper:
+          "REAPER 플레이",
+
+        playGame:
+          "게임 플레이",
+
+        archives:
+          "아카이브",
+
+        archivesTitle:
+          "📁 GooseyWorks 아카이브",
+
+        archivesDescription:
+          "오래된 프로젝트, 실험, 애니메이션 및 GooseyWorks의 역사.",
+
+        archiveHam1:
+          "오리지널 Python/Turtle 시뮬레이션.",
+
+        archiveHam2:
+          "날씨, 성격, 건강 및 거북이 진화가 추가된 업그레이드 Python/Turtle 시뮬레이션.",
+
+        scratchAnimations:
+          "🎬 Scratch 애니메이션",
+
+        scratchAnimationsDescription:
+          "Scratch로 만든 애니메이션과 실험.",
+
+        watchAnimation:
+          "애니메이션 보기",
+
+        oldExperiments:
+          "🧪 오래된 실험",
+
+        oldExperimentsDescription:
+          "GooseyWorks 아카이브의 랜덤 코딩 프로젝트, 프로토타입 및 이상한 아이디어. 현재 사용할 수 없습니다.",
+
+        keepWatching:
+          "계속 지켜봐 주세요",
+
+        moreChaos:
+          "더 많은 혼돈이 찾아옵니다.",
+
+        justGettingStarted:
+          "GooseyWorks는 이제 막 시작했습니다.",
+
+        viewUpdateHistory:
+          "📜 업데이트 기록 보기",
+
+        reportBug:
+          "🐛 버그 신고",
+
+        builtWith:
+          "코드와 혼돈으로 만들어졌습니다."
+      }
+
+    };
+
+
+    // =========================
+    // LANGUAGE SWITCHER
+    // =========================
+
+    const languageSelect =
+      document.getElementById("languageSelect");
+
+
+    function setLanguage(language) {
+
+      const selected =
+        translations[language] || translations.en;
+
+      document.documentElement.lang =
+        language;
+
+
+      document
+        .querySelectorAll("[data-i18n]")
+        .forEach(element => {
+
+          const key =
+            element.getAttribute("data-i18n");
+
+          if (selected[key]) {
+            element.textContent =
+              selected[key];
+          }
+
+        });
+
+
+      localStorage.setItem(
+        "gooseyworks-language",
+        language
+      );
+
+    }
+
+
+    // Load saved language
+
+    const savedLanguage =
+      localStorage.getItem(
+        "gooseyworks-language"
+      );
+
+
+    if (
+      savedLanguage &&
+      translations[savedLanguage]
+    ) {
+
+      languageSelect.value =
+        savedLanguage;
+
+      setLanguage(savedLanguage);
+
+    }
+
+
+    // Change language
+
+    languageSelect.addEventListener(
+      "change",
+      function () {
+
+        setLanguage(
+          this.value
+        );
+
+      }
+    );
+
+  </script>
+
+
 </body>
 </html>
+```
