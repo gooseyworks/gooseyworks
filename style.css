@@ -470,3 +470,9 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
   }
 
 }
+.language-select {
+  background: red !important;
+  color: yellow !important;
+  border: 5px solid lime !important;
+  font-size: 25px !important;
+}
