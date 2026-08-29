@@ -306,173 +306,185 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
     transform: scale(0.98);
 }
 /* =========================================
-   🌎 GOOSEYWORKS WORLDWIDE LANGUAGE BUTTON
+   🌎 GOOSEYWORKS WORLDWIDE LANGUAGE CONTROL
    ========================================= */
 
 .language-select {
-  appearance: none;
-  -webkit-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
 
-  min-width: 205px;
+    position: relative;
 
-  padding: 12px 45px 12px 46px;
+    min-width: 215px;
 
-  background-color: #080808;
+    padding: 11px 44px 11px 45px;
 
-  color: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #080d18
+        );
 
-  border: 2px solid #3a3a3a;
-  border-radius: 14px;
+    color: #ffffff;
 
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 800;
+    border: 2px solid rgba(114, 229, 255, 0.35);
+    border-radius: 14px;
 
-  letter-spacing: 0.3px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
 
-  cursor: pointer;
+    letter-spacing: 0.02em;
 
-  /* Globe + custom arrow */
-  background-image:
-    linear-gradient(45deg, transparent 50%, #ffffff 50%),
-    linear-gradient(135deg, #ffffff 50%, transparent 50%);
+    cursor: pointer;
 
-  background-position:
-    calc(100% - 18px) 50%,
-    calc(100% - 12px) 50%;
+    /* Custom dropdown arrow */
+    background-image:
+        linear-gradient(45deg, transparent 50%, #72e5ff 50%),
+        linear-gradient(135deg, #72e5ff 50%, transparent 50%),
+        linear-gradient(135deg, #111827, #080d18);
 
-  background-size:
-    6px 6px,
-    6px 6px;
+    background-position:
+        calc(100% - 18px) 48%,
+        calc(100% - 12px) 48%,
+        0 0;
 
-  background-repeat: no-repeat;
+    background-size:
+        6px 6px,
+        6px 6px,
+        100% 100%;
 
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.03),
-    0 6px 18px rgba(0,0,0,0.5);
+    background-repeat: no-repeat;
 
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background-color 0.18s ease;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 5px 0 #050912,
+        0 0 18px rgba(114,229,255,0.08);
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
 }
 
 
-/* 🌎 FAKE GLOBE AREA */
+/* 🌎 GLOBE */
 
-.language-select {
-  text-indent: 0;
+.language-selector {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+
+/* Put the globe INSIDE the control */
+
+.language-selector::before {
+    content: "🌎";
+
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    transform:
+        translateY(-50%)
+        rotate(0deg)
+        scale(1);
+
+    font-size: 20px;
+
+    pointer-events: none;
+
+    z-index: 5;
+
+    transition:
+        transform 0.3s ease;
 }
 
 
 /* ✨ HOVER */
 
+.language-selector:hover::before {
+    transform:
+        translateY(-50%)
+        rotate(20deg)
+        scale(1.15);
+}
+
+
 .language-select:hover {
 
-  transform:
-    translateY(-3px)
-    rotate(-1deg);
+    transform:
+        translateY(-3px)
+        scale(1.04);
 
-  background-color: #151515;
+    border-color: #72e5ff;
 
-  border-color: #aaa;
+    background:
+        linear-gradient(
+            135deg,
+            #16243a,
+            #0b1220
+        );
 
-  box-shadow:
-    0 0 8px rgba(255,255,255,0.12),
-    0 0 25px rgba(255,255,255,0.08),
-    0 10px 25px rgba(0,0,0,0.7);
+    box-shadow:
+        0 0 10px rgba(114,229,255,0.25),
+        0 0 30px rgba(114,229,255,0.12),
+        0 8px 0 #050912;
 }
 
 
 /* 🚀 CLICK */
 
 .language-select:active {
+    transform:
+        translateY(2px)
+        scale(0.98);
 
-  transform:
-    translateY(0)
-    scale(0.96);
-
+    box-shadow:
+        0 2px 0 #050912;
 }
 
 
 /* 🎯 FOCUS */
 
 .language-select:focus {
+    outline: none;
 
-  outline: none;
+    border-color: #72e5ff;
 
-  border-color: #fff;
-
-  box-shadow:
-    0 0 0 3px rgba(255,255,255,0.08),
-    0 0 25px rgba(255,255,255,0.12);
-
+    box-shadow:
+        0 0 0 3px rgba(114,229,255,0.12),
+        0 0 25px rgba(114,229,255,0.2),
+        0 5px 0 #050912;
 }
 
 
-/* 🌎 LITTLE LABEL EFFECT */
+/* 🌐 DROPDOWN OPTIONS */
 
-.language-selector {
-  position: relative;
+.language-select option {
+    background: #101c30;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-weight: 700;
 }
 
 
-/* WORLDWIDE LABEL */
-
-.language-selector::before {
-
-  content: "🌎";
-
-  position: absolute;
-
-  left: 15px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  font-size: 20px;
-
-  pointer-events: none;
-
-  z-index: 2;
-
-  transition:
-    transform 0.25s ease;
-}
-
-
-/* MAKE THE GLOBE SPIN WHEN HOVERING */
-
-.language-selector:hover::before {
-
-  transform:
-    translateY(-50%)
-    rotate(20deg)
-    scale(1.12);
-
-}
-
-
-/* MOBILE */
+/* 📱 MOBILE */
 
 @media (max-width: 700px) {
 
-  .language-select {
+    .language-select {
+        min-width: 180px;
 
-    min-width: 175px;
+        font-size: 13px;
 
-    font-size: 13px;
+        padding:
+            10px 40px 10px 42px;
+    }
 
-    padding:
-      11px 40px 11px 42px;
-
-  }
-
-}
-.language-select {
-  background: red !important;
-  color: yellow !important;
-  border: 5px solid lime !important;
-  font-size: 25px !important;
 }
