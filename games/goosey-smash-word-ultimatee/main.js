@@ -3575,14 +3575,20 @@ onUpdate(() => {
 // ==================================================
 
 scene("fight", (data) => {
-window.gooseyScene = "fight";
+
+    window.gooseyScene = "fight";
+
     // 🎲 RANDOM MAP
-    const currentMap =
+    const selectedMap =
         Math.floor(Math.random() * 6);
-window.gooseyMap = currentMap;
+
+    window.gooseyMap =
+        selectedMap;
+
+    const currentMap =
+        selectedMap;
 
     let player;
-
     // ==================================================
     // P1 CREATION
     // ==================================================
