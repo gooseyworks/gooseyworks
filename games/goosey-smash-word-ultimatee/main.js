@@ -3576,10 +3576,10 @@ onUpdate(() => {
 
 scene("fight", (data) => {
 window.gooseyScene = "fight";
-window.gooseyMap = currentMap;
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
+window.gooseyMap = currentMap;
 
     let player;
 
