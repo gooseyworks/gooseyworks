@@ -5,12 +5,6 @@ kaplay({
 });
 setGravity(1800);
 // ==================================================
-// 🌌 WEBSITE BACKGROUND SCENE BRIDGE
-// ==================================================
-
-window.gooseyScene = "characterSelect";
-window.gooseyMap = 0;
-// ==================================================
 // LOAD SPRITES
 // ==================================================
 
@@ -49,6 +43,25 @@ loadSprite("P1", "assets/sprites/P1.png", {
 });
 loadSprite("mark", "assets/sprites/mark.png");
 loadSprite("Chat", "assets/sprites/chat.png");
+loadSprite("Bach", "assets/sprites/BACH.png", {
+    sliceX: 52,
+    sliceY: 1,
+    anims: {
+        bach: {
+            from: 0,
+            to: 51,
+            loop: true,
+            speed: 12,
+        },
+
+        bachSpecial: {
+            from: 34,
+            to: 51,
+            loop: false,
+            speed: 12,
+        },
+    },
+});
 // ==================================================
 // CONSTANTS
 // ==================================================
@@ -75,7 +88,9 @@ const BLUE_PUNCH_DAMAGE = 7;
 const BLUE_PUNCH_KNOCKBACK = 350;
 const BLUE_UPPERCUT_DAMAGE = 12;
 const BLUE_UPPERCUT_KNOCKBACK = 250;
-
+// ⚽ BACH
+const BACH_SPEED = 800;
+const BACH_AURA_TIME = 10;
 const JUMP_FORCE = 700;
 
 const START_DAMAGE = 0;
@@ -99,6 +114,12 @@ const CAT_MOD_SCALE = 0.25;
 const ANGY_CAP_DAMAGE = 10;
 const ANGY_CAP_KNOCKBACK = 1800;
 // ==================================================
+// ⚽ BACH BALL SYSTEM
+// ==================================================
+
+let bachBallP1 = null;
+let bachBallP2 = null;
+// ==================================================
 // 🗺️ MAPS
 // ==================================================
 
@@ -107,6 +128,7 @@ const MAP_PARKOUR = 1;
 const MAP_PARKOUR_NIGHTMARE = 2;
 const MAP_GRAVITY_CHAOS = 3;
 const MAP_PARKOUR_GRAVITY = 4;
+const MAP_VOLCANO = 5;
 // 🙂 MARK DIMENSION WORLD
 let markWorldActive = false;
 let timeScale = 1;
@@ -203,6 +225,7 @@ scene("title", () => {
         "ANGYCAP",
         "CHAT",
         "MARK",
+        "BACH",
     ];
 
     let currentSpecial = null;
@@ -481,6 +504,11 @@ scene("title", () => {
                 "ACCESS GRANTED",
                 "GOOSEY_SMASH",
                 "player.damage += 100;",
+                "while true:",
+                "player.damage += 1000",
+                "player_die = false",
+                "if not player_die:",
+                "player_die = true"
             ];
 
             for (
@@ -493,10 +521,10 @@ scene("title", () => {
                     add([
                         text(
                             codeLines[
-                                Math.floor(
-                                    Math.random() *
-                                    codeLines.length
-                                )
+                            Math.floor(
+                                Math.random() *
+                                codeLines.length
+                            )
                             ]
                         ),
                         pos(
@@ -811,10 +839,10 @@ scene("title", () => {
                     add([
                         text(
                             moves[
-                                Math.floor(
-                                    Math.random() *
-                                    moves.length
-                                )
+                            Math.floor(
+                                Math.random() *
+                                moves.length
+                            )
                             ]
                         ),
                         pos(
@@ -830,58 +858,58 @@ scene("title", () => {
                 );
             }
         }
-// ==================================================
-// 🙂 MARK DIMENSION
-// ==================================================
+        // ==================================================
+        // 🙂 MARK DIMENSION
+        // ==================================================
 
-else if (
-    currentSpecial ===
-    "MARK"
-) {
+        else if (
+            currentSpecial ===
+            "MARK"
+        ) {
 
-    // 🌑 VERY DARK DIMENSION BACKGROUND
-    specialObjects.push(
-        add([
-            rect(800, 450),
-            pos(0, 0),
-            color(
-                5,
-                0,
-                15
-            ),
-            opacity(0.85),
-            z(2),
-        ])
-    );
+            // 🌑 VERY DARK DIMENSION BACKGROUND
+            specialObjects.push(
+                add([
+                    rect(800, 450),
+                    pos(0, 0),
+                    color(
+                        5,
+                        0,
+                        15
+                    ),
+                    opacity(0.85),
+                    z(2),
+                ])
+            );
 
-    // 🌀 PORTAL RINGS
-    for (
-        let i = 0;
-        i < 8;
-        i++
-    ) {
+            // 🌀 PORTAL RINGS
+            for (
+                let i = 0;
+                i < 8;
+                i++
+            ) {
 
-        specialObjects.push(
-            add([
-                circle(20),
-                pos(400, 255),
-                color(
-                    150,
-                    0,
-                    255
-                ),
-                opacity(0.8),
-                anchor("center"),
-                z(4),
+                specialObjects.push(
+                    add([
+                        circle(20),
+                        pos(400, 255),
+                        color(
+                            150,
+                            0,
+                            255
+                        ),
+                        opacity(0.8),
+                        anchor("center"),
+                        z(4),
 
-                {
-                    ringTime:
-                        i * 0.25,
-                },
-            ])
-        );
-    }
-}
+                        {
+                            ringTime:
+                                i * 0.25,
+                        },
+                    ])
+                );
+            }
+        }
     }
     startSpecialAnimation();
 
@@ -1679,27 +1707,27 @@ scene("playerSelect", () => {
                 time() * 4 + 1
             ) * 10;
     });
-// ==================================================
-// ✅ ENTER
-// ==================================================
+    // ==================================================
+    // ✅ ENTER
+    // ==================================================
 
-onKeyPress("enter", () => {
+    onKeyPress("enter", () => {
 
-    if (choice === 0) {
+        if (choice === 0) {
 
-        // SINGLE PLAYER
-        window.singlePlayerMode = true;
+            // SINGLE PLAYER
+            window.singlePlayerMode = true;
 
-        go("cpuSelect");
+            go("cpuSelect");
 
-    } else {
+        } else {
 
-        // MULTIPLAYER
-        window.singlePlayerMode = false;
+            // MULTIPLAYER
+            window.singlePlayerMode = false;
 
-        go("characterSelect");
-    }
-});
+            go("characterSelect");
+        }
+    });
     // ==================================================
     // 📝 INSTRUCTIONS
     // ==================================================
@@ -1981,7 +2009,7 @@ scene("cpuSelect", () => {
 // ==================================================
 
 scene("characterSelect", () => {
-window.gooseyScene = "characterSelect";
+
     // Reset gravity whenever we enter character select.
     // This prevents Mark's Void World from carrying over.
     setGravity(1800);
@@ -2014,6 +2042,7 @@ window.gooseyScene = "characterSelect";
         "PENGUY",
         "mark",
         "CHAT",
+        "BACH",
     ];
 
     // ==================================================
@@ -2214,7 +2243,7 @@ window.gooseyScene = "characterSelect";
             player1Text.text =
                 "PLAYER 1: " +
                 categories[
-                    player1Category
+                player1Category
                 ];
         }
 
@@ -2225,7 +2254,7 @@ window.gooseyScene = "characterSelect";
             player1SpecialText.text =
                 "SPECIAL: " +
                 specialCharacters[
-                    player1Special
+                player1Special
                 ];
 
         } else {
@@ -2264,7 +2293,7 @@ window.gooseyScene = "characterSelect";
             player2Text.text =
                 "PLAYER 2: " +
                 categories[
-                    player2Category
+                player2Category
                 ];
         }
 
@@ -2275,7 +2304,7 @@ window.gooseyScene = "characterSelect";
             player2SpecialText.text =
                 "SPECIAL: " +
                 specialCharacters[
-                    player2Special
+                player2Special
                 ];
 
         } else {
@@ -2486,7 +2515,7 @@ window.gooseyScene = "characterSelect";
 
             cpuName =
                 specialCharacters[
-                    player2Special
+                player2Special
                 ];
         }
 
@@ -2510,7 +2539,7 @@ window.gooseyScene = "characterSelect";
 
             player1Name =
                 specialCharacters[
-                    player1Special
+                player1Special
                 ];
         }
 
@@ -2536,7 +2565,7 @@ window.gooseyScene = "characterSelect";
 
                 cpuName =
                     specialCharacters[
-                        player2Special
+                    player2Special
                     ];
 
             } else if (
@@ -2680,11 +2709,16 @@ window.gooseyScene = "characterSelect";
 // ==================================================
 
 scene("fight", (data) => {
-    window.gooseyScene = "fight";
-        // 🎲 RANDOM MAP
+
+    // 🎲 RANDOM MAP
     const currentMap =
-        Math.floor(Math.random() * 5);
+        Math.floor(Math.random() * 6);
+
     let player;
+
+    // ==================================================
+    // P1 CREATION
+    // ==================================================
 
     if (data.player1Category === 0) {
 
@@ -2752,35 +2786,45 @@ scene("fight", (data) => {
             scale(3),
             area(),
             body(),
-{
-    facing: 1,
-    facingUp: false,
-    knockbackActive: false,
-    knockbackX: 0,
-    damage: START_DAMAGE,
-    stocks: START_STOCKS,
-    respawning: false,
-    frozen: false,
-    specialUsed: false,
-    invincible: false,
-    gregCooldown: false,
-    catMod: false,
 
-    gooseyPowers: gooseyPowersP1,
+            {
+                facing: 1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
 
-    hasCopiedPower: false,
-    hasRedPower: gooseyPowersP1.includes(0),
-    hasBluePower: gooseyPowersP1.includes(1),
-    hasGhostyPower: gooseyPowersP1.includes(2),
-    hasGregPower: gooseyPowersP1.includes(3),
-    hasCatPower: gooseyPowersP1.includes(4),
-    hasAngyCapPower: gooseyPowersP1.includes(5),
-    hasPenguyPower: gooseyPowersP1.includes(6),
-    hasMarkPower: gooseyPowersP1.includes(7),
-    hasChatPower: gooseyPowersP1.includes(8),
+                gooseyPowers: gooseyPowersP1,
 
-    fighter: "GOOSEY",
-},
+                hasCopiedPower: false,
+                hasRedPower:
+                    gooseyPowersP1.includes(0),
+                hasBluePower:
+                    gooseyPowersP1.includes(1),
+                hasGhostyPower:
+                    gooseyPowersP1.includes(2),
+                hasGregPower:
+                    gooseyPowersP1.includes(3),
+                hasCatPower:
+                    gooseyPowersP1.includes(4),
+                hasAngyCapPower:
+                    gooseyPowersP1.includes(5),
+                hasPenguyPower:
+                    gooseyPowersP1.includes(6),
+                hasMarkPower:
+                    gooseyPowersP1.includes(7),
+                hasChatPower:
+                    gooseyPowersP1.includes(8),
+
+                fighter: "GOOSEY",
+            },
 
             "player",
         ]);
@@ -2868,92 +2912,145 @@ scene("fight", (data) => {
 
             "player",
         ]);
-        } else if (data.player1Special === 5) {
 
-    player = add([
-        sprite("Penguy"),
-        pos(200, 200),
-        scale(0.3),
-        area(),
-        body(),
+    } else if (data.player1Special === 5) {
 
-        {
-            facing: 1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-            invincible: false,
-            gregCooldown: false,
-            catMod: false,
-            fighter: "PENGUY",
-        },
+        player = add([
+            sprite("Penguy"),
+            pos(200, 200),
+            scale(0.3),
+            area(),
+            body(),
 
-        "player",
-    ]);
+            {
+                facing: 1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
+                fighter: "PENGUY",
+            },
+
+            "player",
+        ]);
+
     } else if (data.player1Special === 6) {
 
-    player = add([
-        sprite("mark"),
-        pos(200, 200),
-        scale(1.5),
-        area(),
-        body(),
+        player = add([
+            sprite("mark"),
+            pos(200, 200),
+            scale(1.5),
+            area(),
+            body(),
 
-        {
-            facing: 1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-            invincible: false,
-            gregCooldown: false,
-            catMod: false,
-            fighter: "MARK",
-        },
+            {
+                facing: 1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
+                fighter: "MARK",
+            },
 
-        "player",
-    ]);
+            "player",
+        ]);
+
     } else if (data.player1Special === 7) {
 
-    player = add([
-        sprite("Chat"),
-        pos(200, 200),
-        scale(0.07),
-        area(),
-        body(),
+        player = add([
+            sprite("Chat"),
+            pos(200, 200),
+            scale(0.07),
+            area(),
+            body(),
 
-        {
-            facing: 1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-invincible: false,
-gregCooldown: false,
-catMod: false,
+            {
+                facing: 1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
 
-// 🎲 CHAT RANDOMIZER
-chatPower: null,
+                // 🎲 CHAT RANDOMIZER
+                chatPower: null,
 
-fighter: "CHAT",
-        },
+                fighter: "CHAT",
+            },
 
-        "player",
-    ]);
-} else {
+            "player",
+        ]);
+
+    } else if (data.player1Special === 8) {
+
+        player = add([
+            sprite("Bach", {
+                anim: "bach",
+            }),
+
+            pos(200, 200),
+
+            // 64px sprite -> 96px displayed
+            // Goosey is 32px x scale 3 = 96px
+            scale(1.5),
+
+            area(),
+            body(),
+
+            {
+                facing: 1,
+                facingUp: false,
+
+                knockbackActive: false,
+                knockbackX: 0,
+
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+
+                respawning: false,
+                frozen: false,
+
+                specialUsed: false,
+                invincible: false,
+
+                gregCooldown: false,
+                catMod: false,
+
+                fighter: "BACH",
+
+                bachHasBall: true,
+                bachAura: false,
+                bachAuraTime: 0,
+                bachOriginalSpeed: BACH_SPEED,
+                bachOriginalDamage: 12,
+                bachOriginalKnockback: 700,
+            },
+
+            "player",
+        ]);
+
+    } else {
+
         player = add([
             sprite("Angy-Cap"),
             pos(200, 200),
@@ -2980,6 +3077,10 @@ fighter: "CHAT",
             "player",
         ]);
     }
+
+    // ==================================================
+    // P2 CREATION
+    // ==================================================
 
     let player2;
 
@@ -3049,35 +3150,45 @@ fighter: "CHAT",
             scale(3),
             area(),
             body(),
-{
-    facing: -1,
-    facingUp: false,
-    knockbackActive: false,
-    knockbackX: 0,
-    damage: START_DAMAGE,
-    stocks: START_STOCKS,
-    respawning: false,
-    frozen: false,
-    specialUsed: false,
-    invincible: false,
-    gregCooldown: false,
-    catMod: false,
 
-    gooseyPowers: gooseyPowersP2,
+            {
+                facing: -1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
 
-    hasCopiedPower: false,
-    hasRedPower: gooseyPowersP2.includes(0),
-    hasBluePower: gooseyPowersP2.includes(1),
-    hasGhostyPower: gooseyPowersP2.includes(2),
-    hasGregPower: gooseyPowersP2.includes(3),
-    hasCatPower: gooseyPowersP2.includes(4),
-    hasAngyCapPower: gooseyPowersP2.includes(5),
-    hasPenguyPower: gooseyPowersP2.includes(6),
-    hasMarkPower: gooseyPowersP2.includes(7),
-    hasChatPower: gooseyPowersP2.includes(8),
+                gooseyPowers: gooseyPowersP2,
 
-    fighter: "GOOSEY",
-},
+                hasCopiedPower: false,
+                hasRedPower:
+                    gooseyPowersP2.includes(0),
+                hasBluePower:
+                    gooseyPowersP2.includes(1),
+                hasGhostyPower:
+                    gooseyPowersP2.includes(2),
+                hasGregPower:
+                    gooseyPowersP2.includes(3),
+                hasCatPower:
+                    gooseyPowersP2.includes(4),
+                hasAngyCapPower:
+                    gooseyPowersP2.includes(5),
+                hasPenguyPower:
+                    gooseyPowersP2.includes(6),
+                hasMarkPower:
+                    gooseyPowersP2.includes(7),
+                hasChatPower:
+                    gooseyPowersP2.includes(8),
+
+                fighter: "GOOSEY",
+            },
 
             "player2",
         ]);
@@ -3165,92 +3276,143 @@ fighter: "CHAT",
 
             "player2",
         ]);
-        } else if (data.player2Special === 5) {
 
-    player2 = add([
-        sprite("Penguy"),
-        pos(550, 200),
-        scale(0.3),
-        area(),
-        body(),
+    } else if (data.player2Special === 5) {
 
-        {
-            facing: -1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-            invincible: false,
-            gregCooldown: false,
-            catMod: false,
-            fighter: "PENGUY",
-        },
+        player2 = add([
+            sprite("Penguy"),
+            pos(550, 200),
+            scale(0.3),
+            area(),
+            body(),
 
-        "player2",
-    ]);
+            {
+                facing: -1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
+                fighter: "PENGUY",
+            },
+
+            "player2",
+        ]);
+
     } else if (data.player2Special === 6) {
 
-    player2 = add([
-        sprite("mark"),
-        pos(550, 200),
-        scale(1.5),
-        area(),
-        body(),
+        player2 = add([
+            sprite("mark"),
+            pos(550, 200),
+            scale(1.5),
+            area(),
+            body(),
 
-        {
-            facing: -1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-            invincible: false,
-            gregCooldown: false,
-            catMod: false,
-            fighter: "MARK",
-        },
+            {
+                facing: -1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
+                fighter: "MARK",
+            },
 
-        "player2",
-    ]);
+            "player2",
+        ]);
+
     } else if (data.player2Special === 7) {
 
-    player2 = add([
-        sprite("Chat"),
-        pos(550, 200),
-        scale(0.07),
-        area(),
-        body(),
+        player2 = add([
+            sprite("Chat"),
+            pos(550, 200),
+            scale(0.07),
+            area(),
+            body(),
 
-        {
-            facing: -1,
-            facingUp: false,
-            knockbackActive: false,
-            knockbackX: 0,
-            damage: START_DAMAGE,
-            stocks: START_STOCKS,
-            respawning: false,
-            frozen: false,
-            specialUsed: false,
-invincible: false,
-gregCooldown: false,
-catMod: false,
+            {
+                facing: -1,
+                facingUp: false,
+                knockbackActive: false,
+                knockbackX: 0,
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+                respawning: false,
+                frozen: false,
+                specialUsed: false,
+                invincible: false,
+                gregCooldown: false,
+                catMod: false,
 
-// 🎲 CHAT RANDOMIZER
-chatPower: null,
+                // 🎲 CHAT RANDOMIZER
+                chatPower: null,
 
-fighter: "CHAT",
-        },
+                fighter: "CHAT",
+            },
 
-        "player2",
-    ]);
-} else {
+            "player2",
+        ]);
+
+    } else if (data.player2Special === 8) {
+
+        player2 = add([
+            sprite("Bach", {
+                anim: "bach",
+            }),
+
+            pos(550, 200),
+
+            scale(1.5),
+
+            area(),
+            body(),
+
+            {
+                facing: -1,
+                facingUp: false,
+
+                knockbackActive: false,
+                knockbackX: 0,
+
+                damage: START_DAMAGE,
+                stocks: START_STOCKS,
+
+                respawning: false,
+                frozen: false,
+
+                specialUsed: false,
+                invincible: false,
+
+                gregCooldown: false,
+                catMod: false,
+
+                fighter: "BACH",
+
+                bachHasBall: true,
+                bachAura: false,
+                bachAuraTime: 0,
+                bachOriginalSpeed: BACH_SPEED,
+                bachOriginalDamage: 12,
+                bachOriginalKnockback: 700,
+            },
+
+            "player2",
+        ]);
+
+    } else {
+
         player2 = add([
             sprite("Angy-Cap"),
             pos(550, 200),
@@ -3277,402 +3439,1246 @@ fighter: "CHAT",
             "player2",
         ]);
     }
-// ==================================================
-// 🤖 CPU CONTROLLER
-// ==================================================
+    // ==================================================
+    // ⚽ BACH BALL SYSTEM
+    // ==================================================
 
-let cpuActionTimer = 0;
-
-const CPU_EASY_COOLDOWN = 0.75;
-const CPU_MEDIUM_COOLDOWN = 0.45;
-const CPU_HARD_COOLDOWN = 0.25;
-
-// ==================================================
-// 🎯 FACE PLAYER
-// ==================================================
-
-function cpuFaceOpponent() {
-
-    if (player.pos.x > player2.pos.x) {
-        player2.facing = 1;
-    } else {
-        player2.facing = -1;
-    }
-}
-// ==================================================
-// 🛟 CPU RECOVERY
-// ==================================================
-
-function cpuRecovery() {
-
-    if (
-        player2.respawning ||
-        player2.frozen
-    ) {
-        return;
-    }
-
-    // Stay alive by steering back toward the stage.
-    // DO NOT jump near the blast zone.
-    if (
-        player2.pos.y > 300 &&
-        (
-            player2.pos.x < 120 ||
-            player2.pos.x > 680
-        )
-    ) {
+    let bachBallP1 = null;
+    let bachBallAuraP1 = [];
+    let bachBallAuraP2 = [];
+    function createBachBall() {
 
         if (
-            player2.pos.x < 400
+            player.fighter !== "BACH"
         ) {
-
-            player2.facing = 1;
-
-        } else {
-
-            player2.facing = -1;
+            return;
         }
 
         if (
-            !player2.isGrounded()
+            bachBallP1 &&
+            bachBallP1.exists()
         ) {
+            destroy(bachBallP1);
+        }
+
+        player.bachHasBall = true;
+
+        bachBallP1 = add([
+            text("⚽"),
+            pos(
+                player.pos.x + 80,
+                player.pos.y
+            ),
+            anchor("center"),
+            scale(1),
+            z(50),
+
+            {
+                flying: false,
+                bachVX: 0,
+                bachVY: 0,
+            },
+        ]);
+    }
+
+    createBachBall();
+
+
+    // ==================================================
+    // ⚽ BACH BALL MOVEMENT
+    // ==================================================
+
+    onUpdate(() => {
+
+        if (
+            player.fighter !== "BACH"
+        ) {
+            return;
+        }
+
+        if (
+            !bachBallP1 ||
+            !bachBallP1.exists()
+        ) {
+            return;
+        }
+
+        // ==============================================
+        // ⚽ ORBIT BACH
+        // ==============================================
+
+        if (
+            !bachBallP1.flying
+        ) {
+
+            const angle =
+                time() * 5;
+
+            const orbitX =
+                player.pos.x +
+                Math.cos(angle) * 100;
+
+            const orbitY =
+                player.pos.y -
+                20 +
+                Math.sin(angle) * 70;
+
+            bachBallP1.moveTo(
+                vec2(
+                    orbitX,
+                    orbitY
+                )
+            );
+
+            return;
+        }
+        // ==============================================
+        // ⚽ FLY
+        // ==============================================
+
+        bachBallP1.move(
+            bachBallP1.bachVX,
+            bachBallP1.bachVY
+        );
+
+        // ==============================================
+        // ⚽ HIT P2
+        // ==============================================
+
+        if (
+            !player2.invincible &&
+            Math.abs(
+                bachBallP1.pos.x -
+                player2.pos.x
+            ) < 40 &&
+            Math.abs(
+                bachBallP1.pos.y -
+                player2.pos.y
+            ) < 50
+        ) {
+
+            player2.damage +=
+                20;
+
+            player2.knockbackActive =
+                true;
+
+            player2.knockbackX =
+                bachBallP1.bachVX > 0
+                    ? 900
+                    : -900;
 
             player2.vel.x =
-                player2.facing * 400;
+                player2.knockbackX;
+
+            player2.vel.y =
+                -400;
+
+            shake(8);
+
+            // ==========================================
+            // ⚽ BALL BOUNCES BACK TO BACH
+            // ==========================================
+
+            bachBallP1.bachVX =
+                -bachBallP1.bachVX;
+
+            bachBallP1.bachVY =
+                0;
+
+            return;
         }
-    }
-}
-// ==================================================
-// ⚔️ CPU NORMAL ATTACK
-// ==================================================
 
-function cpuAttack() {
+        // ==============================================
+        // ⚽ BACH RECLAIMS BALL
+        // ==============================================
 
-    if (
-        player2.respawning ||
-        player2.frozen ||
-        player2.invincible
-    ) {
-        return;
-    }
+        const dx =
+            bachBallP1.pos.x -
+            player.pos.x;
 
-    cpuFaceOpponent();
+        const dy =
+            bachBallP1.pos.y -
+            player.pos.y;
 
-    const attack = add([
-        rect(90, 45),
-        pos(
-            player2.pos.x +
-            player2.facing * 65,
-            player2.pos.y
-        ),
-        color(255, 255, 0),
-        opacity(0.5),
-        area(),
-        lifespan(0.12, {
-            fade: 0.05,
-        }),
-    ]);
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
 
-    if (
-        !player.invincible &&
-        Math.abs(
-            attack.pos.x - player.pos.x
-        ) < 90 &&
-        Math.abs(
-            attack.pos.y - player.pos.y
-        ) < 60
-    ) {
+        if (
+            distance < 60 &&
+            !player.respawning
+        ) {
 
-        player.damage += 10;
+            bachBallP1.flying =
+                false;
 
-        player.knockbackActive = true;
+            bachBallP1.bachVX =
+                0;
 
-        player.knockbackX =
-            (
-                500 +
-                player.damage * 10
-            ) *
-            player2.facing;
+            bachBallP1.bachVY =
+                0;
 
-        player.vel.x =
-            player.knockbackX;
+            player.bachHasBall =
+                true;
 
-        player.vel.y = -250;
-    }
-}
+            return;
+        }
 
-// ==================================================
-// 🤖 CPU SPECIAL
-// MEDIUM + HARD ONLY
-// ==================================================
+        // ==============================================
+        // 💀 BALL LEAVES SCREEN
+        // ==============================================
 
-function cpuSpecial() {
+        if (
+            bachBallP1.pos.x < -100 ||
+            bachBallP1.pos.x > 900 ||
+            bachBallP1.pos.y < -150 ||
+            bachBallP1.pos.y > 550
+        ) {
 
-    if (
-        player2.respawning ||
-        player2.frozen ||
-        player2.specialUsed
-    ) {
-        return;
-    }
+            player.bachHasBall =
+                false;
 
-    // GOOSEY
-    if (player2.fighter === "GOOSEY") {
+            destroy(
+                bachBallP1
+            );
 
-        player2.specialUsed = true;
+            bachBallP1 =
+                null;
+        }
+    });
+    // ==================================================
+    // 🔵⚽ BACH AURA SPECIAL
+    // ==================================================
 
-        gooseyGetPower(
-            player2,
-            player,
-            2
+    const BACH_AURA_DURATION = 10;
+    const BACH_AURA_BOOST = 550;
+
+    function activateBachSpecial(bach) {
+
+        if (
+            bach.fighter !== "BACH" ||
+            bach.respawning ||
+            bach.specialUsed
+        ) {
+            return;
+        }
+
+        bach.specialUsed =
+            true;
+
+        bach.bachAura =
+            true;
+
+        bach.bachAuraTime =
+            BACH_AURA_DURATION;
+
+        // ==============================================
+        // 📈 +550 STATS
+        // ==============================================
+
+        bach.bachSpeedBonus =
+            BACH_AURA_BOOST;
+
+        bach.bachDamageBonus =
+            BACH_AURA_BOOST;
+
+        bach.bachKnockbackBonus =
+            BACH_AURA_BOOST;
+
+        bach.bachJumpBonus =
+            BACH_AURA_BOOST;
+
+        // ==============================================
+        // 😎 SPECIAL ANIMATION
+        // ==============================================
+
+        bach.play(
+            "bachSpecial"
         );
 
-        wait(
-            GOOSEY_SPECIAL_COOLDOWN,
-            () => {
-                player2.specialUsed = false;
-            }
-        );
-
-        return;
-    }
-
-    // GHOSTY
-    if (player2.fighter === "GHOSTY") {
-
-        player2.specialUsed = true;
-        player2.invincible = true;
-
         specialStatus.text =
-            "CPU GHOSTY: INVINCIBLE!";
+            "BACH: AURA MODE!!!";
 
-        wait(2, () => {
-
-            player2.invincible = false;
-            player2.specialUsed = false;
-            specialStatus.text = "";
-        });
-
-        return;
-    }
-
-    // ANGY-CAT
-    if (player2.fighter === "ANGY-CAT") {
-
-        player2.specialUsed = true;
-        player2.catMod = true;
-
-        player2.scaleTo(CAT_MOD_SCALE);
-
-        specialStatus.text =
-            "CPU ANGY-CAT: CAT MOD!!!";
+        // ==============================================
+        // ⏳ END AURA
+        // ==============================================
 
         wait(
-            CAT_MOD_TIME,
+            BACH_AURA_DURATION,
             () => {
 
-                player2.catMod = false;
+                bach.bachAura =
+                    false;
 
-                player2.scaleTo(
-                    CAT_NORMAL_SCALE
+                bach.bachSpeedBonus =
+                    0;
+
+                bach.bachDamageBonus =
+                    0;
+
+                bach.bachKnockbackBonus =
+                    0;
+
+                bach.bachJumpBonus =
+                    0;
+
+                bach.specialUsed =
+                    false;
+
+                bach.play(
+                    "bach"
                 );
 
-                player2.specialUsed = false;
-                specialStatus.text = "";
+                specialStatus.text =
+                    "";
             }
         );
+    }
+    // ==================================================
+    // 🔵 BACH AURA VISUAL
+    // ==================================================
 
-        return;
+    onUpdate(() => {
+
+        // ==================================================
+        // 🔵 BACH P1 AURA
+        // ==================================================
+
+        if (
+            player.fighter === "BACH" &&
+            player.bachAura &&
+            !player.respawning
+        ) {
+
+            for (
+                let i = 0;
+                i < 18;
+                i++
+            ) {
+
+                const angle =
+                    time() * 2 +
+                    i * (
+                        Math.PI * 2 /
+                        18
+                    );
+
+                add([
+                    text("🔵"),
+                    pos(
+                        player.pos.x +
+                        Math.cos(angle) * 85,
+
+                        player.pos.y +
+                        Math.sin(angle) * 85
+                    ),
+                    anchor("center"),
+                    scale(0.35),
+                    z(45),
+                    opacity(1),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.1,
+                        }
+                    ),
+                ]);
+            }
+        }
+
+        // ==================================================
+        // 🔵 BACH P2 AURA
+        // ==================================================
+
+        if (
+            player2.fighter === "BACH" &&
+            player2.bachAura &&
+            !player2.respawning
+        ) {
+
+            for (
+                let i = 0;
+                i < 18;
+                i++
+            ) {
+
+                const angle =
+                    time() * 2 +
+                    i * (
+                        Math.PI * 2 /
+                        18
+                    );
+
+                add([
+                    text("🔵"),
+                    pos(
+                        player2.pos.x +
+                        Math.cos(angle) * 85,
+
+                        player2.pos.y +
+                        Math.sin(angle) * 85
+                    ),
+                    anchor("center"),
+                    scale(0.35),
+                    z(45),
+                    opacity(1),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.1,
+                        }
+                    ),
+                ]);
+            }
+        }
+
+        // ==================================================
+        // 🔵⚽ BACH BALL AURA — P1
+        // ==================================================
+
+        if (
+            player.bachAura &&
+            bachBallP1 &&
+            bachBallP1.exists()
+        ) {
+
+            for (
+                let i = 0;
+                i < 18;
+                i++
+            ) {
+
+                const angle =
+                    time() * 2 +
+                    i * (
+                        Math.PI * 2 /
+                        18
+                    );
+
+                add([
+                    text("🔵"),
+                    pos(
+                        bachBallP1.pos.x +
+                        Math.cos(angle) * 85,
+
+                        bachBallP1.pos.y +
+                        Math.sin(angle) * 85
+                    ),
+                    anchor("center"),
+                    scale(0.35),
+                    z(100),
+                    opacity(1),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.1,
+                        }
+                    ),
+                ]);
+            }
+        }
+
+        // ==================================================
+        // 🔵⚽ BACH BALL AURA — P2
+        // ==================================================
+
+        if (
+            player2.bachAura &&
+            bachBallP2 &&
+            bachBallP2.exists()
+        ) {
+
+            for (
+                let i = 0;
+                i < 18;
+                i++
+            ) {
+
+                const angle =
+                    time() * 2 +
+                    i * (
+                        Math.PI * 2 /
+                        18
+                    );
+
+                add([
+                    text("🔵"),
+                    pos(
+                        bachBallP2.pos.x +
+                        Math.cos(angle) * 85,
+
+                        bachBallP2.pos.y +
+                        Math.sin(angle) * 85
+                    ),
+                    anchor("center"),
+                    scale(0.35),
+                    z(100),
+                    opacity(1),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.1,
+                        }
+                    ),
+                ]);
+            }
+        }
+    });
+    // ==================================================
+    // ⚽ BACH BALL SYSTEM — P2
+    // ==================================================
+
+    let bachBallP2 = null;
+
+    function createBachBallP2() {
+
+        if (
+            player2.fighter !== "BACH"
+        ) {
+            return;
+        }
+
+        if (
+            bachBallP2 &&
+            bachBallP2.exists()
+        ) {
+            destroy(bachBallP2);
+        }
+
+        player2.bachHasBall = true;
+
+        bachBallP2 = add([
+            text("⚽"),
+            pos(
+                player2.pos.x + 80,
+                player2.pos.y
+            ),
+            anchor("center"),
+            scale(1),
+            z(50),
+        ]);
     }
 
-    // MARK
-    if (player2.fighter === "MARK") {
+    createBachBallP2();
 
-        player2.specialUsed = true;
 
-        markDimensionShift();
+    // ==================================================
+    // ⚽ BACH BALL MOVEMENT — P2
+    // ==================================================
 
-        wait(3, () => {
-            player2.specialUsed = false;
-        });
+    onUpdate(() => {
 
-        return;
-    }
+        if (
+            player2.fighter !== "BACH"
+        ) {
+            return;
+        }
 
-    // CHAT
-    if (player2.fighter === "CHAT") {
+        if (
+            !bachBallP2 ||
+            !bachBallP2.exists()
+        ) {
+            return;
+        }
 
-        activateChatSpecial(
-            player2,
-            player
+        // ==============================================
+        // ⚽ ORBIT BACH P2
+        // ==============================================
+
+        if (!bachBallP2.flying) {
+
+            const angle =
+                time() * 5;
+
+            const orbitX =
+                player2.pos.x +
+                Math.cos(angle) * 100;
+
+            const orbitY =
+                player2.pos.y -
+                20 +
+                Math.sin(angle) * 70;
+
+            bachBallP2.moveTo(
+                vec2(
+                    orbitX,
+                    orbitY
+                )
+            );
+
+            return;
+        }
+
+        // ==============================================
+        // ⚽ FLY
+        // ==============================================
+
+        bachBallP2.move(
+            bachBallP2.bachVX,
+            bachBallP2.bachVY
         );
 
-        return;
-    }
+        // ==============================================
+        // ⚽ HIT P1
+        // ==============================================
 
-    // Other fighters:
-    // use their normal attack for now.
-    cpuAttack();
-}
+        if (
+            !player.invincible &&
+            Math.abs(
+                bachBallP2.pos.x -
+                player.pos.x
+            ) < 40 &&
+            Math.abs(
+                bachBallP2.pos.y -
+                player.pos.y
+            ) < 50
+        ) {
 
-// ==================================================
-// 🟢 EASY CPU
-// ❌ NEVER USES SPECIALS
-// ==================================================
+            player.damage += 20;
 
-function cpuEasyAction() {
+            player.knockbackActive = true;
 
-    const distance =
-        player.pos.x -
-        player2.pos.x;
+            player.knockbackX =
+                bachBallP2.bachVX > 0
+                    ? 900
+                    : -900;
 
-    const action =
-        Math.floor(
-            Math.random() * 5
-        );
+            player.vel.x =
+                player.knockbackX;
 
-    // MOVE TOWARD
-    if (action === 0) {
+            player.vel.y =
+                -400;
 
-        if (distance > 0) {
+            shake(8);
 
-            player2.move(SPEED, 0);
-            player2.facing = 1;
+            // ⚽ BOUNCE BACK TO P2
 
-        } else {
+            bachBallP2.bachVX =
+                -bachBallP2.bachVX;
 
-            player2.move(-SPEED, 0);
-            player2.facing = -1;
+            bachBallP2.bachVY =
+                0;
+
+            return;
         }
-    }
 
-    // MOVE AWAY
-    else if (action === 1) {
+        // ==============================================
+        // ⚽ P2 RECLAIMS BALL
+        // ==============================================
 
-        if (distance > 0) {
+        const dx =
+            bachBallP2.pos.x -
+            player2.pos.x;
 
-            player2.move(-SPEED, 0);
-            player2.facing = -1;
+        const dy =
+            bachBallP2.pos.y -
+            player2.pos.y;
 
-        } else {
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
 
-            player2.move(SPEED, 0);
-            player2.facing = 1;
+        if (
+            distance < 60 &&
+            !player2.respawning
+        ) {
+
+            bachBallP2.flying = false;
+
+            bachBallP2.bachVX = 0;
+
+            bachBallP2.bachVY = 0;
+
+            player2.bachHasBall = true;
+
+            return;
         }
-    }
 
-    // JUMP
-    else if (action === 2) {
+        // ==============================================
+        // 💀 BALL LEAVES SCREEN
+        // ==============================================
 
-        if (player2.isGrounded()) {
-            player2.jump(JUMP_FORCE);
+        if (
+            bachBallP2.pos.x < -100 ||
+            bachBallP2.pos.x > 900 ||
+            bachBallP2.pos.y < -150 ||
+            bachBallP2.pos.y > 550
+        ) {
+
+            player2.bachHasBall = false;
+
+            destroy(
+                bachBallP2
+            );
+
+            bachBallP2 = null;
         }
-    }
+    });
+    // ==================================================
+    // 🤖 CPU CONTROLLER
+    // ==================================================
 
-    // ATTACK
-    else if (action === 3) {
+    let cpuActionTimer = 0;
 
-        cpuAttack();
-    }
+    const CPU_EASY_COOLDOWN = 0.75;
+    const CPU_MEDIUM_COOLDOWN = 0.45;
+    const CPU_HARD_COOLDOWN = 0.25;
+    // ==================================================
+    // 🎯 FACE PLAYER
+    // ==================================================
 
-    // DO NOTHING
-    else {
+    function cpuFaceOpponent() {
 
-        // Easy CPU brain = absolutely nothing.
-    }
-}
-
-// ==================================================
-// 🟡 MEDIUM CPU
-// ✅ CAN USE SPECIAL
-// ==================================================
-
-function cpuMediumAction() {
-
-    const distance =
-        Math.abs(
-            player.pos.x -
+        if (
+            player.pos.x >
             player2.pos.x
-        );
+        ) {
 
-    cpuFaceOpponent();
-    cpuRecovery();
+            player2.facing = 1;
 
-    if (distance < 140) {
+        } else {
 
-        cpuAttack();
+            player2.facing = -1;
+        }
+    }
 
-        if (Math.random() < 0.35) {
-            cpuSpecial();
+
+    // ==================================================
+    // 🛟 CPU RECOVERY
+    // ==================================================
+
+    function cpuRecovery() {
+
+        if (
+            player2.respawning ||
+            player2.frozen
+        ) {
+            return;
         }
 
-        return;
+        if (
+            player2.pos.y > 300 &&
+            (
+                player2.pos.x < 120 ||
+                player2.pos.x > 680
+            )
+        ) {
+
+            if (
+                player2.pos.x < 400
+            ) {
+
+                player2.facing = 1;
+
+            } else {
+
+                player2.facing = -1;
+            }
+
+            if (
+                !player2.isGrounded()
+            ) {
+
+                player2.vel.x =
+                    player2.facing * 400;
+            }
+        }
     }
 
-    if (player.pos.x > player2.pos.x) {
 
-        player2.move(SPEED, 0);
-        player2.facing = 1;
+    // ==================================================
+    // ⚔️ CPU NORMAL ATTACK
+    // ==================================================
 
-    } else {
+    function cpuAttack() {
 
-        player2.move(-SPEED, 0);
-        player2.facing = -1;
-    }
-
-    if (
-        Math.random() < 0.18 &&
-        player2.isGrounded()
-    ) {
-
-        player2.jump(JUMP_FORCE);
-    }
-
-    if (Math.random() < 0.12) {
-        cpuSpecial();
-    }
-}
-
-// ==================================================
-// 🔴 HARD CPU
-// ✅ CAN USE SPECIAL
-// ==================================================
-
-function cpuHardAction() {
-
-    const dx =
-        player.pos.x -
-        player2.pos.x;
-
-    const distance =
-        Math.abs(dx);
-
-    cpuFaceOpponent();
-    cpuRecovery();
-
-    // Very close
-    if (distance < 110) {
-
-        cpuAttack();
-
-        if (Math.random() < 0.55) {
-            cpuSpecial();
+        if (
+            player2.respawning ||
+            player2.frozen ||
+            player2.invincible
+        ) {
+            return;
         }
 
-        return;
+        cpuFaceOpponent();
+
+        const attack = add([
+            rect(90, 45),
+            pos(
+                player2.pos.x +
+                player2.facing * 65,
+                player2.pos.y
+            ),
+            color(255, 255, 0),
+            opacity(0.5),
+            area(),
+            lifespan(0.12, {
+                fade: 0.05,
+            }),
+        ]);
+
+        if (
+            !player.invincible &&
+            Math.abs(
+                attack.pos.x -
+                player.pos.x
+            ) < 90 &&
+            Math.abs(
+                attack.pos.y -
+                player.pos.y
+            ) < 60
+        ) {
+
+            player.damage += 10;
+
+            player.knockbackActive =
+                true;
+
+            player.knockbackX =
+                (
+                    500 +
+                    player.damage * 10
+                ) *
+                player2.facing;
+
+            player.vel.x =
+                player.knockbackX;
+
+            player.vel.y =
+                -250;
+        }
     }
 
-    // Medium distance
-    if (distance < 260) {
 
-        if (dx > 0) {
+    // ==================================================
+    // 🤖 CPU SPECIAL
+    // ==================================================
+
+    function cpuSpecial() {
+
+        if (
+            player2.respawning ||
+            player2.frozen ||
+            player2.specialUsed
+        ) {
+            return;
+        }
+
+        // GOOSEY
+
+        if (
+            player2.fighter ===
+            "GOOSEY"
+        ) {
+
+            player2.specialUsed =
+                true;
+
+            gooseyGetPower(
+                player2,
+                player,
+                2
+            );
+
+            wait(
+                GOOSEY_SPECIAL_COOLDOWN,
+                () => {
+
+                    player2.specialUsed =
+                        false;
+                }
+            );
+
+            return;
+        }
+
+
+        // GHOSTY
+
+        if (
+            player2.fighter ===
+            "GHOSTY"
+        ) {
+
+            player2.specialUsed =
+                true;
+
+            player2.invincible =
+                true;
+
+            specialStatus.text =
+                "CPU GHOSTY: INVINCIBLE!";
+
+            wait(2, () => {
+
+                player2.invincible =
+                    false;
+
+                player2.specialUsed =
+                    false;
+
+                specialStatus.text =
+                    "";
+            });
+
+            return;
+        }
+
+
+        // ANGY-CAT
+
+        if (
+            player2.fighter ===
+            "ANGY-CAT"
+        ) {
+
+            player2.specialUsed =
+                true;
+
+            player2.catMod =
+                true;
+
+            player2.scaleTo(
+                CAT_MOD_SCALE
+            );
+
+            specialStatus.text =
+                "CPU ANGY-CAT: CAT MOD!!!";
+
+            wait(
+                CAT_MOD_TIME,
+                () => {
+
+                    player2.catMod =
+                        false;
+
+                    player2.scaleTo(
+                        CAT_NORMAL_SCALE
+                    );
+
+                    player2.specialUsed =
+                        false;
+
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+            return;
+        }
+
+
+        // MARK
+
+        if (
+            player2.fighter ===
+            "MARK"
+        ) {
+
+            player2.specialUsed =
+                true;
+
+            markDimensionShift();
+
+            wait(3, () => {
+
+                player2.specialUsed =
+                    false;
+            });
+
+            return;
+        }
+
+
+        // CHAT
+
+        if (
+            player2.fighter ===
+            "CHAT"
+        ) {
+
+            activateChatSpecial(
+                player2,
+                player
+            );
+
+            return;
+        }
+
+
+        // BACH
+        // Not using Bach's special yet.
+        // For now, CPU Bach uses normal attack.
+
+        cpuAttack();
+    }
+
+
+    // ==================================================
+    // 🟢 EASY CPU
+    // ==================================================
+
+    function cpuEasyAction() {
+
+        const distance =
+            player.pos.x -
+            player2.pos.x;
+
+        const action =
+            Math.floor(
+                Math.random() * 5
+            );
+
+        if (
+            action === 0
+        ) {
+
+            if (
+                distance > 0
+            ) {
+
+                player2.move(
+                    SPEED,
+                    0
+                );
+
+                player2.facing =
+                    1;
+
+            } else {
+
+                player2.move(
+                    -SPEED,
+                    0
+                );
+
+                player2.facing =
+                    -1;
+            }
+
+        } else if (
+            action === 1
+        ) {
+
+            if (
+                distance > 0
+            ) {
+
+                player2.move(
+                    -SPEED,
+                    0
+                );
+
+                player2.facing =
+                    -1;
+
+            } else {
+
+                player2.move(
+                    SPEED,
+                    0
+                );
+
+                player2.facing =
+                    1;
+            }
+
+        } else if (
+            action === 2
+        ) {
+
+            if (
+                player2.isGrounded()
+            ) {
+
+                player2.jump(
+                    JUMP_FORCE
+                );
+            }
+
+        } else if (
+            action === 3
+        ) {
+
+            cpuAttack();
+
+        } else {
+
+            // Do nothing.
+        }
+    }
+
+
+    // ==================================================
+    // 🟡 MEDIUM CPU
+    // ==================================================
+
+    function cpuMediumAction() {
+
+        const distance =
+            Math.abs(
+                player.pos.x -
+                player2.pos.x
+            );
+
+        cpuFaceOpponent();
+        cpuRecovery();
+
+        if (
+            distance < 140
+        ) {
+
+            cpuAttack();
+
+            if (
+                Math.random() <
+                0.35
+            ) {
+
+                cpuSpecial();
+            }
+
+            return;
+        }
+
+        if (
+            player.pos.x >
+            player2.pos.x
+        ) {
+
+            player2.move(
+                SPEED,
+                0
+            );
+
+            player2.facing =
+                1;
+
+        } else {
+
+            player2.move(
+                -SPEED,
+                0
+            );
+
+            player2.facing =
+                -1;
+        }
+
+        if (
+            Math.random() < 0.18 &&
+            player2.isGrounded()
+        ) {
+
+            player2.jump(
+                JUMP_FORCE
+            );
+        }
+
+        if (
+            Math.random() < 0.12
+        ) {
+
+            cpuSpecial();
+        }
+    }
+
+
+    // ==================================================
+    // 🔴 HARD CPU
+    // ==================================================
+
+    function cpuHardAction() {
+
+        const dx =
+            player.pos.x -
+            player2.pos.x;
+
+        const distance =
+            Math.abs(dx);
+
+        cpuFaceOpponent();
+        cpuRecovery();
+
+        if (
+            distance < 110
+        ) {
+
+            cpuAttack();
+
+            if (
+                Math.random() < 0.55
+            ) {
+
+                cpuSpecial();
+            }
+
+            return;
+        }
+
+        if (
+            distance < 260
+        ) {
+
+            if (
+                dx > 0
+            ) {
+
+                player2.move(
+                    BLUE_SPEED,
+                    0
+                );
+
+                player2.facing =
+                    1;
+
+            } else {
+
+                player2.move(
+                    -BLUE_SPEED,
+                    0
+                );
+
+                player2.facing =
+                    -1;
+            }
+
+            if (
+                Math.random() < 0.3 &&
+                player2.isGrounded()
+            ) {
+
+                player2.jump(
+                    JUMP_FORCE
+                );
+            }
+
+            if (
+                Math.random() < 0.3
+            ) {
+
+                cpuSpecial();
+            }
+
+            return;
+        }
+
+        if (
+            dx > 0
+        ) {
 
             player2.move(
                 BLUE_SPEED,
                 0
             );
 
-            player2.facing = 1;
+            player2.facing =
+                1;
 
         } else {
 
@@ -3681,135 +4687,114 @@ function cpuHardAction() {
                 0
             );
 
-            player2.facing = -1;
+            player2.facing =
+                -1;
         }
 
         if (
-            Math.random() < 0.3 &&
+            Math.random() < 0.2 &&
             player2.isGrounded()
         ) {
 
-            player2.jump(JUMP_FORCE);
+            player2.jump(
+                JUMP_FORCE
+            );
         }
-
-        if (Math.random() < 0.3) {
-            cpuSpecial();
-        }
-
-        return;
     }
 
-    // Far away
-    if (dx > 0) {
 
-        player2.move(
-            BLUE_SPEED,
-            0
-        );
+    // ==================================================
+    // 🤖 CPU UPDATE
+    // ==================================================
 
-        player2.facing = 1;
-
-    } else {
-
-        player2.move(
-            -BLUE_SPEED,
-            0
-        );
-
-        player2.facing = -1;
-    }
-
-    if (
-        Math.random() < 0.2 &&
-        player2.isGrounded()
-    ) {
-
-        player2.jump(JUMP_FORCE);
-    }
-}
-
-// ==================================================
-// 🤖 CPU UPDATE
-// ==================================================
-
-onUpdate(() => {
-
-    // Only CPU matches use this.
-    if (
-        window.singlePlayerMode !== true
-    ) {
-        return;
-    }
-
-    if (
-        !window.cpuDifficulty
-    ) {
-        return;
-    }
-
-    if (
-        player2.respawning ||
-        player2.frozen
-    ) {
-        return;
-    }
-
-    cpuActionTimer += dt();
-
-    let cooldown =
-        CPU_EASY_COOLDOWN;
-
-    if (
-        window.cpuDifficulty === "MEDIUM"
-    ) {
-
-        cooldown =
-            CPU_MEDIUM_COOLDOWN;
-
-    } else if (
-        window.cpuDifficulty === "HARD"
-    ) {
-
-        cooldown =
-            CPU_HARD_COOLDOWN;
-    }
-
-    if (
-        cpuActionTimer >= cooldown
-    ) {
-
-        cpuActionTimer = 0;
+    onUpdate(() => {
 
         if (
-            window.cpuDifficulty === "EASY"
+            window.singlePlayerMode !==
+            true
         ) {
-
-            // 🚫 NO SPECIALS HERE
-            cpuEasyAction();
-
-        } else if (
-            window.cpuDifficulty === "MEDIUM"
-        ) {
-
-            cpuMediumAction();
-
-        } else if (
-            window.cpuDifficulty === "HARD"
-        ) {
-
-            cpuHardAction();
+            return;
         }
-    }
 
-    cpuRecovery();
-});
-        // ==================================================
+        if (
+            !window.cpuDifficulty
+        ) {
+            return;
+        }
+
+        if (
+            player2.respawning ||
+            player2.frozen
+        ) {
+            return;
+        }
+
+        cpuActionTimer +=
+            dt();
+
+        let cooldown =
+            CPU_EASY_COOLDOWN;
+
+        if (
+            window.cpuDifficulty ===
+            "MEDIUM"
+        ) {
+
+            cooldown =
+                CPU_MEDIUM_COOLDOWN;
+
+        } else if (
+            window.cpuDifficulty ===
+            "HARD"
+        ) {
+
+            cooldown =
+                CPU_HARD_COOLDOWN;
+        }
+
+        if (
+            cpuActionTimer >=
+            cooldown
+        ) {
+
+            cpuActionTimer = 0;
+
+            if (
+                window.cpuDifficulty ===
+                "EASY"
+            ) {
+
+                cpuEasyAction();
+
+            } else if (
+                window.cpuDifficulty ===
+                "MEDIUM"
+            ) {
+
+                cpuMediumAction();
+
+            } else if (
+                window.cpuDifficulty ===
+                "HARD"
+            ) {
+
+                cpuHardAction();
+            }
+        }
+
+        cpuRecovery();
+    });
+
+
+    // ==================================================
     // 🗺️ MAP
     // ==================================================
 
-    if (currentMap === MAP_GRASSLAND) {
+    if (
+        currentMap ===
+        MAP_GRASSLAND
+    ) {
 
-        // 🌱 GRASSLAND
         add([
             rect(700, 50),
             pos(25, 350),
@@ -3820,11 +4805,11 @@ onUpdate(() => {
             }),
         ]);
 
-    } else if (currentMap === MAP_PARKOUR) {
+    } else if (
+        currentMap ===
+        MAP_PARKOUR
+    ) {
 
-        // 🏃 PARKOUR MAYHEM
-
-        // Bottom platform
         add([
             rect(220, 35),
             pos(25, 350),
@@ -3835,7 +4820,6 @@ onUpdate(() => {
             }),
         ]);
 
-        // Low middle platform
         add([
             rect(140, 25),
             pos(280, 300),
@@ -3846,7 +4830,6 @@ onUpdate(() => {
             }),
         ]);
 
-        // High middle platform
         add([
             rect(120, 25),
             pos(480, 230),
@@ -3857,7 +4840,6 @@ onUpdate(() => {
             }),
         ]);
 
-        // Right platform
         add([
             rect(150, 25),
             pos(625, 310),
@@ -3868,7 +4850,6 @@ onUpdate(() => {
             }),
         ]);
 
-        // Top platform
         add([
             rect(100, 25),
             pos(350, 150),
@@ -3878,356 +4859,528 @@ onUpdate(() => {
                 isStatic: true,
             }),
         ]);
+
+    } else if (
+        currentMap ===
+        MAP_PARKOUR_NIGHTMARE
+    ) {
+
+        add([
+            rect(110, 25),
+            pos(145, 250),
+            color(100, 255, 100),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(110, 25),
+            pos(545, 250),
+            color(100, 255, 100),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+    } else if (
+        currentMap ===
+        MAP_GRAVITY_CHAOS
+    ) {
+
+        add([
+            rect(220, 30),
+            pos(25, 350),
+            color(150, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(220, 30),
+            pos(555, 70),
+            color(150, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(30, 180),
+            pos(25, 170),
+            color(180, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(30, 180),
+            pos(745, 170),
+            color(180, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(180, 25),
+            pos(310, 220),
+            color(200, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+    } else if (
+        currentMap ===
+        MAP_PARKOUR_GRAVITY
+    ) {
+
+        add([
+            rect(130, 25),
+            pos(40, 340),
+            color(0, 255, 100),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(130, 25),
+            pos(630, 340),
+            color(0, 255, 100),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        const movingPlatform =
+            add([
+                rect(120, 25),
+                pos(340, 280),
+                color(255, 200, 0),
+                area(),
+                body({
+                    isStatic: true,
+                }),
+                {
+                    moveDirection: 1,
+                },
+            ]);
+
+        add([
+            rect(90, 20),
+            pos(355, 220),
+            color(200, 0, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(110, 22),
+            pos(120, 150),
+            color(0, 200, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(110, 22),
+            pos(570, 150),
+            color(0, 200, 255),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(100, 20),
+            pos(250, 80),
+            color(255, 100, 0),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(100, 20),
+            pos(450, 80),
+            color(255, 100, 0),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(140, 20),
+            pos(330, 30),
+            color(255, 0, 200),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        const verticalPlatform =
+            add([
+                rect(100, 25),
+                pos(350, 150),
+                color(255, 100, 0),
+                area(),
+                body({
+                    isStatic: true,
+                }),
+                {
+                    moveDirection: 1,
+                },
+            ]);
+
+        onUpdate(() => {
+
+            movingPlatform.move(
+                160 *
+                movingPlatform.moveDirection,
+                0
+            );
+
+            if (
+                movingPlatform.pos.x >
+                640
+            ) {
+
+                movingPlatform.moveDirection =
+                    -1;
+            }
+
+            if (
+                movingPlatform.pos.x <
+                40
+            ) {
+
+                movingPlatform.moveDirection =
+                    1;
+            }
+
+            verticalPlatform.move(
+                0,
+                120 *
+                verticalPlatform.moveDirection
+            );
+
+            if (
+                verticalPlatform.pos.y >
+                280
+            ) {
+
+                verticalPlatform.moveDirection =
+                    -1;
+            }
+
+            if (
+                verticalPlatform.pos.y <
+                100
+            ) {
+
+                verticalPlatform.moveDirection =
+                    1;
+            }
+        });
     }
-     else if (currentMap === MAP_PARKOUR_NIGHTMARE) {
 
-    // 💀 PARKOUR NIGHTMARE
-    // ONLY TWO SPAWN PLATFORMS!
-    // HUGE GAP IN THE MIDDLE!
-    // P1 SPAWN PLATFORM
-    add([
-        rect(110, 25),
-        pos(145, 250),
-        color(100, 255, 100),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
 
-    // P2 SPAWN PLATFORM
-    add([
-        rect(110, 25),
-        pos(545, 250),
-        color(100, 255, 100),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-}
-else if (currentMap === MAP_GRAVITY_CHAOS) {
-
+    // ==================================================
     // 🌀 GRAVITY CHAOS
-
-    // Bottom platform
-    add([
-        rect(220, 30),
-        pos(25, 350),
-        color(150, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-
-    // Top platform
-    add([
-        rect(220, 30),
-        pos(555, 70),
-        color(150, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-
-    // Left wall
-    add([
-        rect(30, 180),
-        pos(25, 170),
-        color(180, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-
-    // Right wall
-    add([
-        rect(30, 180),
-        pos(745, 170),
-        color(180, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-
-    // Middle platform
-    add([
-        rect(180, 25),
-        pos(310, 220),
-        color(200, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
-    
-}
-else if (currentMap === MAP_PARKOUR_GRAVITY) {
-
-    // ==================================================
-    // 🌀🏃 PARKOUR GRAVITY MAYHEM
     // ==================================================
 
-    // P1 START
-    add([
-        rect(130, 25),
-        pos(40, 340),
-        color(0, 255, 100),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+    if (
+        currentMap ===
+        MAP_GRAVITY_CHAOS
+    ) {
 
-    // P2 START
-    add([
-        rect(130, 25),
-        pos(630, 340),
-        color(0, 255, 100),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+        let gravityDirection =
+            0;
 
-    // ==================================================
-    // LOWER PARKOUR
-    // ==================================================
+        const gravityPower =
+            1800;
 
-    // Moving horizontal platform
-    const movingPlatform = add([
-        rect(120, 25),
-        pos(340, 280),
-        color(255, 200, 0),
-        area(),
-        body({
-            isStatic: true,
-        }),
-        {
-            moveDirection: 1,
-        },
-    ]);
+        function changeGravity() {
 
-    // Center platform
-    add([
-        rect(90, 20),
-        pos(355, 220),
-        color(200, 0, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+            gravityDirection =
+                Math.floor(
+                    Math.random() * 4
+                );
 
-    // ==================================================
-    // ⬆️ UPPER PARKOUR
-    // ==================================================
+            if (
+                gravityDirection === 0
+            ) {
 
-    // Upper-left platform
-    add([
-        rect(110, 22),
-        pos(120, 150),
-        color(0, 200, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+                setGravity(
+                    gravityPower
+                );
 
-    // Upper-right platform
-    add([
-        rect(110, 22),
-        pos(570, 150),
-        color(0, 200, 255),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+            } else if (
+                gravityDirection === 1
+            ) {
 
-    // Top-left platform
-    add([
-        rect(100, 20),
-        pos(250, 80),
-        color(255, 100, 0),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+                setGravity(
+                    -gravityPower
+                );
 
-    // Top-right platform
-    add([
-        rect(100, 20),
-        pos(450, 80),
-        color(255, 100, 0),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+            } else if (
+                gravityDirection === 2
+            ) {
 
-    // VERY TOP platform
-    add([
-        rect(140, 20),
-        pos(330, 30),
-        color(255, 0, 200),
-        area(),
-        body({
-            isStatic: true,
-        }),
-    ]);
+                setGravity(0);
 
-    // ==================================================
-    // ⬇️ VERTICAL MOVING PLATFORM
-    // ==================================================
+                player.vel.x -=
+                    1200;
 
-    const verticalPlatform = add([
-        rect(100, 25),
-        pos(350, 150),
-        color(255, 100, 0),
-        area(),
-        body({
-            isStatic: true,
-        }),
-        {
-            moveDirection: 1,
-        },
-    ]);
+                player2.vel.x -=
+                    1200;
 
-    // ==================================================
-    // 🔄 MOVEMENT
-    // ==================================================
+            } else {
 
-    onUpdate(() => {
+                setGravity(0);
 
-        // Horizontal platform
-        movingPlatform.move(
-            160 * movingPlatform.moveDirection,
-            0
-        );
+                player.vel.x +=
+                    1200;
 
-        if (movingPlatform.pos.x > 640) {
-            movingPlatform.moveDirection = -1;
+                player2.vel.x +=
+                    1200;
+            }
         }
-
-        if (movingPlatform.pos.x < 40) {
-            movingPlatform.moveDirection = 1;
-        }
-
-        // Vertical platform
-        verticalPlatform.move(
-            0,
-            120 * verticalPlatform.moveDirection
-        );
-
-        if (verticalPlatform.pos.y > 280) {
-            verticalPlatform.moveDirection = -1;
-        }
-
-        if (verticalPlatform.pos.y < 100) {
-            verticalPlatform.moveDirection = 1;
-        }
-    });
-}
-// ==================================================
-// 🌀 GRAVITY CHAOS
-// ==================================================
-
-if (currentMap === MAP_GRAVITY_CHAOS) {
-
-    let gravityDirection = 0;
-
-    const gravityPower = 1800;
-
-    function changeGravity() {
-
-        gravityDirection =
-            Math.floor(Math.random() * 4);
-
-        if (gravityDirection === 0) {
-
-            // 🔽 DOWN
-            setGravity(gravityPower);
-
-        } else if (gravityDirection === 1) {
-
-            // 🔼 UP
-            setGravity(-gravityPower);
-
-        } else if (gravityDirection === 2) {
-
-            // ⬅️ LEFT
-            setGravity(0);
-
-            player.vel.x -= 1200;
-            player2.vel.x -= 1200;
-
-        } else {
-
-            // ➡️ RIGHT
-            setGravity(0);
-
-            player.vel.x += 1200;
-            player2.vel.x += 1200;
-        }
-    }
-
-    changeGravity();
-
-    loop(3, () => {
 
         changeGravity();
 
-    });
-}
-// ==================================================
-// 🌀 PARKOUR GRAVITY MAYHEM
-// ==================================================
+        loop(3, () => {
 
-if (currentMap === MAP_PARKOUR_GRAVITY) {
-
-    const gravityPower = 1800;
-
-    function changeParkourGravity() {
-
-        const direction =
-            Math.floor(Math.random() * 4);
-
-        if (direction === 0) {
-
-            // ⬇️ DOWN
-            setGravity(gravityPower);
-
-        } else if (direction === 1) {
-
-            // ⬆️ UP
-            setGravity(-gravityPower);
-
-        } else if (direction === 2) {
-
-            // ⬅️➡️ SIDEWAYS CHAOS
-            setGravity(0);
-
-        } else {
-
-            // 🌀 ZERO GRAVITY
-            setGravity(0);
-        }
+            changeGravity();
+        });
     }
 
-    changeParkourGravity();
 
-    loop(2.5, () => {
+    // ==================================================
+    // 🌀 PARKOUR GRAVITY MAYHEM
+    // ==================================================
+
+    if (
+        currentMap ===
+        MAP_PARKOUR_GRAVITY
+    ) {
+
+        const gravityPower =
+            1800;
+
+        function changeParkourGravity() {
+
+            const direction =
+                Math.floor(
+                    Math.random() * 4
+                );
+
+            if (
+                direction === 0
+            ) {
+
+                setGravity(
+                    gravityPower
+                );
+
+            } else if (
+                direction === 1
+            ) {
+
+                setGravity(
+                    -gravityPower
+                );
+
+            } else {
+
+                setGravity(0);
+            }
+        }
 
         changeParkourGravity();
 
-    });
-}
+        loop(2.5, () => {
+
+            changeParkourGravity();
+        });
+    }
+
+
+    // ==================================================
+    // 🌋 VOLCANO
+    // ==================================================
+
+    if (
+        currentMap ===
+        MAP_VOLCANO
+    ) {
+
+        add([
+            rect(500, 30),
+            pos(150, 300),
+            color(100, 60, 30),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(120, 25),
+            pos(40, 220),
+            color(120, 70, 35),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(120, 25),
+            pos(640, 220),
+            color(120, 70, 35),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+        add([
+            rect(100, 25),
+            pos(350, 160),
+            color(140, 75, 30),
+            area(),
+            body({
+                isStatic: true,
+            }),
+        ]);
+
+
+        // ==================================================
+        // 🔥 RISING LAVA
+        // ==================================================
+
+        const lava = add([
+            rect(800, 120),
+            pos(0, 430),
+            color(255, 60, 0),
+            area(),
+        ]);
+
+        let lavaSpeed = 100;
+
+        let lavaP1Cooldown = 0;
+        let lavaP2Cooldown = 0;
+
+        onUpdate(() => {
+
+            lava.pos.y -=
+                lavaSpeed * dt();
+
+            if (
+                lavaP1Cooldown > 0
+            ) {
+
+                lavaP1Cooldown -=
+                    dt();
+            }
+
+            if (
+                lavaP2Cooldown > 0
+            ) {
+
+                lavaP2Cooldown -=
+                    dt();
+            }
+
+
+            // P1
+
+            if (
+                !player.respawning &&
+                !player.invincible &&
+                lavaP1Cooldown <= 0 &&
+                player.pos.y + 30 >=
+                lava.pos.y
+            ) {
+
+                lavaP1Cooldown =
+                    0.5;
+
+                player.damage +=
+                    15;
+
+                player.knockbackActive =
+                    true;
+
+                player.knockbackX =
+                    0;
+
+                player.vel.x =
+                    0;
+
+                player.vel.y =
+                    -1000;
+
+                shake(15);
+            }
+
+
+            // P2
+
+            if (
+                !player2.respawning &&
+                !player2.invincible &&
+                lavaP2Cooldown <= 0 &&
+                player2.pos.y + 30 >=
+                lava.pos.y
+            ) {
+
+                lavaP2Cooldown =
+                    0.5;
+
+                player2.damage +=
+                    15;
+
+                player2.knockbackActive =
+                    true;
+
+                player2.knockbackX =
+                    0;
+
+                player2.vel.x =
+                    0;
+
+                player2.vel.y =
+                    -1000;
+
+                shake(15);
+            }
+        });
+    }
+
+
     // ==================================================
     // HUD
     // ==================================================
@@ -4278,1286 +5431,2657 @@ if (currentMap === MAP_PARKOUR_GRAVITY) {
             );
 
         playerPercent.text =
-            Math.floor(player.damage) + "%";
+            Math.floor(
+                player.damage
+            ) + "%";
 
         player2Percent.text =
-            Math.floor(player2.damage) + "%";
+            Math.floor(
+                player2.damage
+            ) + "%";
 
         playerStocks.text =
-            "❤️".repeat(player.stocks);
+            "❤️".repeat(
+                player.stocks
+            );
 
         player2Stocks.text =
-            "❤️".repeat(player2.stocks);
-    });
-// ==================================================
-// PENGUY SUPER-SLIPPERY MOVEMENT
-// ==================================================
-
-const PENGUY_ACCELERATION = 1600;
-const PENGUY_MAX_SPEED = 600;
-
-const PENGUY_GROUND_FRICTION = 0.96;
-const PENGUY_AIR_FRICTION = 0.985;
-
-const PENGUY_AIR_CONTROL = 900;
-
-// P1 LEFT
-onKeyDown("left", () => {
-
-    if (
-        player.knockbackActive ||
-        player.respawning ||
-        player.frozen
-    ) {
-        return;
-    }
-
-    if (player.fighter === "PENGUY") {
-
-        player.vel.x -=
-            PENGUY_ACCELERATION * dt();
-
-        if (player.vel.x < -PENGUY_MAX_SPEED) {
-            player.vel.x = -PENGUY_MAX_SPEED;
-        }
-
-        player.facing = -1;
-        return;
-    }
-
-    if (markIceWorld) {
-
-        player.vel.x -= ICE_ACCELERATION * dt();
-
-        if (player.vel.x < -ICE_MAX_SPEED) {
-            player.vel.x = -ICE_MAX_SPEED;
-        }
-
-    } else if (player.fighter === "GOOSEY") {
-
-        player.move(-GOOSEY_SPEED, 0);
-
-    } else if (player.fighter === "RED") {
-
-        player.move(-RED_SPEED, 0);
-
-    } else if (player.fighter === "BLUE") {
-
-        player.move(-BLUE_SPEED, 0);
-
-    } else {
-
-        player.move(-SPEED, 0);
-    }
-
-    player.facing = -1;
-});
-
-// P1 RIGHT
-onKeyDown("right", () => {
-
-    if (
-        player.knockbackActive ||
-        player.respawning ||
-        player.frozen
-    ) {
-        return;
-    }
-
-    if (player.fighter === "PENGUY") {
-
-        player.vel.x +=
-            PENGUY_ACCELERATION * dt();
-
-        if (player.vel.x > PENGUY_MAX_SPEED) {
-            player.vel.x = PENGUY_MAX_SPEED;
-        }
-
-        player.facing = 1;
-        return;
-    }
-
-    if (markIceWorld) {
-
-        player.vel.x += ICE_ACCELERATION * dt();
-
-        if (player.vel.x > ICE_MAX_SPEED) {
-            player.vel.x = ICE_MAX_SPEED;
-        }
-
-    } else if (player.fighter === "GOOSEY") {
-
-        player.move(GOOSEY_SPEED, 0);
-
-    } else if (player.fighter === "RED") {
-
-        player.move(RED_SPEED, 0);
-
-    } else if (player.fighter === "BLUE") {
-
-        player.move(BLUE_SPEED, 0);
-
-    } else {
-
-        player.move(SPEED, 0);
-    }
-
-    player.facing = 1;
-});
-
-// P1 JUMP
-onKeyPress("up", () => {
-
-    if (
-        player.respawning ||
-        player.frozen
-    ) {
-        return;
-    }
-
-    player.facingUp = true;
-
-    if (player.isGrounded()) {
-        player.jump(JUMP_FORCE);
-    }
-
-    wait(0.5, () => {
-        player.facingUp = false;
-    });
-});
-
-// P2 LEFT
-onKeyDown("a", () => {
-
-    if (
-        player2.knockbackActive ||
-        player2.respawning ||
-        player2.frozen
-    ) {
-        return;
-    }
-
-    if (player2.fighter === "PENGUY") {
-
-        player2.vel.x -=
-            PENGUY_ACCELERATION * dt();
-
-        if (player2.vel.x < -PENGUY_MAX_SPEED) {
-            player2.vel.x = -PENGUY_MAX_SPEED;
-        }
-
-        player2.facing = -1;
-        return;
-    }
-
-    if (markIceWorld) {
-
-        player2.vel.x -= ICE_ACCELERATION * dt();
-
-        if (player2.vel.x < -ICE_MAX_SPEED) {
-            player2.vel.x = -ICE_MAX_SPEED;
-        }
-
-    } else if (player2.fighter === "GOOSEY") {
-
-        player2.move(-GOOSEY_SPEED, 0);
-
-    } else if (player2.fighter === "RED") {
-
-        player2.move(-RED_SPEED, 0);
-
-    } else if (player2.fighter === "BLUE") {
-
-        player2.move(-BLUE_SPEED, 0);
-
-    } else {
-
-        player2.move(-SPEED, 0);
-    }
-
-    player2.facing = -1;
-});
-
-// P2 RIGHT
-onKeyDown("d", () => {
-
-    if (
-        player2.knockbackActive ||
-        player2.respawning ||
-        player2.frozen
-    ) {
-        return;
-    }
-
-    if (player2.fighter === "PENGUY") {
-
-        player2.vel.x +=
-            PENGUY_ACCELERATION * dt();
-
-        if (player2.vel.x > PENGUY_MAX_SPEED) {
-            player2.vel.x = PENGUY_MAX_SPEED;
-        }
-
-        player2.facing = 1;
-        return;
-    }
-
-    if (markIceWorld) {
-
-        player2.vel.x += ICE_ACCELERATION * dt();
-
-        if (player2.vel.x > ICE_MAX_SPEED) {
-            player2.vel.x = ICE_MAX_SPEED;
-        }
-
-    } else if (player2.fighter === "GOOSEY") {
-
-        player2.move(GOOSEY_SPEED, 0);
-
-    } else if (player2.fighter === "RED") {
-
-        player2.move(RED_SPEED, 0);
-
-    } else if (player2.fighter === "BLUE") {
-
-        player2.move(BLUE_SPEED, 0);
-
-    } else {
-
-        player2.move(SPEED, 0);
-    }
-
-    player2.facing = 1;
-});
-
-// P2 JUMP
-onKeyPress("w", () => {
-
-    if (
-        player2.respawning ||
-        player2.frozen
-    ) {
-        return;
-    }
-
-    player2.facingUp = true;
-
-    if (player2.isGrounded()) {
-        player2.jump(JUMP_FORCE);
-    }
-
-    wait(0.5, () => {
-        player2.facingUp = false;
-    });
-});
-
-// ==================================================
-// 🐧 PENGUY FRICTION + AIR CONTROL
-// ==================================================
-
-onUpdate(() => {
-
-    // ==============================================
-    // P1 PENGUY
-    // ==============================================
-
-    if (
-        player.fighter === "PENGUY" &&
-        !player.knockbackActive &&
-        !player.respawning &&
-        !player.frozen
-    ) {
-
-        if (player.isGrounded()) {
-
-            player.vel.x *= PENGUY_GROUND_FRICTION;
-
-        } else {
-
-            player.vel.x *= PENGUY_AIR_FRICTION;
-
-            if (isKeyDown("left")) {
-                player.vel.x -=
-                    PENGUY_AIR_CONTROL * dt();
-            }
-
-            if (isKeyDown("right")) {
-                player.vel.x +=
-                    PENGUY_AIR_CONTROL * dt();
-            }
-
-            if (player.vel.x > PENGUY_MAX_SPEED) {
-                player.vel.x = PENGUY_MAX_SPEED;
-            }
-
-            if (player.vel.x < -PENGUY_MAX_SPEED) {
-                player.vel.x = -PENGUY_MAX_SPEED;
-            }
-        }
-    }
-
-    // ==============================================
-    // P2 PENGUY
-    // ==============================================
-
-    if (
-        player2.fighter === "PENGUY" &&
-        !player2.knockbackActive &&
-        !player2.respawning &&
-        !player2.frozen
-    ) {
-
-        if (player2.isGrounded()) {
-
-            player2.vel.x *= PENGUY_GROUND_FRICTION;
-
-        } else {
-
-            player2.vel.x *= PENGUY_AIR_FRICTION;
-
-            if (isKeyDown("a")) {
-                player2.vel.x -=
-                    PENGUY_AIR_CONTROL * dt();
-            }
-
-            if (isKeyDown("d")) {
-                player2.vel.x +=
-                    PENGUY_AIR_CONTROL * dt();
-            }
-
-            if (player2.vel.x > PENGUY_MAX_SPEED) {
-                player2.vel.x = PENGUY_MAX_SPEED;
-            }
-
-            if (player2.vel.x < -PENGUY_MAX_SPEED) {
-                player2.vel.x = -PENGUY_MAX_SPEED;
-            }
-        }
-    }
-
-    // ==================================================
-    // 🧲 CHAT MAGNET
-    // ==================================================
-
-    if (
-        player.fighter === "CHAT" &&
-        player.chatPower === 0 &&
-        !player.respawning
-    ) {
-
-        const dx = player.pos.x - player2.pos.x;
-
-        if (Math.abs(dx) < 250) {
-
-            player2.vel.x +=
-                dx * 2 * dt();
-        }
-    }
-
-    if (
-        player2.fighter === "CHAT" &&
-        player2.chatPower === 0 &&
-        !player2.respawning
-    ) {
-
-        const dx = player2.pos.x - player.pos.x;
-
-        if (Math.abs(dx) < 250) {
-
-            player.vel.x +=
-                dx * 2 * dt();
-        }
-    }
-
-    // ==================================================
-    // 🟢 CHAT BOUNCY
-    // ==================================================
-
-    if (
-        player.fighter === "CHAT" &&
-        player.chatPower === 1 &&
-        player.isGrounded()
-    ) {
-
-        if (Math.abs(player.vel.y) < 10) {
-            player.jump(900);
-        }
-    }
-
-    if (
-        player2.fighter === "CHAT" &&
-        player2.chatPower === 1 &&
-        player2.isGrounded()
-    ) {
-
-        if (Math.abs(player2.vel.y) < 10) {
-            player2.jump(900);
-        }
-    }
-
-    // ==================================================
-    // 🧊 CHAT ICE TRAIL
-    // ==================================================
-
-    if (
-        player.fighter === "CHAT" &&
-        player.chatPower === 3 &&
-        !player.respawning
-    ) {
-
-        add([
-            rect(35, 8),
-            pos(
-                player.pos.x,
-                player.pos.y + 30
-            ),
-            color(150, 230, 255),
-            opacity(0.7),
-            lifespan(0.5, {
-                fade: 0.4,
-            }),
-        ]);
-    }
-
-    if (
-        player2.fighter === "CHAT" &&
-        player2.chatPower === 3 &&
-        !player2.respawning
-    ) {
-
-        add([
-            rect(35, 8),
-            pos(
-                player2.pos.x,
-                player2.pos.y + 30
-            ),
-            color(150, 230, 255),
-            opacity(0.7),
-            lifespan(0.5, {
-                fade: 0.4,
-            }),
-        ]);
-    }
-    // ==================================================
-    // 💥 KNOCKBACK
-    // ==================================================
-
-    if (player.knockbackActive) {
-
-        // 🪨 CHAT ROCK SOLID = 10% KNOCKBACK
-        if (
-            player.fighter === "CHAT" &&
-            player.chatPower === 2
-        ) {
-
-            player.vel.x =
-                player.knockbackX * 0.1;
-
-        } else {
-
-            player.vel.x =
-                player.knockbackX;
-
-            if (player.fighter === "PENGUY") {
-
-                player.knockbackX *=
-                    PENGUY_KNOCKBACK_FRICTION;
-
-            } else {
-
-                player.knockbackX *=
-                    KNOCKBACK_FRICTION;
-            }
-        }
-
-        if (
-            Math.abs(player.knockbackX) <
-            KNOCKBACK_STOP
-        ) {
-
-            player.knockbackX = 0;
-            player.knockbackActive = false;
-            player.vel.x = 0;
-        }
-    }
-
-    if (player2.knockbackActive) {
-
-        // 🪨 CHAT ROCK SOLID = 10% KNOCKBACK
-        if (
-            player2.fighter === "CHAT" &&
-            player2.chatPower === 2
-        ) {
-
-            player2.vel.x =
-                player2.knockbackX * 0.1;
-
-        } else {
-
-            player2.vel.x =
-                player2.knockbackX;
-
-            if (player2.fighter === "PENGUY") {
-
-                player2.knockbackX *=
-                    PENGUY_KNOCKBACK_FRICTION;
-
-            } else {
-
-                player2.knockbackX *=
-                    KNOCKBACK_FRICTION;
-            }
-        }
-
-        if (
-            Math.abs(player2.knockbackX) <
-            KNOCKBACK_STOP
-        ) {
-
-            player2.knockbackX = 0;
-            player2.knockbackActive = false;
-            player2.vel.x = 0;
-        }
-    }
-});
-
-// ==================================================
-// P1 ATTACK
-// ==================================================
-window.addEventListener("keydown", (event) => {
-
-    if (event.code !== "ShiftRight") {
-        return;
-    }
-
-    if (
-        player.respawning ||
-        player.frozen ||
-        player.invincible
-    ) {
-        return;
-    }
-// ==================================================
-// 🔥 CHAT FIREBALL — P1
-// ==================================================
-
-if (
-    player.fighter === "CHAT" &&
-    player.chatPower === 4
-) {
-
-    // Lock direction when fired
-    const fireballDirection = player.facing;
-
-    const fireball = add([
-        circle(15),
-        pos(
-            player.pos.x +
-            fireballDirection * 55,
-            player.pos.y
-        ),
-        anchor("center"),
-        color(255, 80, 0),
-        opacity(1),
-        area(),
-        {
-            speed: 750,
-            hit: false,
-        },
-        lifespan(1.5, {
-            fade: 0.3,
-        }),
-    ]);
-
-    // 🔥 MOVE + HIT DETECTION
-    fireball.onUpdate(() => {
-
-        fireball.move(
-            fireball.speed *
-            fireballDirection,
-            0
-        );
-
-        // 💥 HIT PLAYER 2
-        if (
-            !fireball.hit &&
-            !player2.invincible &&
-            Math.abs(fireball.pos.x - player2.pos.x) < 40 &&
-            Math.abs(fireball.pos.y - player2.pos.y) < 50
-        ) {
-
-            fireball.hit = true;
-
-            // 💥 DAMAGE
-            player2.damage += 20;
-
-            // 🪨 ROCK SOLID
-            if (
-                player2.fighter === "CHAT" &&
-                player2.chatPower === 2
-            ) {
-
-                player2.knockbackActive = true;
-
-                player2.knockbackX =
-                    700 *
-                    fireballDirection *
-                    0.1;
-
-                player2.vel.x =
-                    player2.knockbackX;
-
-                player2.vel.y = -40;
-
-            } else {
-
-                player2.knockbackActive = true;
-
-                player2.knockbackX =
-                    700 *
-                    fireballDirection;
-
-                player2.vel.x =
-                    player2.knockbackX;
-
-                player2.vel.y = -400;
-            }
-
-            // 🔥 FIREBALL IMPACT
-            shake(8);
-
-            destroy(fireball);
-        }
+            "❤️".repeat(
+                player2.stocks
+            );
     });
 
-    // 🔥 Fireball replaces normal attack
-    return;
-}
+
     // ==================================================
-    // GREG
+    // 🐧 PENGUY SUPER-SLIPPERY MOVEMENT
     // ==================================================
 
-    if (player.fighter === "GREG") {
+    const PENGUY_ACCELERATION =
+        1600;
 
-        if (player.gregCooldown) {
+    const PENGUY_MAX_SPEED =
+        600;
+
+    const PENGUY_GROUND_FRICTION =
+        0.96;
+
+    const PENGUY_AIR_FRICTION =
+        0.985;
+
+    const PENGUY_AIR_CONTROL =
+        900;
+
+
+    // ==================================================
+    // P1 LEFT
+    // ==================================================
+
+    onKeyDown("left", () => {
+
+        if (
+            player.knockbackActive ||
+            player.respawning ||
+            player.frozen
+        ) {
             return;
         }
 
-        player.gregCooldown = true;
+        if (
+            player.fighter ===
+            "PENGUY"
+        ) {
 
-        wait(GREG_ATTACK_COOLDOWN, () => {
-            player.gregCooldown = false;
-        });
-
-        if (player.facingUp) {
-
-            const attack = add([
-                rect(65, 160),
-                pos(
-                    player.pos.x +
-                    player.facing * 45,
-                    player.pos.y - 80
-                ),
-                color(255, 0, 0),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
+            player.vel.x -=
+                PENGUY_ACCELERATION *
+                dt();
 
             if (
-                !player2.invincible &&
-                Math.abs(
-                    attack.pos.x -
-                    player2.pos.x
-                ) < 80 &&
-                Math.abs(
-                    attack.pos.y -
-                    player2.pos.y
-                ) < 120
+                player.vel.x <
+                -PENGUY_MAX_SPEED
             ) {
 
-                player2.damage += 15;
-                player2.knockbackActive = true;
+                player.vel.x =
+                    -PENGUY_MAX_SPEED;
+            }
 
-                player2.knockbackX =
-                    (GREG_UPPERCUT_KNOCKBACK +
-                    player2.damage * 6) *
-                    player.facing;
+            player.facing =
+                -1;
+
+            return;
+        }
+
+        if (
+            markIceWorld
+        ) {
+
+            player.vel.x -=
+                ICE_ACCELERATION *
+                dt();
+
+            if (
+                player.vel.x <
+                -ICE_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    -ICE_MAX_SPEED;
+            }
+
+        } else if (
+            player.fighter ===
+            "GOOSEY"
+        ) {
+
+            player.move(
+                -GOOSEY_SPEED,
+                0
+            );
+
+        } else if (
+            player.fighter ===
+            "RED"
+        ) {
+
+            player.move(
+                -RED_SPEED,
+                0
+            );
+
+        } else if (
+            player.fighter ===
+            "BLUE"
+        ) {
+
+            player.move(
+                -BLUE_SPEED,
+                0
+            );
+        } else if (
+            player.fighter ===
+            "BACH"
+        ) {
+
+            player.move(
+                -BACH_SPEED,
+                0
+            );
+        } else {
+
+            player.move(
+                -SPEED,
+                0
+            );
+        }
+
+        player.facing =
+            -1;
+    });
+
+
+    // ==================================================
+    // P1 RIGHT
+    // ==================================================
+
+    onKeyDown("right", () => {
+
+        if (
+            player.knockbackActive ||
+            player.respawning ||
+            player.frozen
+        ) {
+            return;
+        }
+
+        if (
+            player.fighter ===
+            "PENGUY"
+        ) {
+
+            player.vel.x +=
+                PENGUY_ACCELERATION *
+                dt();
+
+            if (
+                player.vel.x >
+                PENGUY_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    PENGUY_MAX_SPEED;
+            }
+
+            player.facing =
+                1;
+
+            return;
+        }
+
+        if (
+            markIceWorld
+        ) {
+
+            player.vel.x +=
+                ICE_ACCELERATION *
+                dt();
+
+            if (
+                player.vel.x >
+                ICE_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    ICE_MAX_SPEED;
+            }
+
+        } else if (
+            player.fighter ===
+            "GOOSEY"
+        ) {
+
+            player.move(
+                GOOSEY_SPEED,
+                0
+            );
+
+        } else if (
+            player.fighter ===
+            "RED"
+        ) {
+
+            player.move(
+                RED_SPEED,
+                0
+            );
+
+        } else if (
+            player.fighter ===
+            "BLUE"
+        ) {
+
+            player.move(
+                BLUE_SPEED,
+                0
+            );
+        } else if (
+            player.fighter ===
+            "BACH"
+        ) {
+
+            player.move(
+                BACH_SPEED,
+                0
+            );
+        } else {
+
+            player.move(
+                SPEED,
+                0
+            );
+        }
+
+        player.facing =
+            1;
+    });
+
+
+    // ==================================================
+    // P1 JUMP
+    // ==================================================
+
+    onKeyPress("up", () => {
+
+        if (
+            player.respawning ||
+            player.frozen
+        ) {
+            return;
+        }
+
+        player.facingUp =
+            true;
+
+        if (
+            player.isGrounded()
+        ) {
+
+            player.jump(
+                JUMP_FORCE
+            );
+        }
+
+        wait(0.5, () => {
+
+            player.facingUp =
+                false;
+        });
+    });
+
+
+    // ==================================================
+    // P2 LEFT
+    // ==================================================
+
+    onKeyDown("a", () => {
+
+        if (
+            player2.knockbackActive ||
+            player2.respawning ||
+            player2.frozen
+        ) {
+            return;
+        }
+
+        if (
+            player2.fighter ===
+            "PENGUY"
+        ) {
+
+            player2.vel.x -=
+                PENGUY_ACCELERATION *
+                dt();
+
+            if (
+                player2.vel.x <
+                -PENGUY_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    -PENGUY_MAX_SPEED;
+            }
+
+            player2.facing =
+                -1;
+
+            return;
+        }
+
+        if (
+            markIceWorld
+        ) {
+
+            player2.vel.x -=
+                ICE_ACCELERATION *
+                dt();
+
+            if (
+                player2.vel.x <
+                -ICE_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    -ICE_MAX_SPEED;
+            }
+
+        } else if (
+            player2.fighter ===
+            "GOOSEY"
+        ) {
+
+            player2.move(
+                -GOOSEY_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "RED"
+        ) {
+
+            player2.move(
+                -RED_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "BLUE"
+        ) {
+
+            player2.move(
+                -BLUE_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "BACH"
+        ) {
+
+            player2.move(
+                -BACH_SPEED,
+                0
+            );
+
+        } else {
+
+            player2.move(
+                -SPEED,
+                0
+            );
+        }
+
+        player2.facing =
+            -1;
+    });
+
+
+    // ==================================================
+    // P2 RIGHT
+    // ==================================================
+
+    onKeyDown("d", () => {
+
+        if (
+            player2.knockbackActive ||
+            player2.respawning ||
+            player2.frozen
+        ) {
+            return;
+        }
+
+        if (
+            player2.fighter ===
+            "PENGUY"
+        ) {
+
+            player2.vel.x +=
+                PENGUY_ACCELERATION *
+                dt();
+
+            if (
+                player2.vel.x >
+                PENGUY_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    PENGUY_MAX_SPEED;
+            }
+
+            player2.facing =
+                1;
+
+            return;
+        }
+
+        if (
+            markIceWorld
+        ) {
+
+            player2.vel.x +=
+                ICE_ACCELERATION *
+                dt();
+
+            if (
+                player2.vel.x >
+                ICE_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    ICE_MAX_SPEED;
+            }
+
+        } else if (
+            player2.fighter ===
+            "GOOSEY"
+        ) {
+
+            player2.move(
+                GOOSEY_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "RED"
+        ) {
+
+            player2.move(
+                RED_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "BLUE"
+        ) {
+
+            player2.move(
+                BLUE_SPEED,
+                0
+            );
+
+        } else if (
+            player2.fighter ===
+            "BACH"
+        ) {
+
+            player2.move(
+                BACH_SPEED,
+                0
+            );
+
+        } else {
+
+            player2.move(
+                SPEED,
+                0
+            );
+        }
+
+        player2.facing =
+            1;
+    });
+
+
+    // ==================================================
+    // P2 JUMP
+    // ==================================================
+
+    onKeyPress("w", () => {
+
+        if (
+            player2.respawning ||
+            player2.frozen
+        ) {
+            return;
+        }
+
+        player2.facingUp =
+            true;
+
+        if (
+            player2.isGrounded()
+        ) {
+
+            player2.jump(
+                JUMP_FORCE
+            );
+        }
+
+        wait(0.5, () => {
+
+            player2.facingUp =
+                false;
+        });
+    });
+    // ==================================================
+    // 🔵⚽ BALL AURA — P1
+    // ==================================================
+
+    if (
+        player.bachAura &&
+        bachBallP1 &&
+        bachBallP1.exists()
+    ) {
+
+        if (
+            bachBallAuraP1.length === 0
+        ) {
+
+            for (
+                let i = 0;
+                i < 24;
+                i++
+            ) {
+
+                bachBallAuraP1.push(
+                    add([
+                        text("🔵"),
+                        pos(
+                            bachBallP1.pos.x,
+                            bachBallP1.pos.y
+                        ),
+                        anchor("center"),
+                        scale(1),
+                        z(100),
+                    ])
+                );
+            }
+        }
+
+        for (
+            let i = 0;
+            i < 24;
+            i++
+        ) {
+
+            const angle =
+                time() * 2 +
+                i * (
+                    Math.PI * 2 /
+                    24
+                );
+
+            bachBallAuraP1[i].moveTo(
+                vec2(
+                    bachBallP1.pos.x +
+                    Math.cos(angle) * 55,
+
+                    bachBallP1.pos.y +
+                    Math.sin(angle) * 55
+                )
+            );
+        }
+
+    } else {
+
+        for (
+            const dot of bachBallAuraP1
+        ) {
+
+            if (
+                dot.exists()
+            ) {
+                destroy(dot);
+            }
+        }
+
+        bachBallAuraP1 = [];
+    }
+    // ==================================================
+    // 🐧 PENGUY FRICTION + AIR CONTROL
+    // ==================================================
+
+    onUpdate(() => {
+
+        if (
+            player.fighter ===
+            "PENGUY" &&
+            !player.knockbackActive &&
+            !player.respawning &&
+            !player.frozen
+        ) {
+
+            if (
+                player.isGrounded()
+            ) {
+
+                player.vel.x *=
+                    PENGUY_GROUND_FRICTION;
+
+            } else {
+
+                player.vel.x *=
+                    PENGUY_AIR_FRICTION;
+
+                if (
+                    isKeyDown("left")
+                ) {
+
+                    player.vel.x -=
+                        PENGUY_AIR_CONTROL *
+                        dt();
+                }
+
+                if (
+                    isKeyDown("right")
+                ) {
+
+                    player.vel.x +=
+                        PENGUY_AIR_CONTROL *
+                        dt();
+                }
+
+                if (
+                    player.vel.x >
+                    PENGUY_MAX_SPEED
+                ) {
+
+                    player.vel.x =
+                        PENGUY_MAX_SPEED;
+                }
+
+                if (
+                    player.vel.x <
+                    -PENGUY_MAX_SPEED
+                ) {
+
+                    player.vel.x =
+                        -PENGUY_MAX_SPEED;
+                }
+            }
+        }
+
+
+        if (
+            player2.fighter ===
+            "PENGUY" &&
+            !player2.knockbackActive &&
+            !player2.respawning &&
+            !player2.frozen
+        ) {
+
+            if (
+                player2.isGrounded()
+            ) {
+
+                player2.vel.x *=
+                    PENGUY_GROUND_FRICTION;
+
+            } else {
+
+                player2.vel.x *=
+                    PENGUY_AIR_FRICTION;
+
+                if (
+                    isKeyDown("a")
+                ) {
+
+                    player2.vel.x -=
+                        PENGUY_AIR_CONTROL *
+                        dt();
+                }
+
+                if (
+                    isKeyDown("d")
+                ) {
+
+                    player2.vel.x +=
+                        PENGUY_AIR_CONTROL *
+                        dt();
+                }
+
+                if (
+                    player2.vel.x >
+                    PENGUY_MAX_SPEED
+                ) {
+
+                    player2.vel.x =
+                        PENGUY_MAX_SPEED;
+                }
+
+                if (
+                    player2.vel.x <
+                    -PENGUY_MAX_SPEED
+                ) {
+
+                    player2.vel.x =
+                        -PENGUY_MAX_SPEED;
+                }
+            }
+        }
+
+
+        // CHAT MAGNET
+
+        if (
+            player.fighter ===
+            "CHAT" &&
+            player.chatPower === 0 &&
+            !player.respawning
+        ) {
+
+            const dx =
+                player.pos.x -
+                player2.pos.x;
+
+            if (
+                Math.abs(dx) < 250
+            ) {
+
+                player2.vel.x +=
+                    dx * 2 * dt();
+            }
+        }
+
+
+        if (
+            player2.fighter ===
+            "CHAT" &&
+            player2.chatPower === 0 &&
+            !player2.respawning
+        ) {
+
+            const dx =
+                player2.pos.x -
+                player.pos.x;
+
+            if (
+                Math.abs(dx) < 250
+            ) {
+
+                player.vel.x +=
+                    dx * 2 * dt();
+            }
+        }
+
+
+        // CHAT BOUNCY
+
+        if (
+            player.fighter ===
+            "CHAT" &&
+            player.chatPower === 1 &&
+            player.isGrounded()
+        ) {
+
+            if (
+                Math.abs(
+                    player.vel.y
+                ) < 10
+            ) {
+
+                player.jump(900);
+            }
+        }
+
+
+        if (
+            player2.fighter ===
+            "CHAT" &&
+            player2.chatPower === 1 &&
+            player2.isGrounded()
+        ) {
+
+            if (
+                Math.abs(
+                    player2.vel.y
+                ) < 10
+            ) {
+
+                player2.jump(900);
+            }
+        }
+
+
+        // CHAT ICE TRAIL
+
+        if (
+            player.fighter ===
+            "CHAT" &&
+            player.chatPower === 3 &&
+            !player.respawning
+        ) {
+
+            add([
+                rect(35, 8),
+                pos(
+                    player.pos.x,
+                    player.pos.y + 30
+                ),
+                color(150, 230, 255),
+                opacity(0.7),
+                lifespan(0.5, {
+                    fade: 0.4,
+                }),
+            ]);
+        }
+
+
+        if (
+            player2.fighter ===
+            "CHAT" &&
+            player2.chatPower === 3 &&
+            !player2.respawning
+        ) {
+
+            add([
+                rect(35, 8),
+                pos(
+                    player2.pos.x,
+                    player2.pos.y + 30
+                ),
+                color(150, 230, 255),
+                opacity(0.7),
+                lifespan(0.5, {
+                    fade: 0.4,
+                }),
+            ]);
+        }
+
+
+        // ==================================================
+        // 💥 KNOCKBACK
+        // ==================================================
+
+        if (
+            player.knockbackActive
+        ) {
+
+            if (
+                player.fighter ===
+                "CHAT" &&
+                player.chatPower === 2
+            ) {
+
+                player.vel.x =
+                    player.knockbackX *
+                    0.1;
+
+            } else {
+
+                player.vel.x =
+                    player.knockbackX;
+
+                if (
+                    player.fighter ===
+                    "PENGUY"
+                ) {
+
+                    player.knockbackX *=
+                        PENGUY_KNOCKBACK_FRICTION;
+
+                } else {
+
+                    player.knockbackX *=
+                        KNOCKBACK_FRICTION;
+                }
+            }
+
+            if (
+                Math.abs(
+                    player.knockbackX
+                ) <
+                KNOCKBACK_STOP
+            ) {
+
+                player.knockbackX =
+                    0;
+
+                player.knockbackActive =
+                    false;
+
+                player.vel.x =
+                    0;
+            }
+        }
+
+
+        if (
+            player2.knockbackActive
+        ) {
+
+            if (
+                player2.fighter ===
+                "CHAT" &&
+                player2.chatPower === 2
+            ) {
+
+                player2.vel.x =
+                    player2.knockbackX *
+                    0.1;
+
+            } else {
 
                 player2.vel.x =
                     player2.knockbackX;
 
-                player2.vel.y = -700;
+                if (
+                    player2.fighter ===
+                    "PENGUY"
+                ) {
+
+                    player2.knockbackX *=
+                        PENGUY_KNOCKBACK_FRICTION;
+
+                } else {
+
+                    player2.knockbackX *=
+                        KNOCKBACK_FRICTION;
+                }
             }
 
-        } else {
+            if (
+                Math.abs(
+                    player2.knockbackX
+                ) <
+                KNOCKBACK_STOP
+            ) {
 
-            const attack = add([
-                rect(180, 45),
-                pos(
-                    player.pos.x +
-                    player.facing * 90,
-                    player.pos.y
-                ),
-                color(255, 255, 0),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
+                player2.knockbackX =
+                    0;
+
+                player2.knockbackActive =
+                    false;
+
+                player2.vel.x =
+                    0;
+            }
+        }
+    });
+
+
+    // ==================================================
+    // P1 ATTACK
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftRight"
+            ) {
+                return;
+            }
+
+            if (
+                player.respawning ||
+                player.frozen ||
+                player.invincible
+            ) {
+                return;
+            }
+            // ==================================================
+            // ⚽ BACH ATTACK
+            // ==================================================
+
+            if (
+                player.fighter === "BACH"
+            ) {
+
+                // ==============================================
+                // 📏 DISTANCE TO P2
+                // ==============================================
+
+                const distanceX =
+                    Math.abs(
+                        player2.pos.x -
+                        player.pos.x
+                    );
+
+                const distanceY =
+                    Math.abs(
+                        player2.pos.y -
+                        player.pos.y
+                    );
+
+                // ==============================================
+                // 🦵 CLOSE RANGE KICK
+                // ==============================================
+
+                if (
+                    distanceX < 100 &&
+                    distanceY < 70
+                ) {
+
+                    const kick = add([
+                        rect(110, 55),
+                        pos(
+                            player.pos.x +
+                            player.facing * 65,
+                            player.pos.y
+                        ),
+                        color(
+                            255,
+                            220,
+                            0
+                        ),
+                        opacity(0.8),
+                        anchor("center"),
+                        z(40),
+                        opacity(1),
+                        lifespan(
+                            0.18,
+                            {
+                                fade: 0.08,
+                            }
+                        ),
+                    ]);
+
+                    if (
+                        !player2.invincible
+                    ) {
+
+                        player2.damage +=
+                            12;
+
+                        player2.knockbackActive =
+                            true;
+
+                        player2.knockbackX =
+                            700 *
+                            player.facing;
+
+                        player2.vel.x =
+                            player2.knockbackX;
+
+                        player2.vel.y =
+                            -300;
+                    }
+
+                    return;
+                }
+
+                // ==============================================
+                // ⚽ RANGED KICK
+                // ==============================================
+
+                if (
+                    player.bachHasBall &&
+                    bachBallP1 &&
+                    bachBallP1.exists() &&
+                    !bachBallP1.flying
+                ) {
+
+                    player.bachHasBall =
+                        false;
+
+                    bachBallP1.flying =
+                        true;
+
+                    bachBallP1.bachVX =
+                        player.facing * 500;
+
+                    bachBallP1.bachVY =
+                        0;
+
+                    return;
+                }
+
+                return;
+            }
+            // ==================================================
+            // 🔥 CHAT FIREBALL
+            // ==================================================
+
+            if (
+                player.fighter ===
+                "CHAT" &&
+                player.chatPower === 4
+            ) {
+
+                const fireballDirection =
+                    player.facing;
+
+                const fireball = add([
+                    circle(15),
+                    pos(
+                        player.pos.x +
+                        fireballDirection * 55,
+                        player.pos.y
+                    ),
+                    anchor("center"),
+                    color(
+                        255,
+                        80,
+                        0
+                    ),
+                    opacity(1),
+                    area(),
+                    {
+                        speed: 750,
+                        hit: false,
+                    },
+                    lifespan(
+                        1.5,
+                        {
+                            fade: 0.3,
+                        }
+                    ),
+                ]);
+
+
+                fireball.onUpdate(
+                    () => {
+
+                        fireball.move(
+                            fireball.speed *
+                            fireballDirection,
+                            0
+                        );
+
+                        if (
+                            !fireball.hit &&
+                            !player2.invincible &&
+                            Math.abs(
+                                fireball.pos.x -
+                                player2.pos.x
+                            ) < 40 &&
+                            Math.abs(
+                                fireball.pos.y -
+                                player2.pos.y
+                            ) < 50
+                        ) {
+
+                            fireball.hit =
+                                true;
+
+                            player2.damage +=
+                                20;
+
+                            player2.knockbackActive =
+                                true;
+
+                            player2.knockbackX =
+                                700 *
+                                fireballDirection;
+
+                            player2.vel.x =
+                                player2.knockbackX;
+
+                            player2.vel.y =
+                                -400;
+
+                            shake(8);
+
+                            destroy(
+                                fireball
+                            );
+                        }
+                    }
+                );
+
+                return;
+            }
+
+
+            // ==================================================
+            // GREG
+            // ==================================================
+
+            if (
+                player.fighter ===
+                "GREG"
+            ) {
+
+                if (
+                    player.gregCooldown
+                ) {
+                    return;
+                }
+
+                player.gregCooldown =
+                    true;
+
+                wait(
+                    GREG_ATTACK_COOLDOWN,
+                    () => {
+
+                        player.gregCooldown =
+                            false;
+                    }
+                );
+
+
+                if (
+                    player.facingUp
+                ) {
+
+                    const attack = add([
+                        rect(65, 160),
+                        pos(
+                            player.pos.x +
+                            player.facing * 45,
+                            player.pos.y - 80
+                        ),
+                        color(
+                            255,
+                            0,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                    if (
+                        !player2.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player2.pos.x
+                        ) < 80 &&
+                        Math.abs(
+                            attack.pos.y -
+                            player2.pos.y
+                        ) < 120
+                    ) {
+
+                        player2.damage +=
+                            15;
+
+                        player2.knockbackActive =
+                            true;
+
+                        player2.knockbackX =
+                            (
+                                GREG_UPPERCUT_KNOCKBACK +
+                                player2.damage * 6
+                            ) *
+                            player.facing;
+
+                        player2.vel.x =
+                            player2.knockbackX;
+
+                        player2.vel.y =
+                            -700;
+                    }
+
+                } else {
+
+                    const attack = add([
+                        rect(180, 45),
+                        pos(
+                            player.pos.x +
+                            player.facing * 90,
+                            player.pos.y
+                        ),
+                        color(
+                            255,
+                            255,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                    if (
+                        !player2.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player2.pos.x
+                        ) < 130 &&
+                        Math.abs(
+                            attack.pos.y -
+                            player2.pos.y
+                        ) < 60
+                    ) {
+
+                        player2.damage +=
+                            10;
+
+                        player2.knockbackActive =
+                            true;
+
+                        player2.knockbackX =
+                            (
+                                GREG_PUNCH_KNOCKBACK +
+                                player2.damage * 6
+                            ) *
+                            player.facing;
+
+                        player2.vel.x =
+                            player2.knockbackX;
+
+                        player2.vel.y =
+                            -250;
+                    }
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // ANGY-CAT
+            // ==================================================
+
+            if (
+                player.fighter ===
+                "ANGY-CAT"
+            ) {
+
+                if (
+                    player.facingUp
+                ) {
+
+                    const attackSize =
+                        player.catMod
+                            ? 160
+                            : 80;
+
+                    const attack =
+                        add([
+                            rect(
+                                attackSize,
+                                attackSize
+                            ),
+                            pos(
+                                player.pos.x +
+                                player.facing *
+                                (
+                                    player.catMod
+                                        ? 90
+                                        : 50
+                                ),
+                                player.pos.y -
+                                (
+                                    player.catMod
+                                        ? 60
+                                        : 40
+                                )
+                            ),
+                            color(
+                                255,
+                                150,
+                                0
+                            ),
+                            opacity(0.6),
+                            area(),
+                            lifespan(
+                                0.12,
+                                {
+                                    fade: 0.05,
+                                }
+                            ),
+                        ]);
+
+                    if (
+                        !player2.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player2.pos.x
+                        ) <
+                        (
+                            player.catMod
+                                ? 130
+                                : 70
+                        ) &&
+                        Math.abs(
+                            attack.pos.y -
+                            player2.pos.y
+                        ) <
+                        (
+                            player.catMod
+                                ? 130
+                                : 75
+                        )
+                    ) {
+
+                        player2.damage +=
+                            15;
+
+                        player2.knockbackActive =
+                            true;
+
+                        player2.knockbackX =
+                            (
+                                400 +
+                                player2.damage *
+                                10
+                            ) *
+                            player.facing;
+
+                        player2.vel.x =
+                            player2.knockbackX;
+
+                        player2.vel.y =
+                            -700;
+                    }
+
+                    return;
+                }
+
+
+                const attackWidth =
+                    player.catMod
+                        ? 220
+                        : 100;
+
+                const attackHeight =
+                    player.catMod
+                        ? 55
+                        : 40;
+
+                const attackDistance =
+                    player.catMod
+                        ? 110
+                        : 55;
+
+                const attack = add([
+                    rect(
+                        attackWidth,
+                        attackHeight
+                    ),
+                    pos(
+                        player.pos.x +
+                        player.facing *
+                        attackDistance,
+                        player.pos.y
+                    ),
+                    color(
+                        255,
+                        150,
+                        0
+                    ),
+                    opacity(0.6),
+                    area(),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.05,
+                        }
+                    ),
+                ]);
+
+                const hitDistance =
+                    player.catMod
+                        ? 180
+                        : 85;
+
+                const hitHeight =
+                    player.catMod
+                        ? 70
+                        : 50;
+
+                if (
+                    !player2.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player2.pos.x
+                    ) <
+                    hitDistance &&
+                    Math.abs(
+                        attack.pos.y -
+                        player2.pos.y
+                    ) <
+                    hitHeight
+                ) {
+
+                    player2.damage +=
+                        player.catMod
+                            ? 15
+                            : 10;
+
+                    player2.knockbackActive =
+                        true;
+
+                    player2.knockbackX =
+                        (
+                            550 +
+                            player2.damage *
+                            10
+                        ) *
+                        player.facing;
+
+                    player2.vel.x =
+                        player2.knockbackX;
+
+                    player2.vel.y =
+                        player.catMod
+                            ? -400
+                            : -300;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // ANGY-CAP
+            // ==================================================
+
+            if (
+                player.fighter ===
+                "ANGY-CAP"
+            ) {
+
+                if (
+                    player.facingUp
+                ) {
+
+                    const attack =
+                        add([
+                            rect(50, 100),
+                            pos(
+                                player.pos.x +
+                                player.facing * 45,
+                                player.pos.y - 55
+                            ),
+                            color(
+                                150,
+                                100,
+                                50
+                            ),
+                            opacity(0.6),
+                            area(),
+                            lifespan(
+                                0.12,
+                                {
+                                    fade: 0.05,
+                                }
+                            ),
+                        ]);
+
+                    if (
+                        !player2.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player2.pos.x
+                        ) < 35 &&
+                        Math.abs(
+                            attack.pos.y -
+                            player2.pos.y
+                        ) < 70
+                    ) {
+
+                        player2.damage +=
+                            15;
+
+                        player2.knockbackActive =
+                            true;
+
+                        player2.knockbackX =
+                            (
+                                900 +
+                                player2.damage *
+                                15
+                            ) *
+                            player.facing;
+
+                        player2.vel.x =
+                            player2.knockbackX;
+
+                        player2.vel.y =
+                            -700;
+                    }
+
+                    return;
+                }
+
+
+                const attack =
+                    add([
+                        rect(75, 25),
+                        pos(
+                            player.pos.x +
+                            player.facing * 35,
+                            player.pos.y
+                        ),
+                        color(
+                            150,
+                            100,
+                            50
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player2.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player2.pos.x
+                    ) < 55 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player2.pos.y
+                    ) < 45
+                ) {
+
+                    player2.damage +=
+                        ANGY_CAP_DAMAGE;
+
+                    player2.knockbackActive =
+                        true;
+
+                    player2.knockbackX =
+                        ANGY_CAP_KNOCKBACK *
+                        player.facing;
+
+                    player2.vel.x =
+                        player2.knockbackX;
+
+                    player2.vel.y =
+                        -300;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // GENERAL UPPERCUT
+            // ==================================================
+
+            if (
+                player.facingUp
+            ) {
+
+                const attack =
+                    add([
+                        rect(45, 90),
+                        pos(
+                            player.pos.x +
+                            player.facing * 45,
+                            player.pos.y - 55
+                        ),
+                        color(
+                            255,
+                            0,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player2.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player2.pos.x
+                    ) < 70 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player2.pos.y
+                    ) < 90
+                ) {
+
+                    player2.damage +=
+                        player.fighter ===
+                            "RED"
+                            ? RED_UPPERCUT_DAMAGE
+                            : player.fighter ===
+                                "BLUE"
+                                ? BLUE_UPPERCUT_DAMAGE
+                                : 15;
+
+                    player2.knockbackActive =
+                        true;
+
+                    let knockback;
+
+                    if (
+                        player2.fighter ===
+                        "GOOSEY" &&
+                        player2.hasRedPower
+                    ) {
+
+                        knockback =
+                            RED_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player2.fighter ===
+                        "GOOSEY"
+                    ) {
+
+                        knockback =
+                            GOOSEY_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player.fighter ===
+                        "RED"
+                    ) {
+
+                        knockback =
+                            RED_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player.fighter ===
+                        "BLUE"
+                    ) {
+
+                        knockback =
+                            BLUE_UPPERCUT_KNOCKBACK;
+
+                    } else {
+
+                        knockback =
+                            300;
+                    }
+
+                    player2.knockbackX =
+                        (
+                            knockback +
+                            player2.damage * 10
+                        ) *
+                        player.facing;
+
+                    player2.vel.x =
+                        player2.knockbackX;
+
+                    player2.vel.y =
+                        -700;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // GENERAL PUNCH
+            // ==================================================
+
+            const attack =
+                add([
+                    rect(90, 45),
+                    pos(
+                        player.pos.x +
+                        player.facing * 65,
+                        player.pos.y
+                    ),
+                    color(
+                        255,
+                        255,
+                        0
+                    ),
+                    opacity(0.6),
+                    area(),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.05,
+                        }
+                    ),
+                ]);
 
             if (
                 !player2.invincible &&
                 Math.abs(
                     attack.pos.x -
                     player2.pos.x
-                ) < 130 &&
+                ) < 90 &&
                 Math.abs(
                     attack.pos.y -
                     player2.pos.y
                 ) < 60
             ) {
 
-                player2.damage += 10;
-                player2.knockbackActive = true;
+                player2.damage +=
+                    player.fighter ===
+                        "GOOSEY" &&
+                        player.hasRedPower
+                        ? RED_PUNCH_DAMAGE
+                        : player.fighter ===
+                            "RED"
+                            ? RED_PUNCH_DAMAGE
+                            : player.fighter ===
+                                "BLUE"
+                                ? BLUE_PUNCH_DAMAGE
+                                : 10;
+
+                player2.knockbackActive =
+                    true;
+
+                let knockback;
+
+                if (
+                    player.fighter ===
+                    "GOOSEY"
+                ) {
+
+                    knockback =
+                        GOOSEY_PUNCH_KNOCKBACK;
+
+                } else if (
+                    player.fighter ===
+                    "RED"
+                ) {
+
+                    knockback =
+                        RED_PUNCH_KNOCKBACK;
+
+                } else if (
+                    player.fighter ===
+                    "BLUE"
+                ) {
+
+                    knockback =
+                        BLUE_PUNCH_KNOCKBACK;
+
+                } else {
+
+                    knockback =
+                        500;
+                }
 
                 player2.knockbackX =
-                    (GREG_PUNCH_KNOCKBACK +
-                    player2.damage * 6) *
+                    (
+                        knockback +
+                        player2.damage * 10
+                    ) *
                     player.facing;
 
                 player2.vel.x =
                     player2.knockbackX;
 
-                player2.vel.y = -250;
+                player2.vel.y =
+                    -250;
             }
         }
+    );
 
-        return;
-    }
 
     // ==================================================
-    // ANGY-CAT
+    // P2 ATTACK
     // ==================================================
 
-    if (player.fighter === "ANGY-CAT") {
-
-        if (player.facingUp) {
-
-            const attackSize =
-                player.catMod ? 160 : 80;
-
-            const attack = add([
-                rect(
-                    attackSize,
-                    attackSize
-                ),
-                pos(
-                    player.pos.x +
-                    player.facing *
-                    (player.catMod ? 90 : 50),
-
-                    player.pos.y -
-                    (player.catMod ? 60 : 40)
-                ),
-                color(255, 150, 0),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
+    onKeyPress(
+        "f",
+        () => {
 
             if (
-                !player2.invincible &&
-                Math.abs(
-                    attack.pos.x -
-                    player2.pos.x
-                ) <
-                (player.catMod ? 130 : 70) &&
-
-                Math.abs(
-                    attack.pos.y -
-                    player2.pos.y
-                ) <
-                (player.catMod ? 130 : 75)
+                player2.respawning ||
+                player2.frozen ||
+                player2.invincible
             ) {
-
-                player2.damage += 15;
-                player2.knockbackActive = true;
-
-                player2.knockbackX =
-                    (400 +
-                    player2.damage * 10) *
-                    player.facing;
-
-                player2.vel.x =
-                    player2.knockbackX;
-
-                player2.vel.y = -700;
+                return;
             }
-
-            return;
-        }
-
-        const attackWidth =
-            player.catMod ? 220 : 100;
-
-        const attackHeight =
-            player.catMod ? 55 : 40;
-
-        const attackDistance =
-            player.catMod ? 110 : 55;
-
-        const attack = add([
-            rect(
-                attackWidth,
-                attackHeight
-            ),
-            pos(
-                player.pos.x +
-                player.facing *
-                attackDistance,
-
-                player.pos.y
-            ),
-            color(255, 150, 0),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        const hitDistance =
-            player.catMod ? 180 : 85;
-
-        const hitHeight =
-            player.catMod ? 70 : 50;
-
-        if (
-            !player2.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player2.pos.x
-            ) < hitDistance &&
-            Math.abs(
-                attack.pos.y -
-                player2.pos.y
-            ) < hitHeight
-        ) {
-
-            player2.damage +=
-                player.catMod ? 15 : 10;
-
-            player2.knockbackActive = true;
-
-            player2.knockbackX =
-                (550 +
-                player2.damage * 10) *
-                player.facing;
-
-            player2.vel.x =
-                player2.knockbackX;
-
-            player2.vel.y =
-                player.catMod
-                ? -400
-                : -300;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // ANGY-CAP
-    // ==================================================
-
-    if (player.fighter === "ANGY-CAP") {
-
-        if (player.facingUp) {
-
-            const attack = add([
-                rect(50, 100),
-                pos(
-                    player.pos.x +
-                    player.facing * 45,
-                    player.pos.y - 55
-                ),
-                color(150, 100, 50),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
+            // ==================================================
+            // ⚽ BACH ATTACK — P2
+            // ==================================================
 
             if (
-                !player2.invincible &&
-                Math.abs(
-                    attack.pos.x -
-                    player2.pos.x
-                ) < 35 &&
-                Math.abs(
-                    attack.pos.y -
-                    player2.pos.y
-                ) < 70
+                player2.fighter ===
+                "BACH"
             ) {
 
-                player2.damage += 15;
-                player2.knockbackActive = true;
+                const closeToOpponent =
+                    Math.abs(
+                        player.pos.x -
+                        player2.pos.x
+                    ) < 100 &&
+                    Math.abs(
+                        player.pos.y -
+                        player2.pos.y
+                    ) < 70;
 
-                player2.knockbackX =
-                    (900 +
-                    player2.damage * 15) *
-                    player.facing;
+                // 🦵 NORMAL KICK
 
-                player2.vel.x =
-                    player2.knockbackX;
+                if (
+                    closeToOpponent
+                ) {
 
-                player2.vel.y = -700;
+                    if (
+                        !player.invincible
+                    ) {
+
+                        player.damage +=
+                            12;
+
+                        player.knockbackActive =
+                            true;
+
+                        player.knockbackX =
+                            700 *
+                            player2.facing;
+
+                        player.vel.x =
+                            player.knockbackX;
+
+                        player.vel.y =
+                            -300;
+                    }
+
+                    return;
+                }
+
+                // ⚽ RANGED KICK
+
+                if (
+                    player2.bachHasBall &&
+                    bachBallP2 &&
+                    bachBallP2.exists() &&
+                    !bachBallP2.flying
+                ) {
+
+                    player2.bachHasBall =
+                        false;
+
+                    bachBallP2.flying =
+                        true;
+
+                    bachBallP2.bachVX =
+                        player2.facing *
+                        450;
+
+                    bachBallP2.bachVY =
+                        0;
+
+                    return;
+                }
+
+                return;
             }
+            // ==================================================
+            // 🔥 CHAT FIREBALL — P2
+            // ==================================================
 
-            return;
-        }
-
-        const attack = add([
-            rect(75, 25),
-            pos(
-                player.pos.x +
-                player.facing * 35,
-                player.pos.y
-            ),
-            color(150, 100, 50),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player2.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player2.pos.x
-            ) < 55 &&
-            Math.abs(
-                attack.pos.y -
-                player2.pos.y
-            ) < 45
-        ) {
-
-            player2.damage +=
-                ANGY_CAP_DAMAGE;
-
-            player2.knockbackActive = true;
-
-            player2.knockbackX =
-                ANGY_CAP_KNOCKBACK *
-                player.facing;
-
-            player2.vel.x =
-                player2.knockbackX;
-
-            player2.vel.y = -300;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // GENERAL UPPERCUT
-    // ==================================================
-
-    if (player.facingUp) {
-
-        const attack = add([
-            rect(45, 90),
-            pos(
-                player.pos.x +
-                player.facing * 45,
-                player.pos.y - 55
-            ),
-            color(255, 0, 0),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player2.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player2.pos.x
-            ) < 70 &&
-            Math.abs(
-                attack.pos.y -
-                player2.pos.y
-            ) < 90
-        ) {
-
-            player2.damage +=
-                player.fighter === "RED"
-                ? RED_UPPERCUT_DAMAGE
-                : player.fighter === "BLUE"
-                ? BLUE_UPPERCUT_DAMAGE
-                : 15;
-
-            player2.knockbackActive = true;
-
-            let knockback;
-if (
-    player2.fighter === "GOOSEY" &&
-    player2.hasRedPower
-) {
-
-    knockback =
-        RED_UPPERCUT_KNOCKBACK;
-
-} else if (player2.fighter === "GOOSEY") {
-
-    knockback =
-        GOOSEY_UPPERCUT_KNOCKBACK;
-
-} else if (player2.fighter === "RED") {
-                knockback =
-                    RED_UPPERCUT_KNOCKBACK;
-            } else if (player.fighter === "BLUE") {
-                knockback =
-                    BLUE_UPPERCUT_KNOCKBACK;
-            } else {
-                knockback = 300;
-            }
-
-            player2.knockbackX =
-                (knockback +
-                player2.damage * 10) *
-                player.facing;
-
-            player2.vel.x =
-                player2.knockbackX;
-
-            player2.vel.y = -700;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // GENERAL PUNCH
-    // ==================================================
-
-    const attack = add([
-        rect(90, 45),
-        pos(
-            player.pos.x +
-            player.facing * 65,
-            player.pos.y
-        ),
-        color(255, 255, 0),
-        opacity(0.6),
-        area(),
-        lifespan(0.12, {
-            fade: 0.05,
-        }),
-    ]);
-
-    if (
-        !player2.invincible &&
-        Math.abs(
-            attack.pos.x -
-            player2.pos.x
-        ) < 90 &&
-        Math.abs(
-            attack.pos.y -
-            player2.pos.y
-        ) < 60
-    ) {
-player2.damage +=
-    player.fighter === "GOOSEY" &&
-    player.hasRedPower
-        ? RED_PUNCH_DAMAGE
-        : player.fighter === "RED"
-        ? RED_PUNCH_DAMAGE
-        : player.fighter === "BLUE"
-        ? BLUE_PUNCH_DAMAGE
-        : 10;
-        player2.knockbackActive = true;
-
-        let knockback;
-
-        if (player.fighter === "GOOSEY") {
-            knockback =
-                GOOSEY_PUNCH_KNOCKBACK;
-        } else if (player.fighter === "RED") {
-            knockback =
-                RED_PUNCH_KNOCKBACK;
-        } else if (player.fighter === "BLUE") {
-            knockback =
-                BLUE_PUNCH_KNOCKBACK;
-        } else {
-            knockback = 500;
-        }
-
-        player2.knockbackX =
-            (knockback +
-            player2.damage * 10) *
-            player.facing;
-
-        player2.vel.x =
-            player2.knockbackX;
-
-        player2.vel.y = -250;
-    }
-});
-
-// ==================================================
-// P2 ATTACK
-// ==================================================
-
-onKeyPress("f", () => {
-
-    if (
-        player2.respawning ||
-        player2.frozen ||
-        player2.invincible
-    ) {
-        return;
-    }
-// ==================================================
-// 🔥 CHAT FIREBALL — P2
-// ==================================================
-
-if (
-    player2.fighter === "CHAT" &&
-    player2.chatPower === 4
-) {
-
-    // Lock direction when fired
-    const fireballDirection = player2.facing;
-
-    const fireball = add([
-        circle(15),
-        pos(
-            player2.pos.x +
-            fireballDirection * 55,
-            player2.pos.y
-        ),
-        anchor("center"),
-        color(255, 80, 0),
-        opacity(1),
-        area(),
-        {
-            speed: 750,
-            hit: false,
-        },
-        lifespan(1.5, {
-            fade: 0.3,
-        }),
-    ]);
-
-    // 🔥 MOVE + HIT DETECTION
-    fireball.onUpdate(() => {
-
-        fireball.move(
-            fireball.speed *
-            fireballDirection,
-            0
-        );
-
-        // 💥 HIT PLAYER 1
-        if (
-            !fireball.hit &&
-            !player.invincible &&
-            Math.abs(fireball.pos.x - player.pos.x) < 40 &&
-            Math.abs(fireball.pos.y - player.pos.y) < 50
-        ) {
-
-            fireball.hit = true;
-
-            // 💥 DAMAGE
-            player.damage += 20;
-
-            // 🪨 ROCK SOLID
             if (
-                player.fighter === "CHAT" &&
-                player.chatPower === 2
+                player2.fighter ===
+                "CHAT" &&
+                player2.chatPower === 4
             ) {
 
-                player.knockbackActive = true;
+                const fireballDirection =
+                    player2.facing;
 
-                player.knockbackX =
-                    700 *
-                    fireballDirection *
-                    0.1;
+                const fireball = add([
+                    circle(15),
+                    pos(
+                        player2.pos.x +
+                        fireballDirection * 55,
+                        player2.pos.y
+                    ),
+                    anchor("center"),
+                    color(
+                        255,
+                        80,
+                        0
+                    ),
+                    opacity(1),
+                    area(),
+                    {
+                        speed: 750,
+                        hit: false,
+                    },
+                    lifespan(
+                        1.5,
+                        {
+                            fade: 0.3,
+                        }
+                    ),
+                ]);
 
-                player.vel.x =
-                    player.knockbackX;
 
-                player.vel.y = -40;
+                fireball.onUpdate(
+                    () => {
 
-            } else {
+                        fireball.move(
+                            fireball.speed *
+                            fireballDirection,
+                            0
+                        );
 
-                player.knockbackActive = true;
+                        if (
+                            !fireball.hit &&
+                            !player.invincible &&
+                            Math.abs(
+                                fireball.pos.x -
+                                player.pos.x
+                            ) < 40 &&
+                            Math.abs(
+                                fireball.pos.y -
+                                player.pos.y
+                            ) < 50
+                        ) {
 
-                player.knockbackX =
-                    700 *
-                    fireballDirection;
+                            fireball.hit =
+                                true;
 
-                player.vel.x =
-                    player.knockbackX;
+                            player.damage +=
+                                20;
 
-                player.vel.y = -400;
+                            player.knockbackActive =
+                                true;
+
+                            player.knockbackX =
+                                700 *
+                                fireballDirection;
+
+                            player.vel.x =
+                                player.knockbackX;
+
+                            player.vel.y =
+                                -400;
+
+                            shake(8);
+
+                            destroy(
+                                fireball
+                            );
+                        }
+                    }
+                );
+
+                return;
             }
 
-            // 🔥 FIREBALL IMPACT
-            shake(8);
 
-            destroy(fireball);
-        }
-    });
+            // ==================================================
+            // GREG
+            // ==================================================
 
-    // 🔥 Fireball replaces normal attack
-    return;
-}
-    // ==================================================
-    // GREG
-    // ==================================================
+            if (
+                player2.fighter ===
+                "GREG"
+            ) {
 
-    if (player2.fighter === "GREG") {
+                if (
+                    player2.gregCooldown
+                ) {
+                    return;
+                }
 
-        if (player2.gregCooldown) {
-            return;
-        }
+                player2.gregCooldown =
+                    true;
 
-        player2.gregCooldown = true;
+                wait(
+                    GREG_ATTACK_COOLDOWN,
+                    () => {
 
-        wait(GREG_ATTACK_COOLDOWN, () => {
-            player2.gregCooldown = false;
-        });
+                        player2.gregCooldown =
+                            false;
+                    }
+                );
 
-        if (player2.facingUp) {
 
-            const attack = add([
-                rect(65, 160),
-                pos(
-                    player2.pos.x +
-                    player2.facing * 45,
-                    player2.pos.y - 85
-                ),
-                color(255, 100, 100),
-                opacity(0.6),
-                area(),
-                lifespan(0.15, {
-                    fade: 0.05,
-                }),
-            ]);
+                if (
+                    player2.facingUp
+                ) {
+
+                    const attack =
+                        add([
+                            rect(65, 160),
+                            pos(
+                                player2.pos.x +
+                                player2.facing * 45,
+                                player2.pos.y - 85
+                            ),
+                            color(
+                                255,
+                                100,
+                                100
+                            ),
+                            opacity(0.6),
+                            area(),
+                            lifespan(
+                                0.15,
+                                {
+                                    fade: 0.05,
+                                }
+                            ),
+                        ]);
+
+                    if (
+                        !player.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player.pos.x
+                        ) < 90 &&
+                        Math.abs(
+                            attack.pos.y -
+                            player.pos.y
+                        ) < 130
+                    ) {
+
+                        player.damage +=
+                            15;
+
+                        player.knockbackActive =
+                            true;
+
+                        player.knockbackX =
+                            (
+                                GREG_UPPERCUT_KNOCKBACK +
+                                player.damage * 6
+                            ) *
+                            player2.facing;
+
+                        player.vel.x =
+                            player.knockbackX;
+
+                        player.vel.y =
+                            -750;
+                    }
+
+                    return;
+                }
+
+
+                const attack =
+                    add([
+                        rect(180, 45),
+                        pos(
+                            player2.pos.x +
+                            player2.facing * 110,
+                            player2.pos.y
+                        ),
+                        color(
+                            255,
+                            150,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.15,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player.pos.x
+                    ) < 170 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player.pos.y
+                    ) < 60
+                ) {
+
+                    player.damage +=
+                        10;
+
+                    player.knockbackActive =
+                        true;
+
+                    player.knockbackX =
+                        (
+                            GREG_PUNCH_KNOCKBACK +
+                            player.damage * 6
+                        ) *
+                        player2.facing;
+
+                    player.vel.x =
+                        player.knockbackX;
+
+                    player.vel.y =
+                        -300;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // ANGY-CAT
+            // ==================================================
+
+            if (
+                player2.fighter ===
+                "ANGY-CAT"
+            ) {
+
+                if (
+                    player2.facingUp
+                ) {
+
+                    const attackSize =
+                        player2.catMod
+                            ? 160
+                            : 80;
+
+                    const attack =
+                        add([
+                            rect(
+                                attackSize,
+                                attackSize
+                            ),
+                            pos(
+                                player2.pos.x +
+                                player2.facing *
+                                (
+                                    player2.catMod
+                                        ? 90
+                                        : 50
+                                ),
+                                player2.pos.y -
+                                (
+                                    player2.catMod
+                                        ? 60
+                                        : 40
+                                )
+                            ),
+                            color(
+                                255,
+                                150,
+                                0
+                            ),
+                            opacity(0.6),
+                            area(),
+                            lifespan(
+                                0.12,
+                                {
+                                    fade: 0.05,
+                                }
+                            ),
+                        ]);
+
+                    if (
+                        !player.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player.pos.x
+                        ) <
+                        (
+                            player2.catMod
+                                ? 130
+                                : 70
+                        ) &&
+                        Math.abs(
+                            attack.pos.y -
+                            player.pos.y
+                        ) <
+                        (
+                            player2.catMod
+                                ? 130
+                                : 75
+                        )
+                    ) {
+
+                        player.damage +=
+                            15;
+
+                        player.knockbackActive =
+                            true;
+
+                        player.knockbackX =
+                            (
+                                400 +
+                                player.damage *
+                                10
+                            ) *
+                            player2.facing;
+
+                        player.vel.x =
+                            player.knockbackX;
+
+                        player.vel.y =
+                            -700;
+                    }
+
+                    return;
+                }
+
+
+                const attack =
+                    add([
+                        rect(100, 40),
+                        pos(
+                            player2.pos.x +
+                            player2.facing * 55,
+                            player2.pos.y
+                        ),
+                        color(
+                            255,
+                            150,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player.pos.x
+                    ) < 85 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player.pos.y
+                    ) < 50
+                ) {
+
+                    player.damage +=
+                        10;
+
+                    player.knockbackActive =
+                        true;
+
+                    player.knockbackX =
+                        (
+                            550 +
+                            player.damage *
+                            10
+                        ) *
+                        player2.facing;
+
+                    player.vel.x =
+                        player.knockbackX;
+
+                    player.vel.y =
+                        -300;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // ANGY-CAP
+            // ==================================================
+
+            if (
+                player2.fighter ===
+                "ANGY-CAP"
+            ) {
+
+                if (
+                    player2.facingUp
+                ) {
+
+                    const attack =
+                        add([
+                            rect(50, 100),
+                            pos(
+                                player2.pos.x +
+                                player2.facing * 45,
+                                player2.pos.y - 55
+                            ),
+                            color(
+                                150,
+                                100,
+                                50
+                            ),
+                            opacity(0.6),
+                            area(),
+                            lifespan(
+                                0.12,
+                                {
+                                    fade: 0.05,
+                                }
+                            ),
+                        ]);
+
+                    if (
+                        !player.invincible &&
+                        Math.abs(
+                            attack.pos.x -
+                            player.pos.x
+                        ) < 35 &&
+                        Math.abs(
+                            attack.pos.y -
+                            player.pos.y
+                        ) < 70
+                    ) {
+
+                        player.damage +=
+                            15;
+
+                        player.knockbackActive =
+                            true;
+
+                        player.knockbackX =
+                            (
+                                900 +
+                                player.damage *
+                                15
+                            ) *
+                            player2.facing;
+
+                        player.vel.x =
+                            player.knockbackX;
+
+                        player.vel.y =
+                            -700;
+                    }
+
+                    return;
+                }
+
+
+                const attack =
+                    add([
+                        rect(75, 25),
+                        pos(
+                            player2.pos.x +
+                            player2.facing * 35,
+                            player2.pos.y
+                        ),
+                        color(
+                            150,
+                            100,
+                            50
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player.pos.x
+                    ) < 55 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player.pos.y
+                    ) < 45
+                ) {
+
+                    player.damage +=
+                        ANGY_CAP_DAMAGE;
+
+                    player.knockbackActive =
+                        true;
+
+                    player.knockbackX =
+                        ANGY_CAP_KNOCKBACK *
+                        player2.facing;
+
+                    player.vel.x =
+                        player2.knockbackX;
+
+                    player.vel.y =
+                        -300;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // GENERAL UPPERCUT
+            // ==================================================
+
+            if (
+                player2.facingUp
+            ) {
+
+                const attack =
+                    add([
+                        rect(45, 90),
+                        pos(
+                            player2.pos.x +
+                            player2.facing * 45,
+                            player2.pos.y - 55
+                        ),
+                        color(
+                            255,
+                            0,
+                            0
+                        ),
+                        opacity(0.6),
+                        area(),
+                        lifespan(
+                            0.12,
+                            {
+                                fade: 0.05,
+                            }
+                        ),
+                    ]);
+
+                if (
+                    !player.invincible &&
+                    Math.abs(
+                        attack.pos.x -
+                        player.pos.x
+                    ) < 70 &&
+                    Math.abs(
+                        attack.pos.y -
+                        player.pos.y
+                    ) < 90
+                ) {
+
+                    player.damage +=
+                        player2.fighter ===
+                            "RED"
+                            ? RED_UPPERCUT_DAMAGE
+                            : player2.fighter ===
+                                "BLUE"
+                                ? BLUE_UPPERCUT_DAMAGE
+                                : 15;
+
+                    player.knockbackActive =
+                        true;
+
+                    let knockback;
+
+                    if (
+                        player2.fighter ===
+                        "GOOSEY" &&
+                        player2.hasRedPower
+                    ) {
+
+                        knockback =
+                            RED_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player2.fighter ===
+                        "GOOSEY"
+                    ) {
+
+                        knockback =
+                            GOOSEY_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player2.fighter ===
+                        "RED"
+                    ) {
+
+                        knockback =
+                            RED_UPPERCUT_KNOCKBACK;
+
+                    } else if (
+                        player2.fighter ===
+                        "BLUE"
+                    ) {
+
+                        knockback =
+                            BLUE_UPPERCUT_KNOCKBACK;
+
+                    } else {
+
+                        knockback =
+                            300;
+                    }
+
+                    player.knockbackX =
+                        (
+                            knockback +
+                            player.damage * 10
+                        ) *
+                        player2.facing;
+
+                    player.vel.x =
+                        player.knockbackX;
+
+                    player.vel.y =
+                        -700;
+                }
+
+                return;
+            }
+
+
+            // ==================================================
+            // GENERAL PUNCH
+            // ==================================================
+
+            const attack =
+                add([
+                    rect(90, 45),
+                    pos(
+                        player2.pos.x +
+                        player2.facing * 65,
+                        player2.pos.y
+                    ),
+                    color(
+                        255,
+                        255,
+                        0
+                    ),
+                    opacity(0.6),
+                    area(),
+                    lifespan(
+                        0.12,
+                        {
+                            fade: 0.05,
+                        }
+                    ),
+                ]);
 
             if (
                 !player.invincible &&
@@ -5568,2317 +8092,2543 @@ if (
                 Math.abs(
                     attack.pos.y -
                     player.pos.y
-                ) < 130
+                ) < 60
             ) {
 
-                player.damage += 15;
-                player.knockbackActive = true;
+                player.damage +=
+                    player2.fighter ===
+                        "GOOSEY" &&
+                        player2.hasRedPower
+                        ? RED_PUNCH_DAMAGE
+                        : player2.fighter ===
+                            "RED"
+                            ? RED_PUNCH_DAMAGE
+                            : player2.fighter ===
+                                "BLUE"
+                                ? BLUE_PUNCH_DAMAGE
+                                : 10;
+
+                player.knockbackActive =
+                    true;
+
+                let knockback;
+
+                if (
+                    player2.fighter ===
+                    "GOOSEY"
+                ) {
+
+                    knockback =
+                        GOOSEY_PUNCH_KNOCKBACK;
+
+                } else if (
+                    player2.fighter ===
+                    "RED"
+                ) {
+
+                    knockback =
+                        RED_PUNCH_KNOCKBACK;
+
+                } else if (
+                    player2.fighter ===
+                    "BLUE"
+                ) {
+
+                    knockback =
+                        BLUE_PUNCH_KNOCKBACK;
+
+                } else {
+
+                    knockback =
+                        500;
+                }
 
                 player.knockbackX =
-                    (GREG_UPPERCUT_KNOCKBACK +
-                    player.damage * 6) *
+                    (
+                        knockback +
+                        player.damage * 10
+                    ) *
                     player2.facing;
 
                 player.vel.x =
                     player.knockbackX;
 
-                player.vel.y = -750;
+                player.vel.y =
+                    -250;
             }
-
-            return;
         }
-
-        const attack = add([
-            rect(180, 45),
-            pos(
-                player2.pos.x +
-                player2.facing * 110,
-                player2.pos.y
-            ),
-            color(255, 150, 0),
-            opacity(0.6),
-            area(),
-            lifespan(0.15, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player.pos.x
-            ) < 170 &&
-            Math.abs(
-                attack.pos.y -
-                player.pos.y
-            ) < 60
-        ) {
-
-            player.damage += 10;
-            player.knockbackActive = true;
-
-            player.knockbackX =
-                (GREG_PUNCH_KNOCKBACK +
-                player.damage * 6) *
-                player2.facing;
-
-            player.vel.x =
-                player2.knockbackX;
-
-            player.vel.y = -300;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // ANGY-CAT
-    // ==================================================
-
-    if (player2.fighter === "ANGY-CAT") {
-
-        if (player2.facingUp) {
-
-            const attackSize =
-                player2.catMod ? 160 : 80;
-
-            const attack = add([
-                rect(
-                    attackSize,
-                    attackSize
-                ),
-                pos(
-                    player2.pos.x +
-                    player2.facing *
-                    (player2.catMod ? 90 : 50),
-
-                    player2.pos.y -
-                    (player2.catMod ? 60 : 40)
-                ),
-                color(255, 150, 0),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
-
-            if (
-                !player.invincible &&
-                Math.abs(
-                    attack.pos.x -
-                    player.pos.x
-                ) <
-                (player2.catMod ? 130 : 70) &&
-
-                Math.abs(
-                    attack.pos.y -
-                    player.pos.y
-                ) <
-                (player2.catMod ? 130 : 75)
-            ) {
-
-                player.damage += 15;
-                player.knockbackActive = true;
-
-                player.knockbackX =
-                    (400 +
-                    player.damage * 10) *
-                    player2.facing;
-
-                player.vel.x =
-                    player.knockbackX;
-
-                player.vel.y = -700;
-            }
-
-            return;
-        }
-
-        const attack = add([
-            rect(100, 40),
-            pos(
-                player2.pos.x +
-                player2.facing * 55,
-                player2.pos.y
-            ),
-            color(255, 150, 0),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player.pos.x
-            ) < 85 &&
-            Math.abs(
-                attack.pos.y -
-                player.pos.y
-            ) < 50
-        ) {
-
-            player.damage += 10;
-            player.knockbackActive = true;
-
-            player.knockbackX =
-                (550 +
-                player.damage * 10) *
-                player2.facing;
-
-            player.vel.x =
-                player.knockbackX;
-
-            player.vel.y = -300;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // ANGY-CAP
-    // ==================================================
-
-    if (player2.fighter === "ANGY-CAP") {
-
-        if (player2.facingUp) {
-
-            const attack = add([
-                rect(50, 100),
-                pos(
-                    player2.pos.x +
-                    player2.facing * 45,
-                    player2.pos.y - 55
-                ),
-                color(150, 100, 50),
-                opacity(0.6),
-                area(),
-                lifespan(0.12, {
-                    fade: 0.05,
-                }),
-            ]);
-
-            if (
-                !player.invincible &&
-                Math.abs(
-                    attack.pos.x -
-                    player.pos.x
-                ) < 35 &&
-                Math.abs(
-                    attack.pos.y -
-                    player.pos.y
-                ) < 70
-            ) {
-
-                player.damage += 15;
-                player.knockbackActive = true;
-
-                player.knockbackX =
-                    (900 +
-                    player.damage * 15) *
-                    player2.facing;
-
-                player.vel.x =
-                    player.knockbackX;
-
-                player.vel.y = -700;
-            }
-
-            return;
-        }
-
-        const attack = add([
-            rect(75, 25),
-            pos(
-                player2.pos.x +
-                player2.facing * 35,
-                player2.pos.y
-            ),
-            color(150, 100, 50),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player.pos.x
-            ) < 55 &&
-            Math.abs(
-                attack.pos.y -
-                player.pos.y
-            ) < 45
-        ) {
-
-            player.damage +=
-                ANGY_CAP_DAMAGE;
-
-            player.knockbackActive = true;
-
-            player.knockbackX =
-                ANGY_CAP_KNOCKBACK *
-                player2.facing;
-
-            player.vel.x =
-                player.knockbackX;
-
-            player.vel.y = -300;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // GENERAL UPPERCUT
-    // ==================================================
-
-    if (player2.facingUp) {
-
-        const attack = add([
-            rect(45, 90),
-            pos(
-                player2.pos.x +
-                player2.facing * 45,
-                player2.pos.y - 55
-            ),
-            color(255, 0, 0),
-            opacity(0.6),
-            area(),
-            lifespan(0.12, {
-                fade: 0.05,
-            }),
-        ]);
-
-        if (
-            !player.invincible &&
-            Math.abs(
-                attack.pos.x -
-                player.pos.x
-            ) < 70 &&
-            Math.abs(
-                attack.pos.y -
-                player.pos.y
-            ) < 90
-        ) {
-
-            player.damage +=
-                player2.fighter === "RED"
-                ? RED_UPPERCUT_DAMAGE
-                : player2.fighter === "BLUE"
-                ? BLUE_UPPERCUT_DAMAGE
-                : 15;
-
-            player.knockbackActive = true;
-
-            let knockback;
-if (
-    player2.fighter === "GOOSEY" &&
-    player2.hasRedPower
-) {
-
-    knockback =
-        RED_UPPERCUT_KNOCKBACK;
-
-} else if (player2.fighter === "GOOSEY") {
-
-    knockback =
-        GOOSEY_UPPERCUT_KNOCKBACK;
-
-} else if (player2.fighter === "RED") {
-                knockback =
-                    RED_UPPERCUT_KNOCKBACK;
-            } else if (player2.fighter === "BLUE") {
-                knockback =
-                    BLUE_UPPERCUT_KNOCKBACK;
-            } else {
-                knockback = 300;
-            }
-
-            player.knockbackX =
-                (knockback +
-                player.damage * 10) *
-                player2.facing;
-
-            player.vel.x =
-                player.knockbackX;
-
-            player.vel.y = -700;
-        }
-
-        return;
-    }
-
-    // ==================================================
-    // GENERAL PUNCH
-    // ==================================================
-
-    const attack = add([
-        rect(90, 45),
-        pos(
-            player2.pos.x +
-            player2.facing * 65,
-            player2.pos.y
-        ),
-        color(255, 255, 0),
-        opacity(0.6),
-        area(),
-        lifespan(0.12, {
-            fade: 0.05,
-        }),
-    ]);
-
-    if (
-        !player.invincible &&
-        Math.abs(
-            attack.pos.x -
-            player.pos.x
-        ) < 90 &&
-        Math.abs(
-            attack.pos.y -
-            player.pos.y
-        ) < 60
-    ) {
-player.damage +=
-    player2.fighter === "GOOSEY" &&
-    player2.hasRedPower
-        ? RED_PUNCH_DAMAGE
-        : player2.fighter === "RED"
-        ? RED_PUNCH_DAMAGE
-        : player2.fighter === "BLUE"
-        ? BLUE_PUNCH_DAMAGE
-        : 10;
-        player.knockbackActive = true;
-
-        let knockback;
-if (
-    player2.fighter === "GOOSEY" &&
-    player2.hasRedPower
-) {
-
-    knockback =
-        RED_PUNCH_KNOCKBACK;
-
-} else if (player2.fighter === "GOOSEY") {
-
-    knockback =
-        GOOSEY_PUNCH_KNOCKBACK;
-
-} else if (player2.fighter === "RED") {
-            knockback =
-                RED_PUNCH_KNOCKBACK;
-        } else if (player2.fighter === "BLUE") {
-            knockback =
-                BLUE_PUNCH_KNOCKBACK;
-        } else {
-            knockback = 500;
-        }
-
-        player.knockbackX =
-            (knockback +
-            player.damage * 10) *
-            player2.facing;
-
-        player.vel.x =
-            player.knockbackX;
-
-        player.vel.y = -250;
-    }
-});
-// ==================================================
-// 🪿 GOOSEY SPECIAL SYSTEM
-// ==================================================
-
-const GOOSEY_SPECIAL_COOLDOWN = 3;
-const GOOSEY_GREG_COOLDOWN = 1;
-
-// ==================================================
-// 🪿 CHAT POWERS GOOSEY CAN USE
-// ==================================================
-
-const GOOSEY_CHAT_POWERS = [
-    "MAGNET",
-    "BOUNCY",
-    "ROCK_SOLID",
-    "ICE_TRAIL",
-    "FIREBALL",
-    "FREEZE",
-    "LIGHTNING",
-];
-
-// ==================================================
-// 🪿 APPLY / RESTORE GOOSEY POWER
-// ==================================================
-
-function setupGooseyPower(goosey) {
-
-    if (!goosey.gooseyPowers) {
-        goosey.gooseyPowers = [];
-    }
-
-    if (!goosey.hasRedPower) {
-        goosey.hasRedPower =
-            goosey.gooseyPowers.includes(0);
-    }
-
-    if (!goosey.hasBluePower) {
-        goosey.hasBluePower =
-            goosey.gooseyPowers.includes(1);
-    }
-
-    if (!goosey.hasGhostyPower) {
-        goosey.hasGhostyPower =
-            goosey.gooseyPowers.includes(2);
-    }
-
-    if (!goosey.hasGregPower) {
-        goosey.hasGregPower =
-            goosey.gooseyPowers.includes(3);
-    }
-
-    if (!goosey.hasCatPower) {
-        goosey.hasCatPower =
-            goosey.gooseyPowers.includes(4);
-    }
-
-    if (!goosey.hasAngyCapPower) {
-        goosey.hasAngyCapPower =
-            goosey.gooseyPowers.includes(5);
-    }
-
-    if (!goosey.hasPenguyPower) {
-        goosey.hasPenguyPower =
-            goosey.gooseyPowers.includes(6);
-    }
-
-    if (!goosey.hasMarkPower) {
-        goosey.hasMarkPower =
-            goosey.gooseyPowers.includes(7);
-    }
-
-    if (!goosey.hasChatPower) {
-        goosey.hasChatPower =
-            goosey.gooseyPowers.includes(8);
-    }
-
-    // ==============================================
-    // 🔴 RED
-    // ==============================================
-
-    if (goosey.hasRedPower) {
-
-        goosey.gooseySpeed =
-            RED_SPEED;
-    }
-
-    // ==============================================
-    // 🔵 BLUE
-    // ==============================================
-
-    if (goosey.hasBluePower) {
-
-        goosey.gooseySpeed =
-            BLUE_SPEED;
-    }
-
-    // ==============================================
-    // DEFAULT GOOSEY SPEED
-    // ==============================================
-
-    if (!goosey.hasRedPower &&
-        !goosey.hasBluePower) {
-
-        goosey.gooseySpeed =
-            GOOSEY_SPEED;
-    }
-
-    // ==============================================
-    // 🐱 CAT MOD
-    // ==============================================
-
-    if (goosey.hasCatPower) {
-
-        goosey.catMod = true;
-
-        goosey.scaleTo(
-            CAT_MOD_SCALE
-        );
-    }
-}
-
-// ==================================================
-// 🪿 GIVE GOOSEY A POWER
-// ==================================================
-
-function gooseyGetPower(
-    goosey,
-    opponent,
-    playerNumber
-) {
-
-    if (
-        goosey.fighter !==
-        "GOOSEY" ||
-        goosey.respawning
-    ) {
-        return;
-    }
-
-    const randomPower =
-        Math.floor(
-            Math.random() * 12
-        );
-
-    // ==================================================
-    // ❄️ GOOSEY FREEZE
-    // ==================================================
-
-    if (randomPower === 0) {
-
-        opponent.frozen = true;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: FREEZE!`;
-
-        wait(10, () => {
-
-            opponent.frozen = false;
-        });
-
-        wait(2, () => {
-
-            specialStatus.text = "";
-        });
-
-        return;
-    }
-
-    // ==================================================
-    // 💯 GOOSEY +100 DAMAGE
-    // ==================================================
-
-    if (randomPower === 1) {
-
-        opponent.damage += 100;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: +100% DAMAGE!`;
-
-        wait(2, () => {
-
-            specialStatus.text = "";
-        });
-
-        return;
-    }
-
-    // ==================================================
-    // 💥 GOOSEY SUPER KNOCKBACK
-    // ==================================================
-
-    if (randomPower === 2) {
-
-        opponent.knockbackActive =
-            true;
-
-        opponent.knockbackX =
-            1400 *
-            goosey.facing;
-
-        opponent.vel.x =
-            opponent.knockbackX;
-
-        opponent.vel.y = -600;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: SUPER KNOCKBACK!`;
-
-        wait(2, () => {
-
-            specialStatus.text = "";
-        });
-
-        return;
-    }
-
-    // ==================================================
-    // 🪿 CHARACTER POWER
-    // ==================================================
-
-    if (!goosey.gooseyPowers) {
-        goosey.gooseyPowers = [];
-    }
-
-    const copiedPower =
-        randomPower - 3;
-
-    // Don't copy the same character twice.
-    if (
-        goosey.gooseyPowers.includes(
-            copiedPower
-        )
-    ) {
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: ALREADY HAS THAT POWER!`;
-
-        wait(1.5, () => {
-
-            specialStatus.text = "";
-        });
-
-        return;
-    }
-
-    goosey.gooseyPowers.push(
-        copiedPower
     );
 
-    goosey.hasCopiedPower =
-        true;
 
     // ==================================================
-    // 🔴 RED
+    // 🪿 GOOSEY SPECIAL SYSTEM
     // ==================================================
 
-    if (copiedPower === 0) {
+    const GOOSEY_SPECIAL_COOLDOWN =
+        3;
 
-        goosey.hasRedPower =
-            true;
+    const GOOSEY_GREG_COOLDOWN =
+        1;
 
-        goosey.gooseySpeed =
-            RED_SPEED;
 
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED RED!`;
-    }
+    const GOOSEY_CHAT_POWERS = [
+        "MAGNET",
+        "BOUNCY",
+        "ROCK_SOLID",
+        "ICE_TRAIL",
+        "FIREBALL",
+        "FREEZE",
+        "LIGHTNING",
+    ];
 
-    // ==================================================
-    // 🔵 BLUE
-    // ==================================================
-
-    else if (copiedPower === 1) {
-
-        goosey.hasBluePower =
-            true;
-
-        goosey.gooseySpeed =
-            BLUE_SPEED;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED BLUE!`;
-    }
 
     // ==================================================
-    // 👻 GHOSTY
+    // 🪿 APPLY / RESTORE GOOSEY POWER
     // ==================================================
 
-    else if (copiedPower === 2) {
+    function setupGooseyPower(
+        goosey
+    ) {
 
-        goosey.hasGhostyPower =
-            true;
+        if (
+            !goosey.gooseyPowers
+        ) {
 
-        goosey.invincible =
-            true;
-
-        goosey.ghostyActive =
-            true;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED GHOSTY!`;
-
-        wait(3, () => {
-
-            goosey.invincible =
-                false;
-
-            goosey.ghostyActive =
-                false;
-        });
-    }
-
-    // ==================================================
-    // 🥊 GREG
-    // ==================================================
-
-    else if (copiedPower === 3) {
-
-        goosey.hasGregPower =
-            true;
-
-        goosey.gregCooldown =
-            false;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED GREG!`;
-    }
-
-    // ==================================================
-    // 🐱 ANGY-CAT
-    // ==================================================
-
-    else if (copiedPower === 4) {
-
-        goosey.hasCatPower =
-            true;
-
-        goosey.catMod =
-            true;
-
-        goosey.scaleTo(
-            CAT_MOD_SCALE
-        );
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: CAT MOD!!!`;
-    }
-
-    // ==================================================
-    // 😡 ANGY-CAP
-    // ==================================================
-
-    else if (copiedPower === 5) {
-
-        goosey.hasAngyCapPower =
-            true;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED ANGY-CAP!`;
-    }
-
-    // ==================================================
-    // 🐧 PENGUY
-    // ==================================================
-
-    else if (copiedPower === 6) {
-
-        goosey.hasPenguyPower =
-            true;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: SUPER SLIPPERY!`;
-    }
-
-    // ==================================================
-    // 🙂 MARK
-    // ==================================================
-
-    else if (copiedPower === 7) {
-
-        goosey.hasMarkPower =
-            true;
-
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED MARK!`;
-
-        wait(0.4, () => {
-
-            markDimensionShift();
-        });
-    }
-
-    // ==================================================
-    // 💬 CHAT
-    // ==================================================
-
-    else if (copiedPower === 8) {
-
-        goosey.hasChatPower =
-            true;
-
-        if (!goosey.gooseyChatPowers) {
-
-            goosey.gooseyChatPowers =
-                [
-                    "MAGNET",
-                    "BOUNCY",
-                    "ROCK_SOLID",
-                    "ICE_TRAIL",
-                    "FIREBALL",
-                    "FREEZE",
-                    "LIGHTNING",
-                ];
+            goosey.gooseyPowers =
+                [];
         }
 
-        specialStatus.text =
-            `GOOSEY P${playerNumber}: COPIED CHAT!`;
+        if (
+            !goosey.hasRedPower
+        ) {
 
-        wait(0.5, () => {
+            goosey.hasRedPower =
+                goosey.gooseyPowers.includes(
+                    0
+                );
+        }
+
+        if (
+            !goosey.hasBluePower
+        ) {
+
+            goosey.hasBluePower =
+                goosey.gooseyPowers.includes(
+                    1
+                );
+        }
+
+        if (
+            !goosey.hasGhostyPower
+        ) {
+
+            goosey.hasGhostyPower =
+                goosey.gooseyPowers.includes(
+                    2
+                );
+        }
+
+        if (
+            !goosey.hasGregPower
+        ) {
+
+            goosey.hasGregPower =
+                goosey.gooseyPowers.includes(
+                    3
+                );
+        }
+
+        if (
+            !goosey.hasCatPower
+        ) {
+
+            goosey.hasCatPower =
+                goosey.gooseyPowers.includes(
+                    4
+                );
+        }
+
+        if (
+            !goosey.hasAngyCapPower
+        ) {
+
+            goosey.hasAngyCapPower =
+                goosey.gooseyPowers.includes(
+                    5
+                );
+        }
+
+        if (
+            !goosey.hasPenguyPower
+        ) {
+
+            goosey.hasPenguyPower =
+                goosey.gooseyPowers.includes(
+                    6
+                );
+        }
+
+        if (
+            !goosey.hasMarkPower
+        ) {
+
+            goosey.hasMarkPower =
+                goosey.gooseyPowers.includes(
+                    7
+                );
+        }
+
+        if (
+            !goosey.hasChatPower
+        ) {
+
+            goosey.hasChatPower =
+                goosey.gooseyPowers.includes(
+                    8
+                );
+        }
+
+
+        if (
+            goosey.hasRedPower
+        ) {
+
+            goosey.gooseySpeed =
+                RED_SPEED;
+        }
+
+
+        if (
+            goosey.hasBluePower
+        ) {
+
+            goosey.gooseySpeed =
+                BLUE_SPEED;
+        }
+
+
+        if (
+            !goosey.hasRedPower &&
+            !goosey.hasBluePower
+        ) {
+
+            goosey.gooseySpeed =
+                GOOSEY_SPEED;
+        }
+
+
+        if (
+            goosey.hasCatPower
+        ) {
+
+            goosey.catMod =
+                true;
+
+            goosey.scaleTo(
+                CAT_MOD_SCALE
+            );
+        }
+    }
+
+
+    // ==================================================
+    // 🪿 GIVE GOOSEY A POWER
+    // ==================================================
+
+    function gooseyGetPower(
+        goosey,
+        opponent,
+        playerNumber
+    ) {
+
+        if (
+            goosey.fighter !==
+            "GOOSEY" ||
+            goosey.respawning
+        ) {
+            return;
+        }
+
+        const randomPower =
+            Math.floor(
+                Math.random() *
+                12
+            );
+
+
+        if (
+            randomPower === 0
+        ) {
+
+            opponent.frozen =
+                true;
 
             specialStatus.text =
-                `GOOSEY P${playerNumber}: CHAT POWERS UNLOCKED!`;
-        });
-    }
+                `GOOSEY P${playerNumber}: FREEZE!`;
 
-    wait(2, () => {
+            wait(10, () => {
 
-        specialStatus.text = "";
-    });
-}
+                opponent.frozen =
+                    false;
+            });
 
-// ==================================================
-// 👻 GHOSTY COPY EFFECT
-// ==================================================
+            wait(2, () => {
 
-onUpdate(() => {
+                specialStatus.text =
+                    "";
+            });
 
-    if (
-        player.fighter === "GOOSEY" &&
-        player.hasGhostyPower &&
-        player.ghostyActive
-    ) {
-
-        player.invincible = true;
-    }
-
-    if (
-        player2.fighter === "GOOSEY" &&
-        player2.hasGhostyPower &&
-        player2.ghostyActive
-    ) {
-
-        player2.invincible = true;
-    }
-});
-
-// ==================================================
-// 🐧 GOOSEY PENGUY PHYSICS
-// ==================================================
-
-onUpdate(() => {
-
-    if (
-        player.fighter === "GOOSEY" &&
-        player.hasPenguyPower &&
-        !player.knockbackActive &&
-        !player.respawning &&
-        !player.frozen
-    ) {
-
-        player.vel.x *=
-            PENGUY_GROUND_FRICTION;
-
-        if (
-            player.vel.x >
-            PENGUY_MAX_SPEED
-        ) {
-
-            player.vel.x =
-                PENGUY_MAX_SPEED;
+            return;
         }
 
-        if (
-            player.vel.x <
-            -PENGUY_MAX_SPEED
-        ) {
-
-            player.vel.x =
-                -PENGUY_MAX_SPEED;
-        }
-    }
-
-    if (
-        player2.fighter === "GOOSEY" &&
-        player2.hasPenguyPower &&
-        !player2.knockbackActive &&
-        !player2.respawning &&
-        !player2.frozen
-    ) {
-
-        player2.vel.x *=
-            PENGUY_GROUND_FRICTION;
 
         if (
-            player2.vel.x >
-            PENGUY_MAX_SPEED
+            randomPower === 1
         ) {
 
-            player2.vel.x =
-                PENGUY_MAX_SPEED;
+            opponent.damage +=
+                100;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: +100% DAMAGE!`;
+
+            wait(2, () => {
+
+                specialStatus.text =
+                    "";
+            });
+
+            return;
         }
+
 
         if (
-            player2.vel.x <
-            -PENGUY_MAX_SPEED
+            randomPower === 2
         ) {
 
-            player2.vel.x =
-                -PENGUY_MAX_SPEED;
+            opponent.knockbackActive =
+                true;
+
+            opponent.knockbackX =
+                1400 *
+                goosey.facing;
+
+            opponent.vel.x =
+                opponent.knockbackX;
+
+            opponent.vel.y =
+                -600;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: SUPER KNOCKBACK!`;
+
+            wait(2, () => {
+
+                specialStatus.text =
+                    "";
+            });
+
+            return;
         }
-    }
-});
 
-// ==================================================
-// 🥊 GOOSEY GREG POWER
-// ==================================================
 
-function gooseyGregAttack(
-    goosey,
-    opponent
-) {
+        if (
+            !goosey.gooseyPowers
+        ) {
 
-    if (
-        !goosey.hasGregPower ||
-        goosey.gregCooldown
-    ) {
-        return false;
-    }
+            goosey.gooseyPowers =
+                [];
+        }
 
-    goosey.gregCooldown =
-        true;
+        const copiedPower =
+            randomPower - 3;
 
-    wait(
-        GOOSEY_GREG_COOLDOWN,
-        () => {
+
+        if (
+            goosey.gooseyPowers.includes(
+                copiedPower
+            )
+        ) {
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: ALREADY HAS THAT POWER!`;
+
+            wait(1.5, () => {
+
+                specialStatus.text =
+                    "";
+            });
+
+            return;
+        }
+
+
+        goosey.gooseyPowers.push(
+            copiedPower
+        );
+
+        goosey.hasCopiedPower =
+            true;
+
+
+        if (
+            copiedPower === 0
+        ) {
+
+            goosey.hasRedPower =
+                true;
+
+            goosey.gooseySpeed =
+                RED_SPEED;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED RED!`;
+
+        } else if (
+            copiedPower === 1
+        ) {
+
+            goosey.hasBluePower =
+                true;
+
+            goosey.gooseySpeed =
+                BLUE_SPEED;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED BLUE!`;
+
+        } else if (
+            copiedPower === 2
+        ) {
+
+            goosey.hasGhostyPower =
+                true;
+
+            goosey.invincible =
+                true;
+
+            goosey.ghostyActive =
+                true;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED GHOSTY!`;
+
+            wait(3, () => {
+
+                goosey.invincible =
+                    false;
+
+                goosey.ghostyActive =
+                    false;
+            });
+
+        } else if (
+            copiedPower === 3
+        ) {
+
+            goosey.hasGregPower =
+                true;
 
             goosey.gregCooldown =
                 false;
-        }
-    );
 
-    const attack = add([
-        rect(180, 45),
-        pos(
-            goosey.pos.x +
-            goosey.facing * 110,
-            goosey.pos.y
-        ),
-        color(255, 150, 0),
-        opacity(0.6),
-        area(),
-        lifespan(
-            0.15,
-            {
-                fade: 0.05,
-            }
-        ),
-    ]);
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED GREG!`;
 
-    if (
-        !opponent.invincible &&
-        Math.abs(
-            attack.pos.x -
-            opponent.pos.x
-        ) < 170 &&
-        Math.abs(
-            attack.pos.y -
-            opponent.pos.y
-        ) < 60
-    ) {
+        } else if (
+            copiedPower === 4
+        ) {
 
-        opponent.damage += 10;
+            goosey.hasCatPower =
+                true;
 
-        opponent.knockbackActive =
-            true;
+            goosey.catMod =
+                true;
 
-        opponent.knockbackX =
-            (
-                GREG_PUNCH_KNOCKBACK +
-                opponent.damage * 6
-            ) *
-            goosey.facing;
-
-        opponent.vel.x =
-            opponent.knockbackX;
-
-        opponent.vel.y = -250;
-    }
-
-    return true;
-}
-
-// ==================================================
-// 💥 GOOSEY ANGY-CAP POWER
-// ==================================================
-
-function gooseyAngyCapAttack(
-    goosey,
-    opponent
-) {
-
-    if (!goosey.hasAngyCapPower) {
-        return false;
-    }
-
-    const attack = add([
-        rect(120, 30),
-        pos(
-            goosey.pos.x +
-            goosey.facing * 90,
-            goosey.pos.y
-        ),
-        color(150, 100, 50),
-        opacity(0.6),
-        area(),
-        lifespan(
-            0.12,
-            {
-                fade: 0.05,
-            }
-        ),
-    ]);
-
-    if (
-        !opponent.invincible &&
-        Math.abs(
-            attack.pos.x -
-            opponent.pos.x
-        ) < 100 &&
-        Math.abs(
-            attack.pos.y -
-            opponent.pos.y
-        ) < 50
-    ) {
-
-        opponent.damage +=
-            ANGY_CAP_DAMAGE;
-
-        opponent.knockbackActive =
-            true;
-
-        opponent.knockbackX =
-            ANGY_CAP_KNOCKBACK *
-            goosey.facing;
-
-        opponent.vel.x =
-            opponent.knockbackX;
-
-        opponent.vel.y = -300;
-    }
-
-    return true;
-}
-
-// ==================================================
-// 💬 GOOSEY CHAT RANDOMIZER
-// ==================================================
-
-function gooseyChatRandomMove(
-    goosey,
-    opponent
-) {
-
-    if (!goosey.hasChatPower) {
-        return;
-    }
-
-    const randomChat =
-        Math.floor(
-            Math.random() *
-            GOOSEY_CHAT_POWERS.length
-        );
-
-    const power =
-        GOOSEY_CHAT_POWERS[randomChat];
-
-    // ==================================================
-    // 🧲 MAGNET
-    // ==================================================
-
-    if (power === "MAGNET") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: 🧲 MAGNET!";
-
-        opponent.vel.x +=
-            (
-                goosey.pos.x -
-                opponent.pos.x
-            ) *
-            2 *
-            dt();
-    }
-
-    // ==================================================
-    // 🟢 BOUNCY
-    // ==================================================
-
-    else if (power === "BOUNCY") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: 🟢 BOUNCY!";
-
-        goosey.vel.y = -900;
-    }
-
-    // ==================================================
-    // 🪨 ROCK SOLID
-    // ==================================================
-
-    else if (power === "ROCK_SOLID") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: 🪨 ROCK SOLID!";
-
-        goosey.knockbackActive =
-            false;
-
-        goosey.knockbackX = 0;
-
-        goosey.vel.x = 0;
-    }
-
-    // ==================================================
-    // 🧊 ICE TRAIL
-    // ==================================================
-
-    else if (power === "ICE_TRAIL") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: 🧊 ICE TRAIL!";
-
-        add([
-            rect(35, 8),
-            pos(
-                goosey.pos.x,
-                goosey.pos.y + 30
-            ),
-            color(
-                150,
-                230,
-                255
-            ),
-            opacity(0.7),
-            lifespan(
-                0.5,
-                {
-                    fade: 0.4,
-                }
-            ),
-        ]);
-    }
-
-    // ==================================================
-    // 🔥 FIREBALL
-    // ==================================================
-
-    else if (power === "FIREBALL") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: 🔥 FIREBALL!";
-
-        const direction =
-            goosey.facing;
-
-        const fireball = add([
-            circle(15),
-            pos(
-                goosey.pos.x +
-                direction * 55,
-                goosey.pos.y
-            ),
-            anchor("center"),
-            color(
-                255,
-                80,
-                0
-            ),
-            area(),
-            {
-                speed: 750,
-                hit: false,
-            },
-            opacity(0.7),
-            lifespan(
-                1.5,
-                {
-                    fade: 0.3,
-                }
-            ),
-        ]);
-
-        fireball.onUpdate(() => {
-
-            fireball.move(
-                fireball.speed *
-                direction,
-                0
+            goosey.scaleTo(
+                CAT_MOD_SCALE
             );
 
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: CAT MOD!!!`;
+
+        } else if (
+            copiedPower === 5
+        ) {
+
+            goosey.hasAngyCapPower =
+                true;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED ANGY-CAP!`;
+
+        } else if (
+            copiedPower === 6
+        ) {
+
+            goosey.hasPenguyPower =
+                true;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: SUPER SLIPPERY!`;
+
+        } else if (
+            copiedPower === 7
+        ) {
+
+            goosey.hasMarkPower =
+                true;
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED MARK!`;
+
+            wait(0.4, () => {
+
+                markDimensionShift();
+            });
+
+        } else if (
+            copiedPower === 8
+        ) {
+
+            goosey.hasChatPower =
+                true;
+
             if (
-                !fireball.hit &&
-                !opponent.invincible &&
-                Math.abs(
-                    fireball.pos.x -
-                    opponent.pos.x
-                ) < 40 &&
-                Math.abs(
-                    fireball.pos.y -
-                    opponent.pos.y
-                ) < 50
+                !goosey.gooseyChatPowers
             ) {
 
-                fireball.hit = true;
-
-                opponent.damage += 20;
-
-                opponent.knockbackActive =
-                    true;
-
-                opponent.knockbackX =
-                    700 * direction;
-
-                opponent.vel.x =
-                    opponent.knockbackX;
-
-                opponent.vel.y = -400;
-
-                shake(8);
-
-                destroy(fireball);
+                goosey.gooseyChatPowers =
+                    [
+                        "MAGNET",
+                        "BOUNCY",
+                        "ROCK_SOLID",
+                        "ICE_TRAIL",
+                        "FIREBALL",
+                        "FREEZE",
+                        "LIGHTNING",
+                    ];
             }
+
+            specialStatus.text =
+                `GOOSEY P${playerNumber}: COPIED CHAT!`;
+
+            wait(0.5, () => {
+
+                specialStatus.text =
+                    `GOOSEY P${playerNumber}: CHAT POWERS UNLOCKED!`;
+            });
+        }
+
+
+        wait(2, () => {
+
+            specialStatus.text =
+                "";
         });
     }
 
-    // ==================================================
-    // ❄️ FREEZE
-    // ==================================================
-
-    else if (power === "FREEZE") {
-
-        specialStatus.text =
-            "GOOSEY CHAT: ❄️ FREEZE!";
-
-        opponent.frozen =
-            true;
-
-        wait(3, () => {
-
-            opponent.frozen =
-                false;
-        });
-    }
 
     // ==================================================
-    // ⚡ LIGHTNING
+    // 👻 GHOSTY COPY EFFECT
     // ==================================================
 
-    else if (
-        power ===
-        "LIGHTNING"
-    ) {
+    onUpdate(() => {
 
-        specialStatus.text =
-            "GOOSEY CHAT: ⚡ LIGHTNING!";
+        if (
+            player.fighter ===
+            "GOOSEY" &&
+            player.hasGhostyPower &&
+            player.ghostyActive
+        ) {
 
-        opponent.damage +=
-            200;
+            player.invincible =
+                true;
+        }
 
-        opponent.knockbackActive =
-            true;
 
-        opponent.knockbackX =
-            1100 *
-            goosey.facing;
+        if (
+            player2.fighter ===
+            "GOOSEY" &&
+            player2.hasGhostyPower &&
+            player2.ghostyActive
+        ) {
 
-        opponent.vel.x =
-            opponent.knockbackX;
-
-        opponent.vel.y = -800;
-
-        shake(30);
-    }
-
-    wait(2, () => {
-
-        specialStatus.text = "";
+            player2.invincible =
+                true;
+        }
     });
-}
 
-// ==================================================
-// 🪿 GOOSEY P1 SPECIAL
-// ==================================================
 
-onKeyPress("enter", () => {
+    // ==================================================
+    // 🐧 GOOSEY PENGUY PHYSICS
+    // ==================================================
 
-    if (
-        player.fighter !== "GOOSEY" ||
-        player.respawning ||
-        player.specialUsed
+    onUpdate(() => {
+
+        if (
+            player.fighter ===
+            "GOOSEY" &&
+            player.hasPenguyPower &&
+            !player.knockbackActive &&
+            !player.respawning &&
+            !player.frozen
+        ) {
+
+            player.vel.x *=
+                PENGUY_GROUND_FRICTION;
+
+            if (
+                player.vel.x >
+                PENGUY_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    PENGUY_MAX_SPEED;
+            }
+
+            if (
+                player.vel.x <
+                -PENGUY_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    -PENGUY_MAX_SPEED;
+            }
+        }
+
+
+        if (
+            player2.fighter ===
+            "GOOSEY" &&
+            player2.hasPenguyPower &&
+            !player2.knockbackActive &&
+            !player2.respawning &&
+            !player2.frozen
+        ) {
+
+            player2.vel.x *=
+                PENGUY_GROUND_FRICTION;
+
+            if (
+                player2.vel.x >
+                PENGUY_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    PENGUY_MAX_SPEED;
+            }
+
+            if (
+                player2.vel.x <
+                -PENGUY_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    -PENGUY_MAX_SPEED;
+            }
+        }
+    });
+
+
+    // ==================================================
+    // 🥊 GOOSEY GREG POWER
+    // ==================================================
+
+    function gooseyGregAttack(
+        goosey,
+        opponent
     ) {
-        return;
-    }
-
-    player.specialUsed = true;
-
-    gooseyGetPower(
-        player,
-        player2,
-        1
-    );
-
-    wait(
-        GOOSEY_SPECIAL_COOLDOWN,
-        () => {
-
-            player.specialUsed =
-                false;
-        }
-    );
-});
-
-// ==================================================
-// 🪿 GOOSEY P2 SPECIAL
-// ==================================================
-
-window.addEventListener(
-    "keydown",
-    (event) => {
 
         if (
-            event.code !==
-            "ShiftLeft"
+            !goosey.hasGregPower ||
+            goosey.gregCooldown
         ) {
-            return;
+            return false;
         }
 
-        if (
-            player2.fighter !==
-            "GOOSEY" ||
-            player2.respawning ||
-            player2.specialUsed
-        ) {
-            return;
-        }
-
-        player2.specialUsed =
+        goosey.gregCooldown =
             true;
-
-        gooseyGetPower(
-            player2,
-            player,
-            2
-        );
 
         wait(
-            GOOSEY_SPECIAL_COOLDOWN,
+            GOOSEY_GREG_COOLDOWN,
             () => {
 
-                player2.specialUsed =
+                goosey.gregCooldown =
                     false;
             }
         );
-    }
-);
 
-// ==================================================
-// 🪿 GOOSEY ATTACK HOOKS
-// ==================================================
-
-window.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (
-            event.code !==
-            "ShiftRight"
-        ) {
-            return;
-        }
-
-        if (
-            player.fighter !==
-            "GOOSEY" ||
-            player.respawning ||
-            player.frozen ||
-            player.invincible
-        ) {
-            return;
-        }
-
-        if (
-            player.hasGregPower
-        ) {
-
-            gooseyGregAttack(
-                player,
-                player2
-            );
-
-            return;
-        }
-
-        if (
-            player.hasAngyCapPower
-        ) {
-
-            gooseyAngyCapAttack(
-                player,
-                player2
-            );
-
-            return;
-        }
-
-        if (
-            player.hasChatPower
-        ) {
-
-            gooseyChatRandomMove(
-                player,
-                player2
-            );
-        }
-    }
-);
-
-window.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (
-            event.code !==
-            "f"
-        ) {
-            return;
-        }
-
-        if (
-            player2.fighter !==
-            "GOOSEY" ||
-            player2.respawning ||
-            player2.frozen ||
-            player2.invincible
-        ) {
-            return;
-        }
-
-        if (
-            player2.hasGregPower
-        ) {
-
-            gooseyGregAttack(
-                player2,
-                player
-            );
-
-            return;
-        }
-
-        if (
-            player2.hasAngyCapPower
-        ) {
-
-            gooseyAngyCapAttack(
-                player2,
-                player
-            );
-
-            return;
-        }
-
-        if (
-            player2.hasChatPower
-        ) {
-
-            gooseyChatRandomMove(
-                player2,
-                player
-            );
-        }
-    }
-);
-// ==================================================
-// 👻 GHOSTY SPECIAL P1
-// ==================================================
-
-onKeyPress("enter", () => {
-
-    if (
-        player.fighter !== "GHOSTY" ||
-        player.respawning ||
-        player.specialUsed
-    ) {
-        return;
-    }
-
-    player.specialUsed = true;
-    player.invincible = true;
-
-    player.knockbackActive = false;
-    player.knockbackX = 0;
-
-    player.vel.x = 0;
-    player.vel.y = 0;
-
-    specialStatus.text =
-        "GHOSTY P1: INVINCIBLE!";
-
-    wait(3, () => {
-
-        player.invincible = false;
-
-        player.knockbackActive = false;
-        player.knockbackX = 0;
-
-        player.vel.x = 0;
-
-        player.specialUsed = false;
-
-        specialStatus.text = "";
-    });
-});
-// ==================================================
-// 👻 GHOSTY SPECIAL P2
-// ==================================================
-
-window.addEventListener("keydown", (event) => {
-
-    if (
-        event.code !== "ShiftLeft"
-    ) {
-        return;
-    }
-
-    if (
-        window.singlePlayerMode === true
-    ) {
-        return;
-    }
-
-    if (
-        player2.fighter !== "GHOSTY" ||
-        player2.respawning ||
-        player2.specialUsed
-    ) {
-        return;
-    }
-
-    player2.specialUsed = true;
-    player2.invincible = true;
-
-    player2.knockbackActive = false;
-    player2.knockbackX = 0;
-
-    player2.vel.x = 0;
-    player2.vel.y = 0;
-
-    specialStatus.text =
-        "GHOSTY P2: INVINCIBLE!";
-
-    wait(3, () => {
-
-        player2.invincible = false;
-
-        player2.knockbackActive = false;
-        player2.knockbackX = 0;
-
-        player2.vel.x = 0;
-
-        player2.specialUsed = false;
-
-        specialStatus.text = "";
-    });
-});
-// ==================================================
-// ANGY-CAT SPECIAL P1
-// ==================================================
-
-onKeyPress("enter", () => {
-
-    if (
-        player.fighter !== "ANGY-CAT" ||
-        player.respawning ||
-        player.specialUsed
-    ) {
-        return;
-    }
-
-    player.specialUsed = true;
-    player.catMod = true;
-
-    player.scaleTo(CAT_MOD_SCALE);
-
-    specialStatus.text =
-        "ANGY-CAT P1: CAT MOD!!!";
-
-    wait(CAT_MOD_TIME, () => {
-
-        player.catMod = false;
-
-        player.scaleTo(CAT_NORMAL_SCALE);
-
-        specialStatus.text = "";
-    });
-});
-
-// ==================================================
-// ANGY-CAT SPECIAL P2
-// ==================================================
-
-window.addEventListener("keydown", (event) => {
-
-    if (event.code !== "ShiftLeft") {
-        return;
-    }
-
-    if (
-        player2.fighter !== "ANGY-CAT" ||
-        player2.respawning ||
-        player2.specialUsed
-    ) {
-        return;
-    }
-
-    player2.specialUsed = true;
-    player2.catMod = true;
-
-    player2.scaleTo(CAT_MOD_SCALE);
-
-    specialStatus.text =
-        "ANGY-CAT P2: CAT MOD!!!";
-
-    wait(CAT_MOD_TIME, () => {
-
-        player2.catMod = false;
-
-        player2.scaleTo(CAT_NORMAL_SCALE);
-
-        specialStatus.text = "";
-    });
-});
-
-// ==================================================
-// MARK SPECIAL P1
-// ==================================================
-
-onKeyPress("enter", () => {
-
-    if (
-        player.fighter !== "MARK" ||
-        player.respawning ||
-        player.specialUsed
-    ) {
-        return;
-    }
-
-    player.specialUsed = true;
-
-    markDimensionShift();
-});
-
-// ==================================================
-// MARK SPECIAL — DIMENSION SHIFT
-// ==================================================
-
-function markDimensionShift() {
-
-    specialStatus.text =
-        "MARK: DIMENSION SHIFT!!!";
-
-    const darkness = add([
-        rect(800, 450),
-        pos(0, 0),
-        color(0, 0, 0),
-        opacity(0),
-        z(100),
-    ]);
-
-    tween(
-        0,
-        0.75,
-        0.6,
-        (value) => {
-            darkness.opacity = value;
-        }
-    );
-
-    for (let i = 0; i < 6; i++) {
-
-        wait(i * 0.08, () => {
-
-            const ring = add([
-                circle(30),
-                pos(400, 225),
-                color(150, 0, 255),
-                opacity(0.7),
-                anchor("center"),
-                z(101),
+        const attack =
+            add([
+                rect(180, 45),
+                pos(
+                    goosey.pos.x +
+                    goosey.facing * 110,
+                    goosey.pos.y
+                ),
+                color(
+                    255,
+                    150,
+                    0
+                ),
+                opacity(0.6),
+                area(),
+                lifespan(
+                    0.15,
+                    {
+                        fade: 0.05,
+                    }
+                ),
             ]);
 
-            tween(
-                30,
-                500,
-                0.8,
-                (value) => {
-                    ring.radius = value;
-                    ring.opacity =
-                        0.7 * (1 - value / 500);
+        if (
+            !opponent.invincible &&
+            Math.abs(
+                attack.pos.x -
+                opponent.pos.x
+            ) < 170 &&
+            Math.abs(
+                attack.pos.y -
+                opponent.pos.y
+            ) < 60
+        ) {
+
+            opponent.damage +=
+                10;
+
+            opponent.knockbackActive =
+                true;
+
+            opponent.knockbackX =
+                (
+                    GREG_PUNCH_KNOCKBACK +
+                    opponent.damage *
+                    6
+                ) *
+                goosey.facing;
+
+            opponent.vel.x =
+                opponent.knockbackX;
+
+            opponent.vel.y =
+                -250;
+        }
+
+        return true;
+    }
+
+
+    // ==================================================
+    // 💥 GOOSEY ANGY-CAP POWER
+    // ==================================================
+
+    function gooseyAngyCapAttack(
+        goosey,
+        opponent
+    ) {
+
+        if (
+            !goosey.hasAngyCapPower
+        ) {
+            return false;
+        }
+
+        const attack =
+            add([
+                rect(120, 30),
+                pos(
+                    goosey.pos.x +
+                    goosey.facing * 90,
+                    goosey.pos.y
+                ),
+                color(
+                    150,
+                    100,
+                    50
+                ),
+                opacity(0.6),
+                area(),
+                lifespan(
+                    0.12,
+                    {
+                        fade: 0.05,
+                    }
+                ),
+            ]);
+
+        if (
+            !opponent.invincible &&
+            Math.abs(
+                attack.pos.x -
+                opponent.pos.x
+            ) < 100 &&
+            Math.abs(
+                attack.pos.y -
+                opponent.pos.y
+            ) < 50
+        ) {
+
+            opponent.damage +=
+                ANGY_CAP_DAMAGE;
+
+            opponent.knockbackActive =
+                true;
+
+            opponent.knockbackX =
+                ANGY_CAP_KNOCKBACK *
+                goosey.facing;
+
+            opponent.vel.x =
+                opponent.knockbackX;
+
+            opponent.vel.y =
+                -300;
+        }
+
+        return true;
+    }
+
+
+    // ==================================================
+    // 💬 GOOSEY CHAT RANDOMIZER
+    // ==================================================
+
+    function gooseyChatRandomMove(
+        goosey,
+        opponent
+    ) {
+
+        if (
+            !goosey.hasChatPower
+        ) {
+            return;
+        }
+
+        const randomChat =
+            Math.floor(
+                Math.random() *
+                GOOSEY_CHAT_POWERS.length
+            );
+
+        const power =
+            GOOSEY_CHAT_POWERS[
+            randomChat
+            ];
+
+
+        if (
+            power ===
+            "MAGNET"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: 🧲 MAGNET!";
+
+            opponent.vel.x +=
+                (
+                    goosey.pos.x -
+                    opponent.pos.x
+                ) *
+                2 *
+                dt();
+
+        } else if (
+            power ===
+            "BOUNCY"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: 🟢 BOUNCY!";
+
+            goosey.vel.y =
+                -900;
+
+        } else if (
+            power ===
+            "ROCK_SOLID"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: 🪨 ROCK SOLID!";
+
+            goosey.knockbackActive =
+                false;
+
+            goosey.knockbackX =
+                0;
+
+            goosey.vel.x =
+                0;
+
+        } else if (
+            power ===
+            "ICE_TRAIL"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: 🧊 ICE TRAIL!";
+
+            add([
+                rect(35, 8),
+                pos(
+                    goosey.pos.x,
+                    goosey.pos.y + 30
+                ),
+                color(
+                    150,
+                    230,
+                    255
+                ),
+                opacity(0.7),
+                lifespan(
+                    0.5,
+                    {
+                        fade: 0.4,
+                    }
+                ),
+            ]);
+
+        } else if (
+            power ===
+            "FIREBALL"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: 🔥 FIREBALL!";
+
+            const direction =
+                goosey.facing;
+
+            const fireball =
+                add([
+                    circle(15),
+                    pos(
+                        goosey.pos.x +
+                        direction * 55,
+                        goosey.pos.y
+                    ),
+                    anchor("center"),
+                    color(
+                        255,
+                        80,
+                        0
+                    ),
+                    area(),
+                    {
+                        speed: 750,
+                        hit: false,
+                    },
+                    opacity(0.7),
+                    lifespan(
+                        1.5,
+                        {
+                            fade: 0.3,
+                        }
+                    ),
+                ]);
+
+            fireball.onUpdate(
+                () => {
+
+                    fireball.move(
+                        fireball.speed *
+                        direction,
+                        0
+                    );
+
+                    if (
+                        !fireball.hit &&
+                        !opponent.invincible &&
+                        Math.abs(
+                            fireball.pos.x -
+                            opponent.pos.x
+                        ) < 40 &&
+                        Math.abs(
+                            fireball.pos.y -
+                            opponent.pos.y
+                        ) < 50
+                    ) {
+
+                        fireball.hit =
+                            true;
+
+                        opponent.damage +=
+                            20;
+
+                        opponent.knockbackActive =
+                            true;
+
+                        opponent.knockbackX =
+                            700 *
+                            direction;
+
+                        opponent.vel.x =
+                            opponent.knockbackX;
+
+                        opponent.vel.y =
+                            -400;
+
+                        shake(8);
+
+                        destroy(
+                            fireball
+                        );
+                    }
                 }
             );
 
-            wait(0.8, () => {
-                destroy(ring);
+        } else if (
+            power ===
+            "FREEZE"
+        ) {
+
+            specialStatus.text =
+                "GOOSEY CHAT: ❄️ FREEZE!";
+
+            opponent.frozen =
+                true;
+
+            wait(3, () => {
+
+                opponent.frozen =
+                    false;
             });
+
+        } else {
+
+            specialStatus.text =
+                "GOOSEY CHAT: ⚡ LIGHTNING!";
+
+            opponent.damage +=
+                200;
+
+            opponent.knockbackActive =
+                true;
+
+            opponent.knockbackX =
+                1100 *
+                goosey.facing;
+
+            opponent.vel.x =
+                opponent.knockbackX;
+
+            opponent.vel.y =
+                -800;
+
+            shake(30);
+        }
+
+        wait(2, () => {
+
+            specialStatus.text =
+                "";
         });
     }
 
-    shake(15);
 
-    wait(1, () => {
+    // ==================================================
+    // 🪿 GOOSEY P1 SPECIAL
+    // ==================================================
 
-        shake(30);
+    onKeyPress(
+        "enter",
+        () => {
+
+            if (
+                player.fighter !==
+                "GOOSEY" ||
+                player.respawning ||
+                player.specialUsed
+            ) {
+                return;
+            }
+
+            player.specialUsed =
+                true;
+
+            gooseyGetPower(
+                player,
+                player2,
+                1
+            );
+
+            wait(
+                GOOSEY_SPECIAL_COOLDOWN,
+                () => {
+
+                    player.specialUsed =
+                        false;
+                }
+            );
+        }
+    );
+
+
+    // ==================================================
+    // 🪿 GOOSEY P2 SPECIAL
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            if (
+                player2.fighter !==
+                "GOOSEY" ||
+                player2.respawning ||
+                player2.specialUsed
+            ) {
+                return;
+            }
+
+            player2.specialUsed =
+                true;
+
+            gooseyGetPower(
+                player2,
+                player,
+                2
+            );
+
+            wait(
+                GOOSEY_SPECIAL_COOLDOWN,
+                () => {
+
+                    player2.specialUsed =
+                        false;
+                }
+            );
+        }
+    );
+
+
+    // ==================================================
+    // 🪿 GOOSEY ATTACK HOOKS
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftRight"
+            ) {
+                return;
+            }
+
+            if (
+                player.fighter !==
+                "GOOSEY" ||
+                player.respawning ||
+                player.frozen ||
+                player.invincible
+            ) {
+                return;
+            }
+
+            if (
+                player.hasGregPower
+            ) {
+
+                gooseyGregAttack(
+                    player,
+                    player2
+                );
+
+                return;
+            }
+
+            if (
+                player.hasAngyCapPower
+            ) {
+
+                gooseyAngyCapAttack(
+                    player,
+                    player2
+                );
+
+                return;
+            }
+
+            if (
+                player.hasChatPower
+            ) {
+
+                gooseyChatRandomMove(
+                    player,
+                    player2
+                );
+            }
+        }
+    );
+
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "f"
+            ) {
+                return;
+            }
+
+            if (
+                player2.fighter !==
+                "GOOSEY" ||
+                player2.respawning ||
+                player2.frozen ||
+                player2.invincible
+            ) {
+                return;
+            }
+
+            if (
+                player2.hasGregPower
+            ) {
+
+                gooseyGregAttack(
+                    player2,
+                    player
+                );
+
+                return;
+            }
+
+            if (
+                player2.hasAngyCapPower
+            ) {
+
+                gooseyAngyCapAttack(
+                    player2,
+                    player
+                );
+
+                return;
+            }
+
+            if (
+                player2.hasChatPower
+            ) {
+
+                gooseyChatRandomMove(
+                    player2,
+                    player
+                );
+            }
+        }
+    );
+    // ==================================================
+    // 🔵⚽ BACH SPECIAL P1
+    // ==================================================
+
+    onKeyPress(
+        "enter",
+        () => {
+
+            activateBachSpecial(
+                player
+            );
+        }
+    );
+    // ==================================================
+    // 🔵⚽ BACH SPECIAL P2
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            activateBachSpecial(
+                player2
+            );
+        }
+    );
+    // ==================================================
+    // 👻 GHOSTY SPECIAL P1
+    // ==================================================
+
+    onKeyPress(
+        "enter",
+        () => {
+
+            if (
+                player.fighter !==
+                "GHOSTY" ||
+                player.respawning ||
+                player.specialUsed
+            ) {
+                return;
+            }
+
+            player.specialUsed =
+                true;
+
+            player.invincible =
+                true;
+
+            player.knockbackActive =
+                false;
+
+            player.knockbackX =
+                0;
+
+            player.vel.x =
+                0;
+
+            player.vel.y =
+                0;
+
+            specialStatus.text =
+                "GHOSTY P1: INVINCIBLE!";
+
+            wait(3, () => {
+
+                player.invincible =
+                    false;
+
+                player.knockbackActive =
+                    false;
+
+                player.knockbackX =
+                    0;
+
+                player.vel.x =
+                    0;
+
+                player.specialUsed =
+                    false;
+
+                specialStatus.text =
+                    "";
+            });
+        }
+    );
+
+
+    // ==================================================
+    // 👻 GHOSTY SPECIAL P2
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            if (
+                window.singlePlayerMode ===
+                true
+            ) {
+                return;
+            }
+
+            if (
+                player2.fighter !==
+                "GHOSTY" ||
+                player2.respawning ||
+                player2.specialUsed
+            ) {
+                return;
+            }
+
+            player2.specialUsed =
+                true;
+
+            player2.invincible =
+                true;
+
+            player2.knockbackActive =
+                false;
+
+            player2.knockbackX =
+                0;
+
+            player2.vel.x =
+                0;
+
+            player2.vel.y =
+                0;
+
+            specialStatus.text =
+                "GHOSTY P2: INVINCIBLE!";
+
+            wait(3, () => {
+
+                player2.invincible =
+                    false;
+
+                player2.knockbackActive =
+                    false;
+
+                player2.knockbackX =
+                    0;
+
+                player2.vel.x =
+                    0;
+
+                player2.specialUsed =
+                    false;
+
+                specialStatus.text =
+                    "";
+            });
+        }
+    );
+
+
+    // ==================================================
+    // ANGY-CAT SPECIAL P1
+    // ==================================================
+
+    onKeyPress(
+        "enter",
+        () => {
+
+            if (
+                player.fighter !==
+                "ANGY-CAT" ||
+                player.respawning ||
+                player.specialUsed
+            ) {
+                return;
+            }
+
+            player.specialUsed =
+                true;
+
+            player.catMod =
+                true;
+
+            player.scaleTo(
+                CAT_MOD_SCALE
+            );
+
+            specialStatus.text =
+                "ANGY-CAT P1: CAT MOD!!!";
+
+            wait(
+                CAT_MOD_TIME,
+                () => {
+
+                    player.catMod =
+                        false;
+
+                    player.scaleTo(
+                        CAT_NORMAL_SCALE
+                    );
+
+                    specialStatus.text =
+                        "";
+                }
+            );
+        }
+    );
+
+
+    // ==================================================
+    // ANGY-CAT SPECIAL P2
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            if (
+                player2.fighter !==
+                "ANGY-CAT" ||
+                player2.respawning ||
+                player2.specialUsed
+            ) {
+                return;
+            }
+
+            player2.specialUsed =
+                true;
+
+            player2.catMod =
+                true;
+
+            player2.scaleTo(
+                CAT_MOD_SCALE
+            );
+
+            specialStatus.text =
+                "ANGY-CAT P2: CAT MOD!!!";
+
+            wait(
+                CAT_MOD_TIME,
+                () => {
+
+                    player2.catMod =
+                        false;
+
+                    player2.scaleTo(
+                        CAT_NORMAL_SCALE
+                    );
+
+                    specialStatus.text =
+                        "";
+                }
+            );
+        }
+    );
+
+
+    // ==================================================
+    // MARK SPECIAL P1
+    // ==================================================
+
+    onKeyPress(
+        "enter",
+        () => {
+
+            if (
+                player.fighter !==
+                "MARK" ||
+                player.respawning ||
+                player.specialUsed
+            ) {
+                return;
+            }
+
+            player.specialUsed =
+                true;
+
+            markDimensionShift();
+        }
+    );
+
+
+    // ==================================================
+    // MARK SPECIAL
+    // ==================================================
+
+    function markDimensionShift() {
 
         specialStatus.text =
-            "WELCOME TO ANOTHER DIMENSION!";
+            "MARK: DIMENSION SHIFT!!!";
 
-        wait(0.5, () => {
+        const darkness =
+            add([
+                rect(800, 450),
+                pos(0, 0),
+                color(0, 0, 0),
+                opacity(0),
+                z(100),
+            ]);
 
-            destroy(darkness);
+        tween(
+            0,
+            0.75,
+            0.6,
+            (value) => {
 
-            specialStatus.text = "";
+                darkness.opacity =
+                    value;
+            }
+        );
 
-            const markWorld =
-                Math.floor(Math.random() * 5);
 
-            markWorldActive = true;
+        for (
+            let i = 0;
+            i < 6;
+            i++
+        ) {
 
-            if (markWorld === 0) {
+            wait(
+                i * 0.08,
+                () => {
 
-                SPEED -= 150;
-                GOOSEY_SPEED -= 150;
-                RED_SPEED -= 150;
-                BLUE_SPEED -= 150;
-                PENGUY_SPEED -= 150;
+                    const ring =
+                        add([
+                            circle(30),
+                            pos(400, 225),
+                            color(
+                                150,
+                                0,
+                                255
+                            ),
+                            opacity(0.7),
+                            anchor("center"),
+                            z(101),
+                        ]);
 
-                specialStatus.text =
-                    "🐌 SLOW WORLD!!!";
+                    tween(
+                        30,
+                        500,
+                        0.8,
+                        (value) => {
 
-            } else if (markWorld === 1) {
+                            ring.radius =
+                                value;
 
-                SPEED += 150;
-                GOOSEY_SPEED += 150;
-                RED_SPEED += 150;
-                BLUE_SPEED += 150;
-                PENGUY_SPEED += 150;
+                            ring.opacity =
+                                0.7 *
+                                (
+                                    1 -
+                                    value / 500
+                                );
+                        }
+                    );
 
-                specialStatus.text =
-                    "⚡ SPEED WORLD!!!";
+                    wait(
+                        0.8,
+                        () => {
 
-            } else if (markWorld === 2) {
-
-                specialStatus.text =
-                    "🌪️ CHAOS WORLD!!!";
-
-                function chaosEffect() {
-
-                    if (!markWorldActive) {
-                        return;
-                    }
-
-                    const chaos =
-                        Math.floor(Math.random() * 5);
-
-                    if (chaos === 0) {
-
-                        player.knockbackActive = true;
-
-                        player.knockbackX =
-                            (Math.random() < 0.5 ? -1 : 1) * 1200;
-
-                        player.vel.x =
-                            player.knockbackX;
-
-                        player.vel.y = -400;
-
-                        player2.knockbackActive = true;
-
-                        player2.knockbackX =
-                            (Math.random() < 0.5 ? -1 : 1) * 1200;
-
-                        player2.vel.x =
-                            player2.knockbackX;
-
-                        player2.vel.y = -400;
-
-                    } else if (chaos === 1) {
-
-                        player.vel.y = -1000;
-                        player2.vel.y = -1000;
-
-                    } else if (chaos === 2) {
-
-                        player.facing *= -1;
-                        player2.facing *= -1;
-
-                    } else if (chaos === 3) {
-
-                        player.knockbackActive = true;
-
-                        player.knockbackX =
-                            (Math.random() < 0.5 ? -1 : 1) * 1800;
-
-                        player.vel.x =
-                            player.knockbackX;
-
-                        player2.knockbackActive = true;
-
-                        player2.knockbackX =
-                            (Math.random() < 0.5 ? -1 : 1) * 1800;
-
-                        player2.vel.x =
-                            player2.knockbackX;
-
-                    } else {
-
-                        player.knockbackActive = true;
-
-                        player.knockbackX =
-                            (Math.random() * 2400) - 1200;
-
-                        player.vel.x =
-                            player.knockbackX;
-
-                        player.vel.y = -700;
-
-                        player2.knockbackActive = true;
-
-                        player2.knockbackX =
-                            (Math.random() * 2400) - 1200;
-
-                        player2.vel.x =
-                            player2.knockbackX;
-
-                        player2.vel.y = -700;
-                    }
-
-                    wait(0.7, chaosEffect);
+                            destroy(
+                                ring
+                            );
+                        }
+                    );
                 }
+            );
+        }
 
-                chaosEffect();
 
-            } else if (markWorld === 3) {
+        shake(15);
 
-                markIceWorld = true;
+
+        wait(
+            1,
+            () => {
+
+                shake(30);
 
                 specialStatus.text =
-                    "🧊 ICE WORLD!!!";
+                    "WELCOME TO ANOTHER DIMENSION!";
+
+                wait(
+                    0.5,
+                    () => {
+
+                        destroy(
+                            darkness
+                        );
+
+                        specialStatus.text =
+                            "";
+
+                        const markWorld =
+                            Math.floor(
+                                Math.random() *
+                                5
+                            );
+
+                        markWorldActive =
+                            true;
+
+
+                        if (
+                            markWorld === 0
+                        ) {
+
+                            SPEED -=
+                                150;
+
+                            GOOSEY_SPEED -=
+                                150;
+
+                            RED_SPEED -=
+                                150;
+
+                            BLUE_SPEED -=
+                                150;
+
+                            PENGUY_SPEED -=
+                                150;
+
+                            specialStatus.text =
+                                "🐌 SLOW WORLD!!!";
+
+                        } else if (
+                            markWorld === 1
+                        ) {
+
+                            SPEED +=
+                                150;
+
+                            GOOSEY_SPEED +=
+                                150;
+
+                            RED_SPEED +=
+                                150;
+
+                            BLUE_SPEED +=
+                                150;
+
+                            PENGUY_SPEED +=
+                                150;
+
+                            specialStatus.text =
+                                "⚡ SPEED WORLD!!!";
+
+                        } else if (
+                            markWorld === 2
+                        ) {
+
+                            specialStatus.text =
+                                "🌪️ CHAOS WORLD!!!";
+
+
+                            function chaosEffect() {
+
+                                if (
+                                    !markWorldActive
+                                ) {
+                                    return;
+                                }
+
+                                const chaos =
+                                    Math.floor(
+                                        Math.random() *
+                                        5
+                                    );
+
+
+                                if (
+                                    chaos === 0
+                                ) {
+
+                                    player.knockbackActive =
+                                        true;
+
+                                    player.knockbackX =
+                                        (
+                                            Math.random() <
+                                                0.5
+                                                ? -1
+                                                : 1
+                                        ) *
+                                        1200;
+
+                                    player.vel.x =
+                                        player.knockbackX;
+
+                                    player.vel.y =
+                                        -400;
+
+                                    player2.knockbackActive =
+                                        true;
+
+                                    player2.knockbackX =
+                                        (
+                                            Math.random() <
+                                                0.5
+                                                ? -1
+                                                : 1
+                                        ) *
+                                        1200;
+
+                                    player2.vel.x =
+                                        player2.knockbackX;
+
+                                    player2.vel.y =
+                                        -400;
+
+                                } else if (
+                                    chaos === 1
+                                ) {
+
+                                    player.vel.y =
+                                        -1000;
+
+                                    player2.vel.y =
+                                        -1000;
+
+                                } else if (
+                                    chaos === 2
+                                ) {
+
+                                    player.facing *=
+                                        -1;
+
+                                    player2.facing *=
+                                        -1;
+
+                                } else if (
+                                    chaos === 3
+                                ) {
+
+                                    player.knockbackActive =
+                                        true;
+
+                                    player.knockbackX =
+                                        (
+                                            Math.random() <
+                                                0.5
+                                                ? -1
+                                                : 1
+                                        ) *
+                                        1800;
+
+                                    player.vel.x =
+                                        player.knockbackX;
+
+                                    player2.knockbackActive =
+                                        true;
+
+                                    player2.knockbackX =
+                                        (
+                                            Math.random() <
+                                                0.5
+                                                ? -1
+                                                : 1
+                                        ) *
+                                        1800;
+
+                                    player2.vel.x =
+                                        player2.knockbackX;
+
+                                } else {
+
+                                    player.knockbackActive =
+                                        true;
+
+                                    player.knockbackX =
+                                        (
+                                            Math.random() *
+                                            2400
+                                        ) -
+                                        1200;
+
+                                    player.vel.x =
+                                        player.knockbackX;
+
+                                    player.vel.y =
+                                        -700;
+
+                                    player2.knockbackActive =
+                                        true;
+
+                                    player2.knockbackX =
+                                        (
+                                            Math.random() *
+                                            2400
+                                        ) -
+                                        1200;
+
+                                    player2.vel.x =
+                                        player2.knockbackX;
+
+                                    player2.vel.y =
+                                        -700;
+                                }
+
+                                wait(
+                                    0.7,
+                                    chaosEffect
+                                );
+                            }
+
+                            chaosEffect();
+
+                        } else if (
+                            markWorld === 3
+                        ) {
+
+                            markIceWorld =
+                                true;
+
+                            specialStatus.text =
+                                "🧊 ICE WORLD!!!";
+
+                        } else {
+
+                            specialStatus.text =
+                                "🌑 VOID WORLD!!!";
+
+                            setGravity(
+                                4500
+                            );
+
+                            add([
+                                rect(
+                                    800,
+                                    450
+                                ),
+                                pos(0, 0),
+                                color(
+                                    0,
+                                    0,
+                                    0
+                                ),
+                                opacity(0.35),
+                                z(50),
+                            ]);
+                        }
+                    }
+                );
+            }
+        );
+    }
+
+
+    // ==================================================
+    // 🎲 CHAT SPECIAL
+    // ==================================================
+
+    function activateChatSpecial(
+        chat,
+        opponent
+    ) {
+
+        if (
+            chat.fighter !==
+            "CHAT" ||
+            chat.respawning ||
+            chat.specialUsed
+        ) {
+            return;
+        }
+
+        chat.specialUsed =
+            true;
+
+        const randomPower =
+            Math.floor(
+                Math.random() * 7
+            );
+
+        chat.chatPower =
+            randomPower;
+
+
+        if (
+            randomPower === 0
+        ) {
+
+            specialStatus.text =
+                "CHAT: 🧲 MAGNET!!!";
+
+            wait(
+                2,
+                () => {
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else if (
+            randomPower === 1
+        ) {
+
+            specialStatus.text =
+                "CHAT: 🟢 BOUNCY!!!";
+
+            wait(
+                2,
+                () => {
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else if (
+            randomPower === 2
+        ) {
+
+            specialStatus.text =
+                "CHAT: 🪨 ROCK SOLID!!!";
+
+            chat.knockbackActive =
+                false;
+
+            chat.knockbackX =
+                0;
+
+            chat.vel.x =
+                0;
+
+            wait(
+                2,
+                () => {
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else if (
+            randomPower === 3
+        ) {
+
+            specialStatus.text =
+                "CHAT: 🧊 ICE TRAIL!!!";
+
+            wait(
+                2,
+                () => {
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else if (
+            randomPower === 4
+        ) {
+
+            specialStatus.text =
+                "CHAT: 🔥 FIREBALL!!!";
+
+            wait(
+                2,
+                () => {
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else if (
+            randomPower === 5
+        ) {
+
+            opponent.frozen =
+                true;
+
+            specialStatus.text =
+                "CHAT: ❄️ FREEZE!!!";
+
+            wait(
+                3,
+                () => {
+
+                    opponent.frozen =
+                        false;
+
+                    specialStatus.text =
+                        "";
+                }
+            );
+
+        } else {
+
+            specialStatus.text =
+                "CHAT: ⚡ LIGHTNING!!!";
+
+            opponent.damage +=
+                200;
+
+            const strikeX =
+                opponent.pos.x;
+
+            const strikeY =
+                opponent.pos.y;
+
+            const bolt1 =
+                add([
+                    rect(14, 120),
+                    pos(
+                        strikeX - 25,
+                        strikeY - 170
+                    ),
+                    rotate(18),
+                    color(
+                        255,
+                        255,
+                        0
+                    ),
+                    opacity(1),
+                    z(100),
+                ]);
+
+            const bolt2 =
+                add([
+                    rect(14, 110),
+                    pos(
+                        strikeX + 5,
+                        strikeY - 90
+                    ),
+                    rotate(-22),
+                    color(
+                        255,
+                        255,
+                        255
+                    ),
+                    opacity(1),
+                    z(100),
+                ]);
+
+            const bolt3 =
+                add([
+                    rect(14, 100),
+                    pos(
+                        strikeX - 10,
+                        strikeY - 20
+                    ),
+                    rotate(15),
+                    color(
+                        255,
+                        255,
+                        0
+                    ),
+                    opacity(1),
+                    z(100),
+                ]);
+
+            const impact =
+                add([
+                    rect(100, 14),
+                    pos(
+                        strikeX,
+                        strikeY + 35
+                    ),
+                    color(
+                        255,
+                        255,
+                        255
+                    ),
+                    opacity(1),
+                    anchor("center"),
+                    z(100),
+                ]);
+
+            opponent.knockbackActive =
+                true;
+
+            opponent.knockbackX =
+                1100 *
+                chat.facing;
+
+            opponent.vel.x =
+                opponent.knockbackX;
+
+            opponent.vel.y =
+                -800;
+
+            shake(30);
+
+            wait(
+                0.2,
+                () => {
+
+                    if (
+                        bolt1.exists()
+                    ) {
+                        destroy(
+                            bolt1
+                        );
+                    }
+
+                    if (
+                        bolt2.exists()
+                    ) {
+                        destroy(
+                            bolt2
+                        );
+                    }
+
+                    if (
+                        bolt3.exists()
+                    ) {
+                        destroy(
+                            bolt3
+                        );
+                    }
+
+                    if (
+                        impact.exists()
+                    ) {
+                        destroy(
+                            impact
+                        );
+                    }
+                }
+            );
+
+            wait(
+                2,
+                () => {
+
+                    specialStatus.text =
+                        "";
+                }
+            );
+        }
+    }
+
+
+    // ==================================================
+    // 🎲 CHAT SPECIAL P1
+    // ==================================================
+
+    onKeyPress(
+        "enter",
+        () => {
+
+            activateChatSpecial(
+                player,
+                player2
+            );
+        }
+    );
+
+
+    // ==================================================
+    // 🎲 CHAT SPECIAL P2
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            activateChatSpecial(
+                player2,
+                player
+            );
+        }
+    );
+
+
+    // ==================================================
+    // 🧊 ICE WORLD PHYSICS
+    // ==================================================
+
+    onUpdate(() => {
+
+        if (
+            !markIceWorld
+        ) {
+            return;
+        }
+
+
+        if (
+            !player.knockbackActive &&
+            !player.respawning &&
+            !player.frozen
+        ) {
+
+            player.vel.x *=
+                ICE_FRICTION;
+
+            if (
+                player.vel.x >
+                ICE_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    ICE_MAX_SPEED;
+            }
+
+            if (
+                player.vel.x <
+                -ICE_MAX_SPEED
+            ) {
+
+                player.vel.x =
+                    -ICE_MAX_SPEED;
+            }
+        }
+
+
+        if (
+            !player2.knockbackActive &&
+            !player2.respawning &&
+            !player2.frozen
+        ) {
+
+            player2.vel.x *=
+                ICE_FRICTION;
+
+            if (
+                player2.vel.x >
+                ICE_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    ICE_MAX_SPEED;
+            }
+
+            if (
+                player2.vel.x <
+                -ICE_MAX_SPEED
+            ) {
+
+                player2.vel.x =
+                    -ICE_MAX_SPEED;
+            }
+        }
+    });
+
+
+    // ==================================================
+    // 🙂 MARK SPECIAL P2
+    // ==================================================
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.code !==
+                "ShiftLeft"
+            ) {
+                return;
+            }
+
+            if (
+                player2.fighter !==
+                "MARK" ||
+                player2.respawning ||
+                player2.specialUsed
+            ) {
+                return;
+            }
+
+            player2.specialUsed =
+                true;
+
+            markDimensionShift();
+        }
+    );
+    // ==================================================
+    // 💥 BLAST ZONES
+    // ==================================================
+
+    onUpdate(() => {
+
+        // P1
+
+        if (
+            !player.respawning &&
+            (
+                player.pos.x <
+                -100 ||
+                player.pos.x >
+                900 ||
+                player.pos.y <
+                -150 ||
+                player.pos.y >
+                550
+            )
+        ) {
+
+            player.respawning =
+                true;
+
+            player.stocks--;
+
+            player.vel.x =
+                0;
+
+            player.vel.y =
+                0;
+
+            player.knockbackActive =
+                false;
+
+
+            if (
+                player.stocks <= 0
+            ) {
+
+                player.stocks =
+                    0;
+
+                go(
+                    "win",
+                    {
+                        winner:
+                            player2.fighter,
+                    }
+                );
 
             } else {
 
-                specialStatus.text =
-                    "🌑 VOID WORLD!!!";
+                wait(
+                    1,
+                    () => {
 
-                setGravity(4500);
+                        player.pos =
+                            vec2(
+                                200,
+                                200
+                            );
 
-                add([
-                    rect(800, 450),
-                    pos(0, 0),
-                    color(0, 0, 0),
-                    opacity(0.35),
-                    z(50),
-                ]);
+                        player.vel.x =
+                            0;
+
+                        player.vel.y =
+                            0;
+
+                        player.damage =
+                            0;
+
+                        player.knockbackActive =
+                            false;
+
+                        player.respawning =
+                            false;
+
+                        // ⚽ BACH GETS A NEW BALL
+                        // AT THE START OF A NEW STOCK
+
+                        if (
+                            player.fighter ===
+                            "BACH"
+                        ) {
+
+                            player.bachHasBall =
+                                true;
+
+                            if (
+                                !bachBallP1 ||
+                                !bachBallP1.exists()
+                            ) {
+
+                                bachBallP1 =
+                                    add([
+                                        text("⚽"),
+                                        pos(
+                                            player.pos.x +
+                                            50,
+                                            player.pos.y
+                                        ),
+                                        anchor(
+                                            "center"
+                                        ),
+                                        scale(
+                                            0.8
+                                        ),
+                                        z(30),
+
+                                        {
+                                            flying:
+                                                false,
+                                            vx: 0,
+                                            vy: 0,
+                                            angleAround:
+                                                0,
+                                        },
+                                    ]);
+                            }
+                        }
+                    }
+                );
             }
-        });
+        }
+
+
+        // P2
+
+        if (
+            !player2.respawning &&
+            (
+                player2.pos.x <
+                -100 ||
+                player2.pos.x >
+                900 ||
+                player2.pos.y <
+                -150 ||
+                player2.pos.y >
+                550
+            )
+        ) {
+
+            player2.respawning =
+                true;
+
+            player2.stocks--;
+
+            player2.vel.x =
+                0;
+
+            player2.vel.y =
+                0;
+
+            player2.knockbackActive =
+                false;
+
+
+            if (
+                player2.stocks <= 0
+            ) {
+
+                player2.stocks =
+                    0;
+
+                go(
+                    "win",
+                    {
+                        winner:
+                            player.fighter,
+                    }
+                );
+
+            } else {
+
+                wait(
+                    1,
+                    () => {
+
+                        player2.pos =
+                            vec2(
+                                550,
+                                200
+                            );
+
+                        player2.vel.x =
+                            0;
+
+                        player2.vel.y =
+                            0;
+
+                        player2.damage =
+                            0;
+
+                        player2.knockbackActive =
+                            false;
+
+                        player2.respawning =
+                            false;
+                    }
+                );
+            }
+        }
     });
-}
-
-// ==================================================
-// 🎲 CHAT SPECIAL — RANDOMIZER
-// ==================================================
-
-function activateChatSpecial(chat, opponent) {
-
-    if (
-        chat.fighter !== "CHAT" ||
-        chat.respawning ||
-        chat.specialUsed
-    ) {
-        return;
-    }
-
-    chat.specialUsed = true;
-
-    const randomPower =
-        Math.floor(Math.random() * 7);
-
-    chat.chatPower = randomPower;
-
-    // ==============================================
-    // 🧲 MAGNET
-    // ==============================================
-
-    if (randomPower === 0) {
-
-        specialStatus.text =
-            "CHAT: 🧲 MAGNET!!!";
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-
-    // ==============================================
-    // 🟢 BOUNCY
-    // ==============================================
-
-    } else if (randomPower === 1) {
-
-        specialStatus.text =
-            "CHAT: 🟢 BOUNCY!!!";
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-
-    // ==============================================
-    // 🪨 ROCK SOLID
-    // ==============================================
-
-    } else if (randomPower === 2) {
-
-        specialStatus.text =
-            "CHAT: 🪨 ROCK SOLID!!!";
-
-        chat.knockbackActive = false;
-        chat.knockbackX = 0;
-        chat.vel.x = 0;
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-
-    // ==============================================
-    // 🧊 ICE TRAIL
-    // ==============================================
-
-    } else if (randomPower === 3) {
-
-        specialStatus.text =
-            "CHAT: 🧊 ICE TRAIL!!!";
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-
-    // ==============================================
-    // 🔥 FIREBALL
-    // ==============================================
-
-    } else if (randomPower === 4) {
-
-        specialStatus.text =
-            "CHAT: 🔥 FIREBALL!!!";
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-
-    // ==============================================
-    // ❄️ FREEZE
-    // ==============================================
-
-    } else if (randomPower === 5) {
-
-        opponent.frozen = true;
-
-        specialStatus.text =
-            "CHAT: ❄️ FREEZE!!!";
-
-        wait(3, () => {
-
-            opponent.frozen = false;
-            specialStatus.text = "";
-
-        });
-
-    // ==============================================
-    // ⚡ LIGHTNING
-    // ==============================================
-
-    } else {
-
-        specialStatus.text =
-            "CHAT: ⚡ LIGHTNING!!!";
-
-        // 💀 CHAT LIGHTNING = 200% DAMAGE
-        opponent.damage += 200;
-
-        // ⚡ Lightning bolt pieces
-        const strikeX = opponent.pos.x;
-        const strikeY = opponent.pos.y;
-
-        const bolt1 = add([
-            rect(14, 120),
-            pos(strikeX - 25, strikeY - 170),
-            rotate(18),
-            color(255, 255, 0),
-            opacity(1),
-            z(100),
-        ]);
-
-        const bolt2 = add([
-            rect(14, 110),
-            pos(strikeX + 5, strikeY - 90),
-            rotate(-22),
-            color(255, 255, 255),
-            opacity(1),
-            z(100),
-        ]);
-
-        const bolt3 = add([
-            rect(14, 100),
-            pos(strikeX - 10, strikeY - 20),
-            rotate(15),
-            color(255, 255, 0),
-            opacity(1),
-            z(100),
-        ]);
-
-        const impact = add([
-            rect(100, 14),
-            pos(strikeX, strikeY + 35),
-            color(255, 255, 255),
-            opacity(1),
-            anchor("center"),
-            z(100),
-        ]);
-
-        opponent.knockbackActive = true;
-
-        opponent.knockbackX =
-            1100 * chat.facing;
-
-        opponent.vel.x =
-            opponent.knockbackX;
-
-        opponent.vel.y = -800;
-
-        shake(30);
-
-        wait(0.2, () => {
-
-            if (bolt1.exists()) {
-                destroy(bolt1);
-            }
-
-            if (bolt2.exists()) {
-                destroy(bolt2);
-            }
-
-            if (bolt3.exists()) {
-                destroy(bolt3);
-            }
-
-            if (impact.exists()) {
-                destroy(impact);
-            }
-        });
-
-        wait(2, () => {
-            specialStatus.text = "";
-        });
-    }
-}
-
-// ==================================================
-// 🎲 CHAT SPECIAL P1
-// ==================================================
-
-onKeyPress("enter", () => {
-
-    activateChatSpecial(
-        player,
-        player2
-    );
-});
-
-// ==================================================
-// 🎲 CHAT SPECIAL P2
-// ==================================================
-
-window.addEventListener("keydown", (event) => {
-
-    if (event.code !== "ShiftLeft") {
-        return;
-    }
-
-    activateChatSpecial(
-        player2,
-        player
-    );
-});
-
-// ==================================================
-// 🧊 ICE WORLD PHYSICS
-// ==================================================
-
-onUpdate(() => {
-
-    if (!markIceWorld) {
-        return;
-    }
-
-    // ==============================================
-    // 🧊 PLAYER 1 ICE
-    // ==============================================
-
-    if (
-        !player.knockbackActive &&
-        !player.respawning &&
-        !player.frozen
-    ) {
-
-        player.vel.x *= ICE_FRICTION;
-
-        if (player.vel.x > ICE_MAX_SPEED) {
-            player.vel.x = ICE_MAX_SPEED;
-        }
-
-        if (player.vel.x < -ICE_MAX_SPEED) {
-            player.vel.x = -ICE_MAX_SPEED;
-        }
-    }
-
-    // ==============================================
-    // 🧊 PLAYER 2 ICE
-    // ==============================================
-
-    if (
-        !player2.knockbackActive &&
-        !player2.respawning &&
-        !player2.frozen
-    ) {
-
-        player2.vel.x *= ICE_FRICTION;
-
-        if (player2.vel.x > ICE_MAX_SPEED) {
-            player2.vel.x = ICE_MAX_SPEED;
-        }
-
-        if (player2.vel.x < -ICE_MAX_SPEED) {
-            player2.vel.x = -ICE_MAX_SPEED;
-        }
-    }
-});
-
-// ==================================================
-// 🙂 MARK SPECIAL P2 — DIMENSION SHIFT
-// ==================================================
-
-window.addEventListener("keydown", (event) => {
-
-    if (event.code !== "ShiftLeft") {
-        return;
-    }
-
-    if (
-        player2.fighter !== "MARK" ||
-        player2.respawning ||
-        player2.specialUsed
-    ) {
-        return;
-    }
-
-    player2.specialUsed = true;
-
-    markDimensionShift();
-});
-
-// ==================================================
-// 💥 BLAST ZONES
-// ==================================================
-
-onUpdate(() => {
-
-    if (
-        !player.respawning &&
-        (
-            player.pos.x < -100 ||
-            player.pos.x > 900 ||
-            player.pos.y < -150 ||
-            player.pos.y > 550
-        )
-    ) {
-
-        player.respawning = true;
-        player.stocks--;
-
-        player.vel.x = 0;
-        player.vel.y = 0;
-        player.knockbackActive = false;
-
-        if (player.stocks <= 0) {
-
-            player.stocks = 0;
-
-            go("win", {
-                winner: player2.fighter,
-            });
-
-        } else {
-
-            wait(1, () => {
-
-                player.pos =
-                    vec2(200, 200);
-
-                player.vel.x = 0;
-                player.vel.y = 0;
-
-                player.damage = 0;
-                player.knockbackActive = false;
-                player.respawning = false;
-            });
-        }
-    }
-
-    if (
-        !player2.respawning &&
-        (
-            player2.pos.x < -100 ||
-            player2.pos.x > 900 ||
-            player2.pos.y < -150 ||
-            player2.pos.y > 550
-        )
-    ) {
-
-        player2.respawning = true;
-        player2.stocks--;
-
-        player2.vel.x = 0;
-        player2.vel.y = 0;
-        player2.knockbackActive = false;
-
-        if (player2.stocks <= 0) {
-
-            player2.stocks = 0;
-
-            go("win", {
-                winner: player.fighter,
-            });
-
-        } else {
-
-            wait(1, () => {
-
-                player2.pos =
-                    vec2(550, 200);
-
-                player2.vel.x = 0;
-                player2.vel.y = 0;
-
-                player2.damage = 0;
-                player2.knockbackActive = false;
-                player2.respawning = false;
-            });
-        }
-    }
-});
 });
 // ==================================================
 // WIN SCENE
 // ==================================================
 
 scene("win", (data) => {
-window.gooseyScene = "win";
+
     add([
         text("WINNER!!!"),
         pos(400, 50),
@@ -7968,9 +10718,18 @@ window.gooseyScene = "win";
             anchor("center"),
             scale(0.5),
         ]);
+    } else if (data.winner === "BACH") {
+
+        winner = add([
+            sprite("Bach", {
+                anim: "bach",
+            }),
+            pos(400, 210),
+            anchor("center"),
+            scale(1.5),
+        ]);
 
     } else if (data.winner === "RED") {
-
         winner = add([
             rect(70, 70),
             pos(400, 210),
@@ -8009,7 +10768,41 @@ window.gooseyScene = "win";
         winner.scale.x,
         winner.scale.y
     );
+    let bachWinBall = null;
 
+    if (data.winner === "BACH") {
+
+        bachWinBall = add([
+            text("⚽"),
+            pos(
+                winner.pos.x + 90,
+                winner.pos.y
+            ),
+            anchor("center"),
+            scale(0.8),
+            z(10),
+        ]);
+        bachWinBall.onUpdate(() => {
+
+            const ballAngle =
+                time() * 5;
+
+            const orbitX =
+                winner.pos.x +
+                Math.cos(ballAngle) * 90;
+
+            const orbitY =
+                winner.pos.y +
+                Math.sin(ballAngle) * 65;
+
+            bachWinBall.moveTo(
+                vec2(
+                    orbitX,
+                    orbitY
+                )
+            );
+        });
+    }
     onUpdate(() => {
 
         winTime += dt();
@@ -8047,7 +10840,6 @@ window.gooseyScene = "win";
         go("characterSelect");
     });
 });
-
 // ==================================================
 // START GAME
 // ==================================================
