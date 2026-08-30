@@ -2014,6 +2014,8 @@ scene("characterSelect", () => {
     // This prevents Mark's Void World from carrying over.
     setGravity(1800);
 
+    window.gooseyScene =
+        "characterSelect";
     // ==================================================
     // 🎮 PLAYER DATA
     // ==================================================
@@ -2709,11 +2711,13 @@ scene("characterSelect", () => {
 // ==================================================
 
 scene("fight", (data) => {
-
+window.gooseyScene =
+    "fight";
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-
+window.gooseyMap =
+    currentMap;
     let player;
 
     // ==================================================
@@ -10628,7 +10632,8 @@ scene("fight", (data) => {
 // ==================================================
 
 scene("win", (data) => {
-
+window.gooseyScene =
+    "win";
     add([
         text("WINNER!!!"),
         pos(400, 50),
