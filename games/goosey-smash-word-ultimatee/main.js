@@ -62,6 +62,26 @@ loadSprite("Bach", "assets/sprites/BACH.png", {
         },
     },
 });
+loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
+    sliceX: 20,
+    sliceY: 1,
+
+    anims: {
+        nathaniel: {
+            from: 0,
+            to: 19,
+            loop: true,
+            speed: 12,
+        },
+
+        nathanielSpecial: {
+            from: 7,
+            to: 19,
+            loop: false,
+            speed: 12,
+        },
+    },
+});
 // ==================================================
 // CONSTANTS
 // ==================================================
@@ -160,11 +180,16 @@ scene("title", () => {
         z(0),
     ]);
 
+
     // ==================================================
     // ⭐ STARS
     // ==================================================
 
-    for (let i = 0; i < 80; i++) {
+    for (
+        let i = 0;
+        i < 80;
+        i++
+    ) {
 
         add([
             circle(
@@ -174,13 +199,18 @@ scene("title", () => {
                 Math.random() * 800,
                 Math.random() * 450
             ),
-            color(255, 255, 255),
+            color(
+                255,
+                255,
+                255
+            ),
             opacity(
                 Math.random() * 0.8 + 0.2
             ),
             z(1),
         ]);
     }
+
 
     // ==================================================
     // 💥 TITLE
@@ -191,7 +221,11 @@ scene("title", () => {
         pos(400, 65),
         anchor("center"),
         scale(2),
-        color(255, 255, 255),
+        color(
+            255,
+            255,
+            255
+        ),
         z(100),
     ]);
 
@@ -200,17 +234,24 @@ scene("title", () => {
         pos(400, 125),
         anchor("center"),
         scale(1.5),
-        color(255, 220, 0),
+        color(
+            255,
+            220,
+            0
+        ),
         z(100),
     ]);
 
     add([
-        text("THIS IS PROBABLY A BAD IDEA"),
+        text(
+            "THIS IS PROBABLY A BAD IDEA"
+        ),
         pos(400, 165),
         anchor("center"),
         scale(0.65),
         z(100),
     ]);
+
 
     // ==================================================
     // 🌀 SPECIAL ANIMATION SYSTEM
@@ -226,12 +267,14 @@ scene("title", () => {
         "CHAT",
         "MARK",
         "BACH",
+        "NATHANIEL",
     ];
 
     let currentSpecial = null;
     let specialTimer = 0;
 
     const specialObjects = [];
+
 
     // ==================================================
     // 🪿 FLYING CHARACTERS
@@ -257,7 +300,8 @@ scene("title", () => {
             z(zLayer),
 
             {
-                baseScale: scaleAmount,
+                baseScale:
+                    scaleAmount,
 
                 vx:
                     (
@@ -281,10 +325,14 @@ scene("title", () => {
                             : 1
                     ),
 
-                spinSpeed: spinSpeed,
-                flipSpeed: flipSpeed,
+                spinSpeed:
+                    spinSpeed,
 
-                directionTimer: 0,
+                flipSpeed:
+                    flipSpeed,
+
+                directionTimer:
+                    0,
             },
         ]);
 
@@ -294,6 +342,7 @@ scene("title", () => {
 
         return fighter;
     }
+
 
     // ==================================================
     // 👻 GHOSTY
@@ -309,6 +358,7 @@ scene("title", () => {
         10
     );
 
+
     // ==================================================
     // 🥊 GREG
     // ==================================================
@@ -322,6 +372,7 @@ scene("title", () => {
         6,
         10
     );
+
 
     // ==================================================
     // 🐧 PENGUY
@@ -337,6 +388,7 @@ scene("title", () => {
         10
     );
 
+
     // ==================================================
     // 🐱 ANGY-CAT
     // ==================================================
@@ -350,6 +402,7 @@ scene("title", () => {
         5,
         10
     );
+
 
     // ==================================================
     // 😡 ANGY CAP
@@ -365,6 +418,7 @@ scene("title", () => {
         10
     );
 
+
     // ==================================================
     // 🙂 MARK
     // ==================================================
@@ -378,6 +432,7 @@ scene("title", () => {
         4,
         10
     );
+
 
     // ==================================================
     // 💬 CHAT
@@ -396,6 +451,7 @@ scene("title", () => {
 
     chatFighter.chatZoomTime = 0;
 
+
     // ==================================================
     // 🪿 GOOSEY
     // TOP CHARACTER LAYER
@@ -411,6 +467,7 @@ scene("title", () => {
             5,
             40
         );
+
 
     // ==================================================
     // 🧹 CLEAR SPECIAL
@@ -434,6 +491,7 @@ scene("title", () => {
 
         specialObjects.length = 0;
     }
+
 
     // ==================================================
     // 🎬 START SPECIAL
@@ -462,6 +520,7 @@ scene("title", () => {
             specialNames[nextSpecial];
 
         specialTimer = 0;
+
 
         // ==================================================
         // 🪿 GOOSEY HACKER
@@ -508,7 +567,7 @@ scene("title", () => {
                 "player.damage += 1000",
                 "player_die = false",
                 "if not player_die:",
-                "player_die = true"
+                "player_die = true",
             ];
 
             for (
@@ -521,10 +580,10 @@ scene("title", () => {
                     add([
                         text(
                             codeLines[
-                            Math.floor(
-                                Math.random() *
-                                codeLines.length
-                            )
+                                Math.floor(
+                                    Math.random() *
+                                    codeLines.length
+                                )
                             ]
                         ),
                         pos(
@@ -549,13 +608,16 @@ scene("title", () => {
                         {
                             pulse:
                                 Math.random() * 10,
+
                             drift:
-                                Math.random() * 20 - 10,
+                                Math.random() * 20 -
+                                10,
                         },
                     ])
                 );
             }
         }
+
 
         // ==================================================
         // 👻 GHOSTY
@@ -584,6 +646,7 @@ scene("title", () => {
             );
         }
 
+
         // ==================================================
         // 🥊 GREG
         // ==================================================
@@ -593,7 +656,6 @@ scene("title", () => {
             "GREG"
         ) {
 
-            // LEFT ARM
             const leftArm = add([
                 rect(600, 45),
                 pos(150, 235),
@@ -611,7 +673,6 @@ scene("title", () => {
                 },
             ]);
 
-            // RIGHT ARM
             const rightArm = add([
                 rect(600, 45),
                 pos(650, 305),
@@ -629,13 +690,9 @@ scene("title", () => {
                 },
             ]);
 
-            // HANDS
             const leftHand = add([
                 circle(38),
-                pos(
-                    450,
-                    235
-                ),
+                pos(450, 235),
                 color(
                     255,
                     210,
@@ -651,10 +708,7 @@ scene("title", () => {
 
             const rightHand = add([
                 circle(38),
-                pos(
-                    350,
-                    305
-                ),
+                pos(350, 305),
                 color(
                     255,
                     210,
@@ -675,6 +729,7 @@ scene("title", () => {
                 rightHand
             );
         }
+
 
         // ==================================================
         // 🐧 PENGUY
@@ -724,6 +779,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 🐱 CAT MOD
         // ==================================================
@@ -765,6 +821,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 😡 ANGY CAP
         // ==================================================
@@ -788,7 +845,8 @@ scene("title", () => {
                             Math.random() * 450
                         ),
                         scale(
-                            Math.random() * 1 +
+                            Math.random() *
+                            1 +
                             0.5
                         ),
                         anchor("center"),
@@ -797,6 +855,7 @@ scene("title", () => {
                 );
             }
         }
+
 
         // ==================================================
         // 💬 CHAT
@@ -839,10 +898,10 @@ scene("title", () => {
                     add([
                         text(
                             moves[
-                            Math.floor(
-                                Math.random() *
-                                moves.length
-                            )
+                                Math.floor(
+                                    Math.random() *
+                                    moves.length
+                                )
                             ]
                         ),
                         pos(
@@ -850,7 +909,8 @@ scene("title", () => {
                             Math.random() * 450
                         ),
                         scale(
-                            Math.random() * 1 +
+                            Math.random() *
+                            1 +
                             0.5
                         ),
                         z(30),
@@ -858,6 +918,8 @@ scene("title", () => {
                 );
             }
         }
+
+
         // ==================================================
         // 🙂 MARK DIMENSION
         // ==================================================
@@ -867,7 +929,6 @@ scene("title", () => {
             "MARK"
         ) {
 
-            // 🌑 VERY DARK DIMENSION BACKGROUND
             specialObjects.push(
                 add([
                     rect(800, 450),
@@ -882,7 +943,6 @@ scene("title", () => {
                 ])
             );
 
-            // 🌀 PORTAL RINGS
             for (
                 let i = 0;
                 i < 8;
@@ -910,8 +970,134 @@ scene("title", () => {
                 );
             }
         }
+
+
+        // ==================================================
+        // ⚽ BACH
+        // ==================================================
+
+        else if (
+            currentSpecial ===
+            "BACH"
+        ) {
+
+            const bachTitle =
+                add([
+                    sprite("Bach", {
+                        anim: "bach",
+                    }),
+                    pos(400, 255),
+                    anchor("center"),
+                    scale(1.5),
+                    z(40),
+
+                    {
+                        bachTitleTime: 0,
+                    },
+                ]);
+
+            specialObjects.push(
+                bachTitle
+            );
+
+
+            // ⚽ SOCCER BALLS FLYING AROUND BACH
+
+            for (
+                let i = 0;
+                i < 10;
+                i++
+            ) {
+
+                const ball =
+                    add([
+                        text("⚽"),
+                        pos(400, 255),
+                        anchor("center"),
+                        scale(0.45),
+                        z(42),
+
+                        {
+                            orbitIndex: i,
+                        },
+                    ]);
+
+                specialObjects.push(
+                    ball
+                );
+            }
+        }
+
+
+        // ==================================================
+        // 🟣 NATHANIEL
+        // ==================================================
+
+        else if (
+            currentSpecial ===
+            "NATHANIEL"
+        ) {
+
+            const nathanielTitle =
+                add([
+                    sprite("Nathaniel", {
+                        anim: "nathaniel",
+                    }),
+                    pos(400, 255),
+                    anchor("center"),
+                    scale(1.5),
+                    z(40),
+
+                    {
+                        nathanielTitleTime:
+                            0,
+                    },
+                ]);
+
+            specialObjects.push(
+                nathanielTitle
+            );
+
+
+            // 🟣 PURPLE BALLS FLYING AROUND NATHANIEL
+
+            for (
+                let i = 0;
+                i < 10;
+                i++
+            ) {
+
+                const ball =
+                    add([
+                        circle(10),
+                        pos(400, 255),
+                        color(
+                            180,
+                            0,
+                            255
+                        ),
+                        anchor("center"),
+                        z(42),
+
+                        {
+                            orbitIndex: i,
+                        },
+                    ]);
+
+                specialObjects.push(
+                    ball
+                );
+            }
+        }
     }
+
+
+    // ==================================================
+    // 🎬 START FIRST SPECIAL
+    // ==================================================
+
     startSpecialAnimation();
+
 
     // ==================================================
     // 🌀 MAIN UPDATE
@@ -939,13 +1125,15 @@ scene("title", () => {
             fighter.directionTimer +=
                 dt();
 
+
             if (
                 fighter.directionTimer >
                 1.5 +
                 Math.random() * 1.5
             ) {
 
-                fighter.directionTimer = 0;
+                fighter.directionTimer =
+                    0;
 
                 fighter.vx =
                     (
@@ -970,23 +1158,27 @@ scene("title", () => {
                     );
             }
 
+
             if (
                 fighter.pos.x < 45
             ) {
 
-                fighter.pos.x = 45;
+                fighter.pos.x =
+                    45;
 
                 fighter.vx =
                     Math.abs(
                         fighter.vx
                     );
             }
+
 
             if (
                 fighter.pos.x > 755
             ) {
 
-                fighter.pos.x = 755;
+                fighter.pos.x =
+                    755;
 
                 fighter.vx =
                     -Math.abs(
@@ -994,11 +1186,13 @@ scene("title", () => {
                     );
             }
 
+
             if (
                 fighter.pos.y < 190
             ) {
 
-                fighter.pos.y = 190;
+                fighter.pos.y =
+                    190;
 
                 fighter.vy =
                     Math.abs(
@@ -1006,11 +1200,13 @@ scene("title", () => {
                     );
             }
 
+
             if (
                 fighter.pos.y > 390
             ) {
 
-                fighter.pos.y = 390;
+                fighter.pos.y =
+                    390;
 
                 fighter.vy =
                     -Math.abs(
@@ -1018,15 +1214,18 @@ scene("title", () => {
                     );
             }
 
+
             fighter.angle +=
                 fighter.spinSpeed *
                 dt();
+
 
             const flip =
                 Math.sin(
                     time() *
                     fighter.flipSpeed
                 );
+
 
             fighter.scaleTo(
                 vec2(
@@ -1035,11 +1234,16 @@ scene("title", () => {
                         flip * 0.8 +
                         1
                     ),
+
                     fighter.baseScale
                 )
             );
 
-            // CHAT ZOOM
+
+            // ==================================================
+            // 💬 CHAT ZOOM
+            // ==================================================
+
             if (
                 fighter ===
                 chatFighter
@@ -1068,6 +1272,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 🎢 TITLE BOUNCE
         // ==================================================
@@ -1084,12 +1289,14 @@ scene("title", () => {
                 time() * 3
             ) * 5;
 
+
         // ==================================================
         // ⏱️ SPECIAL TIMER
         // ==================================================
 
         specialTimer +=
             dt();
+
 
         if (
             specialTimer >=
@@ -1098,7 +1305,198 @@ scene("title", () => {
 
             startSpecialAnimation();
         }
+// ==================================================
+// ⚽ BACH SPECIAL ANIMATION
+// ==================================================
 
+if (
+    currentSpecial ===
+    "BACH"
+) {
+
+    const bach =
+        specialObjects[0];
+
+    if (
+        bach &&
+        bach.exists()
+    ) {
+
+        bach.bachTitleTime +=
+            dt();
+
+        // Bach goes CRAZY
+        bach.pos.x =
+            400 +
+            Math.sin(
+                bach.bachTitleTime * 4
+            ) * 90;
+
+        bach.pos.y =
+            255 +
+            Math.sin(
+                bach.bachTitleTime * 7
+            ) * 35;
+
+        bach.angle =
+            Math.sin(
+                bach.bachTitleTime * 10
+            ) * 35;
+    }
+
+
+    // ⚽ ALL THE BALLS FLY AROUND BACH
+
+    for (
+        let i = 1;
+        i < specialObjects.length;
+        i++
+    ) {
+
+        const ball =
+            specialObjects[i];
+
+        if (
+            ball &&
+            ball.exists()
+        ) {
+
+            const angle =
+                time() * 6 +
+                ball.orbitIndex *
+                (
+                    Math.PI * 2 /
+                    10
+                );
+
+            const radiusX =
+                130 +
+                Math.sin(
+                    time() * 5 +
+                    ball.orbitIndex
+                ) * 35;
+
+            const radiusY =
+                85 +
+                Math.cos(
+                    time() * 4 +
+                    ball.orbitIndex
+                ) * 25;
+
+            ball.moveTo(
+                vec2(
+                    bach.pos.x +
+                    Math.cos(angle) *
+                    radiusX,
+
+                    bach.pos.y +
+                    Math.sin(angle) *
+                    radiusY
+                )
+            );
+
+            ball.angle +=
+                720 *
+                dt();
+        }
+    }
+}
+// ==================================================
+// 🟣 NATHANIEL SPECIAL ANIMATION
+// ==================================================
+
+if (
+    currentSpecial ===
+    "NATHANIEL"
+) {
+
+    const nathaniel =
+        specialObjects[0];
+
+    if (
+        nathaniel &&
+        nathaniel.exists()
+    ) {
+
+        nathaniel.nathanielTitleTime +=
+            dt();
+
+        // Nathaniel moves too
+        nathaniel.pos.x =
+            400 +
+            Math.sin(
+                nathaniel.nathanielTitleTime * 4
+            ) * 90;
+
+        nathaniel.pos.y =
+            255 +
+            Math.sin(
+                nathaniel.nathanielTitleTime * 7
+            ) * 35;
+
+        nathaniel.angle =
+            Math.sin(
+                nathaniel.nathanielTitleTime * 10
+            ) * 35;
+    }
+
+
+    // 🟣 PURPLE BALLS FLY AROUND HIM
+
+    for (
+        let i = 1;
+        i < specialObjects.length;
+        i++
+    ) {
+
+        const ball =
+            specialObjects[i];
+
+        if (
+            ball &&
+            ball.exists()
+        ) {
+
+            const angle =
+                time() * 6 +
+                ball.orbitIndex *
+                (
+                    Math.PI * 2 /
+                    10
+                );
+
+            const radiusX =
+                130 +
+                Math.sin(
+                    time() * 5 +
+                    ball.orbitIndex
+                ) * 35;
+
+            const radiusY =
+                85 +
+                Math.cos(
+                    time() * 4 +
+                    ball.orbitIndex
+                ) * 25;
+
+            ball.moveTo(
+                vec2(
+                    nathaniel.pos.x +
+                    Math.cos(angle) *
+                    radiusX,
+
+                    nathaniel.pos.y +
+                    Math.sin(angle) *
+                    radiusY
+                )
+            );
+
+            ball.angle +=
+                720 *
+                dt();
+        }
+    }
+}
         // ==================================================
         // 🪿 GOOSEY HACKER
         // ==================================================
@@ -1131,6 +1529,7 @@ scene("title", () => {
                         12 *
                         dt();
 
+
                     if (
                         code.pos.y >
                         445
@@ -1139,6 +1538,7 @@ scene("title", () => {
                         code.pos.y =
                             175;
                     }
+
 
                     code.opacity =
                         0.3 +
@@ -1152,6 +1552,7 @@ scene("title", () => {
                 }
             }
         }
+
 
         // ==================================================
         // 👻 GHOSTY
@@ -1182,8 +1583,9 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
-        // 🥊 GREG — GUARANTEED VISIBLE
+        // 🥊 GREG
         // ==================================================
 
         if (
@@ -1203,7 +1605,7 @@ scene("title", () => {
             const rightHand =
                 specialObjects[3];
 
-            // LEFT GROUP
+
             if (
                 leftArm &&
                 leftArm.exists()
@@ -1222,6 +1624,7 @@ scene("title", () => {
                         -300;
                 }
             }
+
 
             if (
                 leftHand &&
@@ -1242,7 +1645,7 @@ scene("title", () => {
                 }
             }
 
-            // RIGHT GROUP
+
             if (
                 rightArm &&
                 rightArm.exists()
@@ -1261,6 +1664,7 @@ scene("title", () => {
                         900;
                 }
             }
+
 
             if (
                 rightHand &&
@@ -1281,6 +1685,7 @@ scene("title", () => {
                 }
             }
         }
+
 
         // ==================================================
         // 🐱 CAT MOD
@@ -1310,6 +1715,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 😡 ANGY CAP
         // ==================================================
@@ -1337,6 +1743,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 💬 CHAT
         // ==================================================
@@ -1362,6 +1769,7 @@ scene("title", () => {
                 }
             }
         }
+
 
         // ==================================================
         // 🙂 MARK PORTAL
@@ -1400,6 +1808,7 @@ scene("title", () => {
             }
         }
 
+
         // ==================================================
         // 🪿 KEEP GOOSEY ON TOP
         // ==================================================
@@ -1412,7 +1821,9 @@ scene("title", () => {
             gooseyFighter.z =
                 40;
         }
+
     });
+
 
     // ==================================================
     // 🎮 START TEXT
@@ -1428,6 +1839,7 @@ scene("title", () => {
         z(100),
     ]);
 
+
     onUpdate(() => {
 
         startText.scaleTo(
@@ -1438,6 +1850,7 @@ scene("title", () => {
         );
     });
 
+
     // ==================================================
     // ENTER
     // ==================================================
@@ -1446,6 +1859,7 @@ scene("title", () => {
 
         go("playerSelect");
     });
+
 });
 // ==================================================
 // 🎮 PLAYER SCENE
@@ -2009,13 +2423,41 @@ scene("cpuSelect", () => {
 // ==================================================
 
 scene("characterSelect", () => {
+window.gooseyScene = "characterSelect";
+    // ==================================================
+    // 🔓 CHARACTER UNLOCKS
+    // ==================================================
 
-    // Reset gravity whenever we enter character select.
-    // This prevents Mark's Void World from carrying over.
-    setGravity(1800);
+    // NEW v1.0.1 keys.
+    // These intentionally replace the old keys so any
+    // previous test unlocks do not carry over.
+
+    const bachUnlocked =
+        localStorage.getItem(
+            "goosey_bach_unlocked_v101"
+        ) === "true";
+
+    const nathanielUnlocked =
+        localStorage.getItem(
+            "goosey_nathaniel_unlocked_v101"
+        ) === "true";
+
+
+    // ==================================================
+    // 🌌 WEBSITE BACKGROUND
+    // ==================================================
 
     window.gooseyScene =
         "characterSelect";
+
+
+    // ==================================================
+    // 🔧 RESET GRAVITY
+    // ==================================================
+
+    setGravity(1800);
+
+
     // ==================================================
     // 🎮 PLAYER DATA
     // ==================================================
@@ -2024,16 +2466,18 @@ scene("characterSelect", () => {
     let player2Category = 1;
 
     let player1Special = 0;
-    let player2Special = 0;
+    let player2Special = 1;
 
     let player1Ready = false;
     let player2Ready = false;
+
 
     const categories = [
         "RED",
         "BLUE",
         "SPECIAL",
     ];
+
 
     const specialCharacters = [
         "GOOSEY",
@@ -2045,14 +2489,171 @@ scene("characterSelect", () => {
         "mark",
         "CHAT",
         "BACH",
+        "NATHANIEL",
     ];
 
+
     // ==================================================
-    // 🤖 CPU MODE?
+    // 🤖 CPU MODE
     // ==================================================
 
     const singlePlayer =
         window.singlePlayerMode === true;
+
+
+    // ==================================================
+    // 🔒 CHECK CHARACTER LOCK
+    // ==================================================
+
+    function isCharacterLocked(
+        character
+    ) {
+
+        if (
+            character === "BACH" &&
+            !bachUnlocked
+        ) {
+
+            return true;
+        }
+
+        if (
+            character === "NATHANIEL" &&
+            !nathanielUnlocked
+        ) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // ==================================================
+    // 🎲 CPU CHARACTER POOL
+    // ==================================================
+
+    function getRandomCPUCharacter() {
+
+        const available = [];
+
+
+        // 🔴 RED
+
+        available.push({
+            category: 0,
+            special: 0,
+            name: "RED",
+        });
+
+
+        // 🔵 BLUE
+
+        available.push({
+            category: 1,
+            special: 0,
+            name: "BLUE",
+        });
+
+
+        // ⭐ SPECIAL CHARACTERS
+
+        for (
+            let i = 0;
+            i < specialCharacters.length;
+            i++
+        ) {
+
+            const character =
+                specialCharacters[i];
+
+
+            // HARD CPU can use everyone.
+
+            if (
+                window.cpuDifficulty ===
+                "HARD"
+            ) {
+
+                available.push({
+                    category: 2,
+                    special: i,
+                    name: character,
+                });
+
+            // EASY / MEDIUM only use unlocked characters.
+
+            } else if (
+                !isCharacterLocked(
+                    character
+                )
+            ) {
+
+                available.push({
+                    category: 2,
+                    special: i,
+                    name: character,
+                });
+            }
+        }
+
+
+        // ==================================================
+        // 🎯 GET P1 NAME
+        // ==================================================
+
+        let player1Name;
+
+
+        if (
+            player1Category === 0
+        ) {
+
+            player1Name =
+                "RED";
+
+        } else if (
+            player1Category === 1
+        ) {
+
+            player1Name =
+                "BLUE";
+
+        } else {
+
+            player1Name =
+                specialCharacters[
+                    player1Special
+                ];
+        }
+
+
+        // ==================================================
+        // 🎲 PICK DIFFERENT CPU CHARACTER
+        // ==================================================
+
+        let choice;
+
+
+        do {
+
+            choice =
+                available[
+                    Math.floor(
+                        Math.random() *
+                        available.length
+                    )
+                ];
+
+        } while (
+            available.length > 1 &&
+            choice.name === player1Name
+        );
+
+
+        return choice;
+    }
+
 
     // ==================================================
     // 📝 TITLE
@@ -2064,6 +2665,7 @@ scene("characterSelect", () => {
         anchor("center"),
         scale(1.5),
     ]);
+
 
     // ==================================================
     // 🔴 RED
@@ -2081,6 +2683,7 @@ scene("characterSelect", () => {
         anchor("center"),
     ]);
 
+
     // ==================================================
     // 🔵 BLUE
     // ==================================================
@@ -2097,22 +2700,29 @@ scene("characterSelect", () => {
         anchor("center"),
     ]);
 
-    // ==================================================
-    // 🟡 SPECIAL
-    // ==================================================
+// ==================================================
+// 🟡 SPECIAL
+// ==================================================
 
-    add([
-        rect(100, 100),
-        pos(600, 130),
-        color(255, 200, 0),
-    ]);
+add([
+    rect(100, 100),
+    pos(600, 130),
+    color(255, 200, 0),
+]);
 
-    add([
-        text("SPECIAL"),
-        pos(650, 250),
-        anchor("center"),
-    ]);
+const specialCharacterDisplay = add([
+    text("?"),
+    pos(650, 180),
+    anchor("center"),
+    scale(1.2),
+    z(10),
+]);
 
+add([
+    text("SPECIAL"),
+    pos(650, 250),
+    anchor("center"),
+]);
     // ==================================================
     // 🎯 P1 POINTER
     // ==================================================
@@ -2126,6 +2736,7 @@ scene("characterSelect", () => {
         anchor("center"),
         z(20),
     ]);
+
 
     // ==================================================
     // 🎯 P2 POINTER
@@ -2142,12 +2753,15 @@ scene("characterSelect", () => {
         color(0, 255, 255),
     ]);
 
-    // In single-player mode, make P2 pointer look like CPU.
-    if (singlePlayer) {
+
+    if (
+        singlePlayer
+    ) {
 
         player2Cursor.color =
             rgb(255, 80, 80);
     }
+
 
     // ==================================================
     // 🎯 CURSOR POSITIONS
@@ -2155,45 +2769,69 @@ scene("characterSelect", () => {
 
     function updatePlayer1Cursor() {
 
-        if (player1Category === 0) {
+        if (
+            player1Category === 0
+        ) {
 
             player1Cursor.pos =
-                vec2(90, 145);
+                vec2(
+                    90,
+                    145
+                );
 
         } else if (
             player1Category === 1
         ) {
 
             player1Cursor.pos =
-                vec2(340, 145);
+                vec2(
+                    340,
+                    145
+                );
 
         } else {
 
             player1Cursor.pos =
-                vec2(590, 145);
+                vec2(
+                    590,
+                    145
+                );
         }
     }
 
+
     function updatePlayer2Cursor() {
 
-        if (player2Category === 0) {
+        if (
+            player2Category === 0
+        ) {
 
             player2Cursor.pos =
-                vec2(90, 215);
+                vec2(
+                    90,
+                    215
+                );
 
         } else if (
             player2Category === 1
         ) {
 
             player2Cursor.pos =
-                vec2(340, 215);
+                vec2(
+                    340,
+                    215
+                );
 
         } else {
 
             player2Cursor.pos =
-                vec2(590, 215);
+                vec2(
+                    590,
+                    215
+                );
         }
     }
+
 
     // ==================================================
     // 📝 PLAYER TEXT
@@ -2206,12 +2844,14 @@ scene("characterSelect", () => {
         scale(0.8),
     ]);
 
+
     const player2Text = add([
         text(""),
         pos(600, 300),
         anchor("center"),
         scale(0.8),
     ]);
+
 
     const player1SpecialText = add([
         text(""),
@@ -2220,12 +2860,14 @@ scene("characterSelect", () => {
         scale(0.8),
     ]);
 
+
     const player2SpecialText = add([
         text(""),
         pos(600, 350),
         anchor("center"),
         scale(0.8),
     ]);
+
 
     // ==================================================
     // 📝 UPDATE P1
@@ -2235,7 +2877,10 @@ scene("characterSelect", () => {
 
         updatePlayer1Cursor();
 
-        if (player1Ready) {
+
+        if (
+            player1Ready
+        ) {
 
             player1Text.text =
                 "PLAYER 1 READY!";
@@ -2245,19 +2890,38 @@ scene("characterSelect", () => {
             player1Text.text =
                 "PLAYER 1: " +
                 categories[
-                player1Category
+                    player1Category
                 ];
         }
+
 
         if (
             player1Category === 2
         ) {
 
-            player1SpecialText.text =
-                "SPECIAL: " +
+            const selected =
                 specialCharacters[
-                player1Special
+                    player1Special
                 ];
+
+
+            if (
+                isCharacterLocked(
+                    selected
+                )
+            ) {
+
+                player1SpecialText.text =
+                    "SPECIAL: " +
+                    selected +
+                    " 🔒";
+
+            } else {
+
+                player1SpecialText.text =
+                    "SPECIAL: " +
+                    selected;
+            }
 
         } else {
 
@@ -2266,6 +2930,7 @@ scene("characterSelect", () => {
         }
     }
 
+
     // ==================================================
     // 📝 UPDATE P2
     // ==================================================
@@ -2273,6 +2938,7 @@ scene("characterSelect", () => {
     function updatePlayer2() {
 
         updatePlayer2Cursor();
+
 
         if (
             singlePlayer
@@ -2295,19 +2961,38 @@ scene("characterSelect", () => {
             player2Text.text =
                 "PLAYER 2: " +
                 categories[
-                player2Category
+                    player2Category
                 ];
         }
+
 
         if (
             player2Category === 2
         ) {
 
-            player2SpecialText.text =
-                "SPECIAL: " +
+            const selected =
                 specialCharacters[
-                player2Special
+                    player2Special
                 ];
+
+
+            if (
+                isCharacterLocked(
+                    selected
+                )
+            ) {
+
+                player2SpecialText.text =
+                    "SPECIAL: " +
+                    selected +
+                    " 🔒";
+
+            } else {
+
+                player2SpecialText.text =
+                    "SPECIAL: " +
+                    selected;
+            }
 
         } else {
 
@@ -2316,8 +3001,10 @@ scene("characterSelect", () => {
         }
     }
 
+
     updatePlayer1();
     updatePlayer2();
+
 
     // ==================================================
     // ⬅️ P1 LEFT
@@ -2325,11 +3012,15 @@ scene("characterSelect", () => {
 
     onKeyPress("left", () => {
 
-        if (player1Ready) {
+        if (
+            player1Ready
+        ) {
             return;
         }
 
+
         player1Category--;
+
 
         if (
             player1Category < 0
@@ -2339,19 +3030,27 @@ scene("characterSelect", () => {
                 2;
         }
 
+
         if (
             player1Category === 2
         ) {
 
-            player1Special =
-                Math.floor(
-                    Math.random() *
-                    specialCharacters.length
-                );
+            player1Special--;
+
+
+            if (
+                player1Special < 0
+            ) {
+
+                player1Special =
+                    specialCharacters.length - 1;
+            }
         }
+
 
         updatePlayer1();
     });
+
 
     // ==================================================
     // ➡️ P1 RIGHT
@@ -2359,11 +3058,15 @@ scene("characterSelect", () => {
 
     onKeyPress("right", () => {
 
-        if (player1Ready) {
+        if (
+            player1Ready
+        ) {
             return;
         }
 
+
         player1Category++;
+
 
         if (
             player1Category > 2
@@ -2373,19 +3076,28 @@ scene("characterSelect", () => {
                 0;
         }
 
+
         if (
             player1Category === 2
         ) {
 
-            player1Special =
-                Math.floor(
-                    Math.random() *
-                    specialCharacters.length
-                );
+            player1Special++;
+
+
+            if (
+                player1Special >=
+                specialCharacters.length
+            ) {
+
+                player1Special =
+                    0;
+            }
         }
+
 
         updatePlayer1();
     });
+
 
     // ==================================================
     // ⬅️ P2 LEFT
@@ -2400,7 +3112,9 @@ scene("characterSelect", () => {
             return;
         }
 
+
         player2Category--;
+
 
         if (
             player2Category < 0
@@ -2410,19 +3124,27 @@ scene("characterSelect", () => {
                 2;
         }
 
+
         if (
             player2Category === 2
         ) {
 
-            player2Special =
-                Math.floor(
-                    Math.random() *
-                    specialCharacters.length
-                );
+            player2Special--;
+
+
+            if (
+                player2Special < 0
+            ) {
+
+                player2Special =
+                    specialCharacters.length - 1;
+            }
         }
+
 
         updatePlayer2();
     });
+
 
     // ==================================================
     // ➡️ P2 RIGHT
@@ -2437,7 +3159,9 @@ scene("characterSelect", () => {
             return;
         }
 
+
         player2Category++;
+
 
         if (
             player2Category > 2
@@ -2447,19 +3171,28 @@ scene("characterSelect", () => {
                 0;
         }
 
+
         if (
             player2Category === 2
         ) {
 
-            player2Special =
-                Math.floor(
-                    Math.random() *
-                    specialCharacters.length
-                );
+            player2Special++;
+
+
+            if (
+                player2Special >=
+                specialCharacters.length
+            ) {
+
+                player2Special =
+                    0;
+            }
         }
+
 
         updatePlayer2();
     });
+
 
     // ==================================================
     // 🤖 CPU RANDOM CHARACTER
@@ -2467,130 +3200,30 @@ scene("characterSelect", () => {
 
     function chooseCPUCharacter() {
 
-        // ----------------------------------------------
-        // Randomly choose RED or BLUE
-        // ----------------------------------------------
+        const choice =
+            getRandomCPUCharacter();
 
-        const categoryChoice =
-            Math.floor(
-                Math.random() * 3
-            );
 
         player2Category =
-            categoryChoice;
+            choice.category;
 
-        // ----------------------------------------------
-        // If SPECIAL, randomly choose one
-        // ----------------------------------------------
+        player2Special =
+            choice.special;
 
-        if (
-            player2Category === 2
-        ) {
 
-            player2Special =
-                Math.floor(
-                    Math.random() *
-                    specialCharacters.length
-                );
-        }
-
-        // ----------------------------------------------
-        // Make sure CPU is not exactly
-        // the same character as P1.
-        // ----------------------------------------------
-
-        let cpuName;
-
-        if (
-            player2Category === 0
-        ) {
-
-            cpuName = "RED";
-
-        } else if (
-            player2Category === 1
-        ) {
-
-            cpuName = "BLUE";
-
-        } else {
-
-            cpuName =
-                specialCharacters[
-                player2Special
-                ];
-        }
-
-        let player1Name;
-
-        if (
-            player1Category === 0
-        ) {
-
-            player1Name =
-                "RED";
-
-        } else if (
-            player1Category === 1
-        ) {
-
-            player1Name =
-                "BLUE";
-
-        } else {
-
-            player1Name =
-                specialCharacters[
-                player1Special
-                ];
-        }
-
-        // Try again if they match.
-        while (
-            cpuName === player1Name
-        ) {
-
-            player2Category =
-                Math.floor(
-                    Math.random() * 3
-                );
-
-            if (
-                player2Category === 2
-            ) {
-
-                player2Special =
-                    Math.floor(
-                        Math.random() *
-                        specialCharacters.length
-                    );
-
-                cpuName =
-                    specialCharacters[
-                    player2Special
-                    ];
-
-            } else if (
-                player2Category === 0
-            ) {
-
-                cpuName =
-                    "RED";
-
-            } else {
-
-                cpuName =
-                    "BLUE";
-            }
-        }
-
-        player2Ready = true;
+        player2Ready =
+            true;
 
         player2Cursor.color =
-            rgb(255, 255, 0);
+            rgb(
+                255,
+                255,
+                0
+            );
 
         updatePlayer2();
     }
+
 
     // ==================================================
     // ✅ P1 ENTER
@@ -2598,14 +3231,43 @@ scene("characterSelect", () => {
 
     onKeyPress("enter", () => {
 
-        if (player1Ready) {
+        if (
+            player1Ready
+        ) {
             return;
         }
 
-        player1Ready = true;
+
+        // ==============================================
+        // 🔒 BLOCK LOCKED CHARACTER
+        // ==============================================
+
+        if (
+            player1Category === 2 &&
+            isCharacterLocked(
+                specialCharacters[
+                    player1Special
+                ]
+            )
+        ) {
+
+            player1SpecialText.text =
+                "🔒 BEAT HARD CPU TO UNLOCK";
+
+            return;
+        }
+
+
+        player1Ready =
+            true;
 
         player1Cursor.color =
-            rgb(0, 255, 0);
+            rgb(
+                0,
+                255,
+                0
+            );
+
 
         // ==============================================
         // 🤖 SINGLE PLAYER
@@ -2617,33 +3279,40 @@ scene("characterSelect", () => {
 
             chooseCPUCharacter();
 
-            wait(0.5, () => {
 
-                go("fight", {
+            wait(
+                0.5,
+                () => {
 
-                    player1Category:
-                        player1Category,
+                    go("fight", {
 
-                    player2Category:
-                        player2Category,
+                        player1Category:
+                            player1Category,
 
-                    player1Special:
-                        player1Special,
+                        player2Category:
+                            player2Category,
 
-                    player2Special:
-                        player2Special,
-                });
-            });
+                        player1Special:
+                            player1Special,
+
+                        player2Special:
+                            player2Special,
+                    });
+                }
+            );
 
             return;
         }
 
+
         updatePlayer1();
+
         checkReady();
     });
 
+
     // ==================================================
-    // ✅ P2 ENTER — MULTIPLAYER
+    // ✅ P2 ENTER
     // ==================================================
 
     window.addEventListener(
@@ -2657,6 +3326,7 @@ scene("characterSelect", () => {
                 return;
             }
 
+
             if (
                 singlePlayer ||
                 player2Ready
@@ -2664,16 +3334,45 @@ scene("characterSelect", () => {
                 return;
             }
 
-            player2Ready = true;
+
+            // ==========================================
+            // 🔒 BLOCK LOCKED CHARACTER
+            // ==========================================
+
+            if (
+                player2Category === 2 &&
+                isCharacterLocked(
+                    specialCharacters[
+                        player2Special
+                    ]
+                )
+            ) {
+
+                player2SpecialText.text =
+                    "🔒 BEAT HARD CPU TO UNLOCK";
+
+                return;
+            }
+
+
+            player2Ready =
+                true;
+
 
             player2Cursor.color =
-                rgb(0, 255, 0);
+                rgb(
+                    0,
+                    255,
+                    0
+                );
+
 
             updatePlayer2();
 
             checkReady();
         }
     );
+
 
     // ==================================================
     // ✅ READY CHECK
@@ -2686,38 +3385,202 @@ scene("characterSelect", () => {
             player2Ready
         ) {
 
-            wait(0.5, () => {
+            wait(
+                0.5,
+                () => {
 
-                go("fight", {
+                    go("fight", {
 
-                    player1Category:
-                        player1Category,
+                        player1Category:
+                            player1Category,
 
-                    player2Category:
-                        player2Category,
+                        player2Category:
+                            player2Category,
 
-                    player1Special:
-                        player1Special,
+                        player1Special:
+                            player1Special,
 
-                    player2Special:
-                        player2Special,
-                });
-            });
+                        player2Special:
+                            player2Special,
+                    });
+                }
+            );
+        }
+    }
+// ==================================================
+// ✨ SPECIAL CHARACTER DISPLAY
+// ==================================================
+
+let titleEffectTime = 0;
+
+onUpdate(() => {
+
+    titleEffectTime += dt();
+
+    // ==============================================
+    // ⭐ GET CURRENT P1 CHARACTER
+    // ==============================================
+
+    let selectedCharacterP1 = null;
+
+    if (
+        player1Category === 2
+    ) {
+
+        selectedCharacterP1 =
+            specialCharacters[
+                player1Special
+            ];
+    }
+
+    // ==============================================
+    // ⭐ DISPLAY CHARACTER
+    // ==============================================
+
+    if (
+        selectedCharacterP1 === "BACH"
+    ) {
+
+        specialCharacterDisplay.text =
+            "⚽";
+
+    } else if (
+        selectedCharacterP1 === "NATHANIEL"
+    ) {
+
+        specialCharacterDisplay.text =
+            "🟣";
+
+    } else if (
+        selectedCharacterP1
+    ) {
+
+        specialCharacterDisplay.text =
+            selectedCharacterP1;
+
+    } else {
+
+        specialCharacterDisplay.text =
+            "?";
+    }
+
+    // ==============================================
+    // ⚽ BACH TITLE EFFECT
+    // ==============================================
+
+    if (
+        selectedCharacterP1 === "BACH" &&
+        bachUnlocked
+    ) {
+
+        for (
+            let i = 0;
+            i < 12;
+            i++
+        ) {
+
+            const angle =
+                titleEffectTime * 3 +
+                i *
+                (
+                    Math.PI * 2 /
+                    12
+                );
+
+            add([
+                text("⚽"),
+
+                pos(
+                    650 +
+                    Math.cos(angle) * 75,
+
+                    180 +
+                    Math.sin(angle) * 55
+                ),
+
+                anchor("center"),
+
+                scale(0.3),
+
+                z(30),
+
+                opacity(1),
+
+                lifespan(
+                    0.1,
+                    {
+                        fade: 0.05,
+                    }
+                ),
+            ]);
+        }
+    }
+
+    // ==============================================
+    // 🟣 NATHANIEL TITLE EFFECT
+    // ==============================================
+
+    if (
+        selectedCharacterP1 === "NATHANIEL" &&
+        nathanielUnlocked
+    ) {
+
+        for (
+            let i = 0;
+            i < 12;
+            i++
+        ) {
+
+            const angle =
+                titleEffectTime * 3 +
+                i *
+                (
+                    Math.PI * 2 /
+                    12
+                );
+
+            add([
+                text("🟣"),
+
+                pos(
+                    650 +
+                    Math.cos(angle) * 75,
+
+                    180 +
+                    Math.sin(angle) * 55
+                ),
+
+                anchor("center"),
+
+                scale(0.3),
+
+                z(30),
+
+                opacity(1),
+
+                lifespan(
+                    0.1,
+                    {
+                        fade: 0.05,
+                    }
+                ),
+            ]);
         }
     }
 });
+});
+
 // ==================================================
 // FIGHT
 // ==================================================
 
 scene("fight", (data) => {
-window.gooseyScene =
-    "fight";
+window.gooseyScene = "fight";
+window.gooseyMap = currentMap;
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-window.gooseyMap =
-    currentMap;
+
     let player;
 
     // ==================================================
@@ -3052,7 +3915,44 @@ window.gooseyMap =
 
             "player",
         ]);
+} else if (data.player1Special === 9) {
 
+    player = add([
+        sprite("Nathaniel", {
+            anim: "nathaniel",
+        }),
+
+        pos(200, 200),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: 1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "NATHANIEL",
+        },
+
+        "player",
+    ]);
     } else {
 
         player = add([
@@ -3414,7 +4314,44 @@ window.gooseyMap =
 
             "player2",
         ]);
+} else if (data.player2Special === 9) {
 
+    player2 = add([
+        sprite("Nathaniel", {
+            anim: "nathaniel",
+        }),
+
+        pos(550, 200),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: -1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "NATHANIEL",
+        },
+
+        "player2",
+    ]);
     } else {
 
         player2 = add([
@@ -6629,7 +7566,137 @@ window.gooseyMap =
 
                 return;
             }
+// ==================================================
+// 🟣 NATHANIEL RANGED ATTACK
+// ==================================================
 
+if (
+    player.fighter ===
+    "NATHANIEL"
+) {
+player.play(
+    "nathanielSpecial"
+);
+    // ==============================================
+    // /null HAND EFFECT
+    // ==============================================
+
+    add([
+        text("/null"),
+        pos(
+            player.pos.x +
+            player.facing * 35,
+            player.pos.y - 15
+        ),
+        anchor("center"),
+        scale(0.6),
+        z(60),
+        opacity(1),
+
+        lifespan(
+            0.25,
+            {
+                fade: 0.15,
+            }
+        ),
+    ]);
+
+    // ==============================================
+    // 🟣 PURPLE BALL
+    // ==============================================
+
+    const nathanielBall =
+        add([
+            circle(10),
+            pos(
+                player.pos.x +
+                player.facing * 45,
+                player.pos.y - 15
+            ),
+            color(
+                180,
+                0,
+                255
+            ),
+            area(),
+            z(55),
+
+            {
+                vx:
+                    player.facing *
+                    700,
+            },
+        ]);
+
+    nathanielBall.onUpdate(() => {
+
+        // 🟣 MOVE PROJECTILE
+
+        nathanielBall.move(
+            nathanielBall.vx,
+            0
+        );
+
+        // ==========================================
+        // 💥 HIT P2
+        // ==========================================
+
+        if (
+            !player2.invincible &&
+            Math.abs(
+                nathanielBall.pos.x -
+                player2.pos.x
+            ) < 35 &&
+            Math.abs(
+                nathanielBall.pos.y -
+                player2.pos.y
+            ) < 45
+        ) {
+
+            player2.damage +=
+                25;
+
+            player2.knockbackActive =
+                true;
+
+            player2.knockbackX =
+                1000 *
+                player.facing;
+
+            player2.vel.x =
+                player2.knockbackX;
+
+            player2.vel.y =
+                -450;
+
+            shake(10);
+
+            destroy(
+                nathanielBall
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // 💀 LEAVE SCREEN
+        // ==========================================
+
+        if (
+            nathanielBall.pos.x <
+                -100 ||
+            nathanielBall.pos.x >
+                900
+        ) {
+
+            destroy(
+                nathanielBall
+            );
+        }
+    });
+
+    return;
+}
 
             // ==================================================
             // GREG
@@ -7504,8 +8571,135 @@ window.gooseyMap =
 
                 return;
             }
+// ==================================================
+// 🟣 NATHANIEL RANGED ATTACK — P2
+// ==================================================
 
+if (
+    player2.fighter ===
+    "NATHANIEL"
+) {
 
+    player2.play(
+        "nathanielSpecial"
+    );
+
+    // /null HAND EFFECT
+
+    add([
+        text("/null"),
+        pos(
+            player2.pos.x +
+            player2.facing * 35,
+            player2.pos.y - 15
+        ),
+        anchor("center"),
+        scale(0.6),
+        z(60),
+        opacity(1),
+
+        lifespan(
+            0.25,
+            {
+                fade: 0.15,
+            }
+        ),
+    ]);
+
+    // ==============================================
+    // 🟣 PURPLE BALL
+    // ==============================================
+
+    const nathanielBallP2 =
+        add([
+            circle(10),
+            pos(
+                player2.pos.x +
+                player2.facing * 45,
+                player2.pos.y - 15
+            ),
+            color(
+                180,
+                0,
+                255
+            ),
+            area(),
+            z(55),
+
+            {
+                vx:
+                    player2.facing *
+                    700,
+            },
+        ]);
+
+    nathanielBallP2.onUpdate(() => {
+
+        nathanielBallP2.move(
+            nathanielBallP2.vx,
+            0
+        );
+
+        // ==========================================
+        // 💥 HIT P1
+        // ==========================================
+
+        if (
+            !player.invincible &&
+            Math.abs(
+                nathanielBallP2.pos.x -
+                player.pos.x
+            ) < 35 &&
+            Math.abs(
+                nathanielBallP2.pos.y -
+                player.pos.y
+            ) < 45
+        ) {
+
+            player.damage +=
+                25;
+
+            player.knockbackActive =
+                true;
+
+            player.knockbackX =
+                1000 *
+                player2.facing;
+
+            player.vel.x =
+                player.knockbackX;
+
+            player.vel.y =
+                -450;
+
+            shake(10);
+
+            destroy(
+                nathanielBallP2
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // 💀 LEAVE SCREEN
+        // ==========================================
+
+        if (
+            nathanielBallP2.pos.x <
+                -100 ||
+            nathanielBallP2.pos.x >
+                900
+        ) {
+
+            destroy(
+                nathanielBallP2
+            );
+        }
+    });
+
+    return;
+}
             // ==================================================
             // GREG
             // ==================================================
@@ -10586,7 +11780,25 @@ window.gooseyMap =
 
                 player2.stocks =
                     0;
+// ==================================================
+// 🔓 HARD CPU REWARD
+// ==================================================
 
+if (
+    window.singlePlayerMode === true &&
+    window.cpuDifficulty === "HARD"
+) {
+
+    localStorage.setItem(
+        "goosey_bach_unlocked_v101",
+        "true"
+    );
+
+    localStorage.setItem(
+        "goosey_nathaniel_unlocked_v101",
+        "true"
+    );
+}
                 go(
                     "win",
                     {
@@ -10632,8 +11844,31 @@ window.gooseyMap =
 // ==================================================
 
 scene("win", (data) => {
-window.gooseyScene =
-    "win";
+    window.gooseyScene = "win";
+// ==================================================
+// 🔓 HARD CPU UNLOCKS
+// ==================================================
+
+if (
+    window.singlePlayerMode === true &&
+    window.cpuDifficulty === "HARD" &&
+    data.winner === "PLAYER 1"
+) {
+
+    localStorage.setItem(
+        "goosey_bach_unlocked",
+        "true"
+    );
+
+    localStorage.setItem(
+        "goosey_nathaniel_unlocked",
+        "true"
+    );
+
+    console.log(
+        "🔓 BACH + NATHANIEL UNLOCKED!"
+    );
+}
     add([
         text("WINNER!!!"),
         pos(400, 50),
@@ -10733,7 +11968,16 @@ window.gooseyScene =
             anchor("center"),
             scale(1.5),
         ]);
+} else if (data.winner === "NATHANIEL") {
 
+    winner = add([
+        sprite("Nathaniel", {
+            anim: "nathaniel",
+        }),
+        pos(400, 210),
+        anchor("center"),
+        scale(1.5),
+    ]);
     } else if (data.winner === "RED") {
         winner = add([
             rect(70, 70),
