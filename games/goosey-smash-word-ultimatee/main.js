@@ -82,6 +82,7 @@ loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
         },
     },
 });
+loadSprite("Kachen", "assets/sprites/Kachen.png");
 // ==================================================
 // CONSTANTS
 // ==================================================
@@ -268,6 +269,7 @@ scene("title", () => {
         "MARK",
         "BACH",
         "NATHANIEL",
+        "KACHEN",
     ];
 
     let currentSpecial = null;
@@ -1498,6 +1500,75 @@ if (
     }
 }
         // ==================================================
+        // ✴️ KACHEN
+        // ==================================================
+
+        else if (
+            currentSpecial ===
+            "KACHEN"
+        ) {
+
+            // ✴️ STARS FLYING AROUND THE TITLE
+
+            for (
+                let i = 0;
+                i < 8;
+                i++
+            ) {
+
+                const star =
+                    add([
+                        text("✴"),
+                        pos(
+                            Math.random() * 760 + 20,
+                            Math.random() * 380 + 50
+                        ),
+                        anchor("center"),
+                        scale(0.4),
+                        z(42),
+
+                        {
+                            vx:
+                                (
+                                    Math.random() * 260 +
+                                    120
+                                ) *
+                                (
+                                    Math.random() < 0.5
+                                        ? -1
+                                        : 1
+                                ),
+
+                            vy:
+                                (
+                                    Math.random() * 220 +
+                                    100
+                                ) *
+                                (
+                                    Math.random() < 0.5
+                                        ? -1
+                                        : 1
+                                ),
+
+                            spin:
+                                (
+                                    Math.random() * 500 +
+                                    300
+                                ) *
+                                (
+                                    Math.random() < 0.5
+                                        ? -1
+                                        : 1
+                                ),
+                        },
+                    ]);
+
+                specialObjects.push(
+                    star
+                );
+            }
+        }
+        // ==================================================
         // 🪿 GOOSEY HACKER
         // ==================================================
 
@@ -2423,27 +2494,26 @@ scene("cpuSelect", () => {
 // ==================================================
 
 scene("characterSelect", () => {
-window.gooseyScene = "characterSelect";
-    // ==================================================
-    // 🔓 CHARACTER UNLOCKS
-    // ==================================================
+    window.gooseyScene = "characterSelect";
+// ==================================================
+// 🔓 CHARACTER UNLOCKS
+// ==================================================
 
-    // NEW v1.0.1 keys.
-    // These intentionally replace the old keys so any
-    // previous test unlocks do not carry over.
+const bachUnlocked =
+    localStorage.getItem(
+        "goosey_bach_unlocked_v101"
+    ) === "true";
 
-    const bachUnlocked =
-        localStorage.getItem(
-            "goosey_bach_unlocked_v101"
-        ) === "true";
+const nathanielUnlocked =
+    localStorage.getItem(
+        "goosey_nathaniel_unlocked_v101"
+    ) === "true";
 
-    const nathanielUnlocked =
-        localStorage.getItem(
-            "goosey_nathaniel_unlocked_v101"
-        ) === "true";
-
-
-    // ==================================================
+const kachenUnlocked =
+    localStorage.getItem(
+        "goosey_kachen_unlocked_v101"
+    ) === "true";
+        // ==================================================
     // 🌌 WEBSITE BACKGROUND
     // ==================================================
 
@@ -2490,6 +2560,7 @@ window.gooseyScene = "characterSelect";
         "CHAT",
         "BACH",
         "NATHANIEL",
+        "KACHEN",
     ];
 
 
@@ -2499,36 +2570,40 @@ window.gooseyScene = "characterSelect";
 
     const singlePlayer =
         window.singlePlayerMode === true;
+// ==================================================
+// 🔒 CHECK CHARACTER LOCK
+// ==================================================
 
+function isCharacterLocked(
+    character
+) {
 
-    // ==================================================
-    // 🔒 CHECK CHARACTER LOCK
-    // ==================================================
-
-    function isCharacterLocked(
-        character
+    if (
+        character === "BACH" &&
+        !bachUnlocked
     ) {
 
-        if (
-            character === "BACH" &&
-            !bachUnlocked
-        ) {
-
-            return true;
-        }
-
-        if (
-            character === "NATHANIEL" &&
-            !nathanielUnlocked
-        ) {
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
+    if (
+        character === "NATHANIEL" &&
+        !nathanielUnlocked
+    ) {
 
+        return true;
+    }
+
+    if (
+        character === "KACHEN" &&
+        !kachenUnlocked
+    ) {
+
+        return true;
+    }
+
+    return false;
+}
     // ==================================================
     // 🎲 CPU CHARACTER POOL
     // ==================================================
@@ -3192,39 +3267,37 @@ add([
 
         updatePlayer2();
     });
+// ==================================================
+// 🤖 CPU RANDOM CHARACTER
+// ==================================================
 
+function chooseCPUCharacter() {
 
-    // ==================================================
-    // 🤖 CPU RANDOM CHARACTER
-    // ==================================================
+    const choice =
+        getRandomCPUCharacter();
 
-    function chooseCPUCharacter() {
+    player2Category =
+        choice.category;
 
-        const choice =
-            getRandomCPUCharacter();
+    player2Special =
+        choice.special;
 
+    // Remember exactly who the CPU selected
+    window.cpuCharacterName =
+        choice.name;
 
-        player2Category =
-            choice.category;
+    player2Ready =
+        true;
 
-        player2Special =
-            choice.special;
+    player2Cursor.color =
+        rgb(
+            255,
+            255,
+            0
+        );
 
-
-        player2Ready =
-            true;
-
-        player2Cursor.color =
-            rgb(
-                255,
-                255,
-                0
-            );
-
-        updatePlayer2();
-    }
-
-
+    updatePlayer2();
+}
     // ==================================================
     // ✅ P1 ENTER
     // ==================================================
@@ -3567,28 +3640,73 @@ onUpdate(() => {
             ]);
         }
     }
-});
-});
 
+    // ==============================================
+    // ✴️ KACHEN TITLE EFFECT
+    // ==============================================
+
+    if (
+        selectedCharacterP1 === "KACHEN"
+    ) {
+
+        for (
+            let i = 0;
+            i < 12;
+            i++
+        ) {
+
+            const angle =
+                titleEffectTime * 3 +
+                i *
+                (
+                    Math.PI * 2 /
+                    12
+                );
+
+            add([
+                text("✴"),
+
+                pos(
+                    650 +
+                    Math.cos(angle) * 75,
+
+                    180 +
+                    Math.sin(angle) * 55
+                ),
+
+                anchor("center"),
+
+                scale(0.3),
+
+                z(30),
+
+                opacity(1),
+
+                lifespan(
+                    0.1,
+                    {
+                        fade: 0.05,
+                    }
+                ),
+            ]);
+        }
+    }
+});
+});
 // ==================================================
 // FIGHT
 // ==================================================
 
 scene("fight", (data) => {
 
-    window.gooseyScene = "fight";
-
+window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
-    const selectedMap =
-        Math.floor(Math.random() * 6);
-
-    window.gooseyMap =
-        selectedMap;
-
     const currentMap =
-        selectedMap;
-
+        Math.floor(Math.random() * 6);
+window.gooseyMap =
+    selectedMap;
     let player;
+
     // ==================================================
     // P1 CREATION
     // ==================================================
@@ -3955,6 +4073,47 @@ scene("fight", (data) => {
             catMod: false,
 
             fighter: "NATHANIEL",
+        },
+
+        "player",
+    ]);
+    } else if (
+    data.player1Special === 10
+) {
+
+    player = add([
+        sprite("Kachen"),
+
+        pos(
+            200,
+            200
+        ),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: 1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "KACHEN",
         },
 
         "player",
@@ -4354,6 +4513,47 @@ scene("fight", (data) => {
             catMod: false,
 
             fighter: "NATHANIEL",
+        },
+
+        "player2",
+    ]);
+    } else if (
+    data.player2Special === 10
+) {
+
+    player2 = add([
+        sprite("Kachen"),
+
+        pos(
+            550,
+            200
+        ),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: -1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "KACHEN",
         },
 
         "player2",
@@ -7480,6 +7680,102 @@ scene("fight", (data) => {
                 return;
             }
             // ==================================================
+// ✴️ KACHEN RANGED ATTACK — P1
+// ==================================================
+
+if (
+    player.fighter ===
+    "KACHEN"
+) {
+
+    const kachenProjectile =
+        add([
+            text("✴️"),
+            pos(
+                player.pos.x +
+                player.facing * 45,
+                player.pos.y - 15
+            ),
+            anchor("center"),
+            scale(0.8),
+            z(55),
+
+            {
+                vx:
+                    player.facing * 700,
+            },
+        ]);
+
+    kachenProjectile.onUpdate(() => {
+
+        // ✴️ MOVE PROJECTILE
+
+        kachenProjectile.move(
+            kachenProjectile.vx,
+            0
+        );
+
+        // ==========================================
+        // 💥 HIT P2
+        // ==========================================
+
+        if (
+            !player2.invincible &&
+            Math.abs(
+                kachenProjectile.pos.x -
+                player2.pos.x
+            ) < 35 &&
+            Math.abs(
+                kachenProjectile.pos.y -
+                player2.pos.y
+            ) < 45
+        ) {
+
+            player2.damage +=
+                30;
+
+            player2.knockbackActive =
+                true;
+
+            player2.knockbackX =
+                1100 *
+                player.facing;
+
+            player2.vel.x =
+                player2.knockbackX;
+
+            player2.vel.y =
+                -450;
+
+            shake(10);
+
+            destroy(
+                kachenProjectile
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // 💀 LEAVE SCREEN
+        // ==========================================
+
+        if (
+            kachenProjectile.pos.x <
+                -100 ||
+            kachenProjectile.pos.x >
+                900
+        ) {
+
+            destroy(
+                kachenProjectile
+            );
+        }
+    });
+
+    return;
+}
+            // ==================================================
             // 🔥 CHAT FIREBALL
             // ==================================================
 
@@ -8484,6 +8780,102 @@ player.play(
 
                 return;
             }
+            // ==================================================
+// ✴️ KACHEN RANGED ATTACK — P2
+// ==================================================
+
+if (
+    player2.fighter ===
+    "KACHEN"
+) {
+
+    const kachenProjectileP2 =
+        add([
+            text("✴️"),
+            pos(
+                player2.pos.x +
+                player2.facing * 45,
+                player2.pos.y - 15
+            ),
+            anchor("center"),
+            scale(0.8),
+            z(55),
+
+            {
+                vx:
+                    player2.facing * 700,
+            },
+        ]);
+
+    kachenProjectileP2.onUpdate(() => {
+
+        // ✴️ MOVE PROJECTILE
+
+        kachenProjectileP2.move(
+            kachenProjectileP2.vx,
+            0
+        );
+
+        // ==========================================
+        // 💥 HIT P1
+        // ==========================================
+
+        if (
+            !player.invincible &&
+            Math.abs(
+                kachenProjectileP2.pos.x -
+                player.pos.x
+            ) < 35 &&
+            Math.abs(
+                kachenProjectileP2.pos.y -
+                player.pos.y
+            ) < 45
+        ) {
+
+            player.damage +=
+                30;
+
+            player.knockbackActive =
+                true;
+
+            player.knockbackX =
+                1100 *
+                player2.facing;
+
+            player.vel.x =
+                player.knockbackX;
+
+            player.vel.y =
+                -450;
+
+            shake(10);
+
+            destroy(
+                kachenProjectileP2
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // 💀 LEAVE SCREEN
+        // ==========================================
+
+        if (
+            kachenProjectileP2.pos.x <
+                -100 ||
+            kachenProjectileP2.pos.x >
+                900
+        ) {
+
+            destroy(
+                kachenProjectileP2
+            );
+        }
+    });
+
+    return;
+}
             // ==================================================
             // 🔥 CHAT FIREBALL — P2
             // ==================================================
@@ -11852,7 +12244,7 @@ if (
 scene("win", (data) => {
     window.gooseyScene = "win";
 // ==================================================
-// 🔓 HARD CPU UNLOCKS
+// 🔓 HARD CPU UNLOCK PROGRESSION
 // ==================================================
 
 if (
@@ -11861,20 +12253,80 @@ if (
     data.winner === "PLAYER 1"
 ) {
 
-    localStorage.setItem(
-        "goosey_bach_unlocked",
-        "true"
-    );
+    const bachIsUnlocked =
+        localStorage.getItem(
+            "goosey_bach_unlocked_v101"
+        ) === "true";
 
-    localStorage.setItem(
-        "goosey_nathaniel_unlocked",
-        "true"
-    );
+    const kachenIsUnlocked =
+        localStorage.getItem(
+            "goosey_kachen_unlocked_v101"
+        ) === "true";
 
-    console.log(
-        "🔓 BACH + NATHANIEL UNLOCKED!"
-    );
+    // ==============================================
+    // 🔓 BACH
+    // First HARD CPU victory
+    // ==============================================
+
+    if (
+        !bachIsUnlocked
+    ) {
+
+        localStorage.setItem(
+            "goosey_bach_unlocked_v101",
+            "true"
+        );
+
+        console.log(
+            "🔓 BACH UNLOCKED!"
+        );
+    }
+
+    // ==============================================
+    // 🔓 KACHEN
+    // Beat HARD CPU while CPU = BACH
+    // ==============================================
+
+    else if (
+        window.cpuCharacterName ===
+        "BACH" &&
+        !kachenIsUnlocked
+    ) {
+
+        localStorage.setItem(
+            "goosey_kachen_unlocked_v101",
+            "true"
+        );
+
+        console.log(
+            "🔓 KACHEN UNLOCKED!"
+        );
+    }
+
+    // ==============================================
+    // 🔓 NATHANIEL
+    // Beat HARD CPU while CPU = KACHEN
+    // ==============================================
+
+    else if (
+        window.cpuCharacterName ===
+        "KACHEN"
+    ) {
+
+        localStorage.setItem(
+            "goosey_nathaniel_unlocked_v101",
+            "true"
+        );
+
+        console.log(
+            "🔓 NATHANIEL UNLOCKED!"
+        );
+    }
 }
+// ==================================================
+// WINNER TEXT
+// ==================================================
+
     add([
         text("WINNER!!!"),
         pos(400, 50),
@@ -11888,6 +12340,10 @@ if (
         anchor("center"),
         scale(1.5),
     ]);
+
+// ==================================================
+// CREATE WINNER
+// ==================================================
 
     let winner;
 
@@ -11964,6 +12420,7 @@ if (
             anchor("center"),
             scale(0.5),
         ]);
+
     } else if (data.winner === "BACH") {
 
         winner = add([
@@ -11974,17 +12431,30 @@ if (
             anchor("center"),
             scale(1.5),
         ]);
-} else if (data.winner === "NATHANIEL") {
 
-    winner = add([
-        sprite("Nathaniel", {
-            anim: "nathaniel",
-        }),
-        pos(400, 210),
-        anchor("center"),
-        scale(1.5),
-    ]);
+    } else if (data.winner === "NATHANIEL") {
+
+        winner = add([
+            sprite("Nathaniel", {
+                anim: "nathaniel",
+            }),
+            pos(400, 210),
+            anchor("center"),
+            scale(1.5),
+        ]);
+
+    } else if (data.winner === "KACHEN") {
+
+        // Kachen just stands still
+        winner = add([
+            sprite("Kachen"),
+            pos(400, 210),
+            anchor("center"),
+            scale(1.5),
+        ]);
+
     } else if (data.winner === "RED") {
+
         winner = add([
             rect(70, 70),
             pos(400, 210),
@@ -12014,6 +12484,10 @@ if (
         ]);
     }
 
+// ==================================================
+// NORMAL WIN ANIMATION SETUP
+// ==================================================
+
     let winTime = 0;
 
     const winStartX = 400;
@@ -12023,7 +12497,12 @@ if (
         winner.scale.x,
         winner.scale.y
     );
+
     let bachWinBall = null;
+
+// ==================================================
+// BACH WIN BALL
+// ==================================================
 
     if (data.winner === "BACH") {
 
@@ -12037,6 +12516,7 @@ if (
             scale(0.8),
             z(10),
         ]);
+
         bachWinBall.onUpdate(() => {
 
             const ballAngle =
@@ -12058,7 +12538,61 @@ if (
             );
         });
     }
+
+// ==================================================
+// KACHEN ✴ WIN EFFECT
+// ==================================================
+
+    let kachenWinStar = null;
+
+    if (data.winner === "KACHEN") {
+
+        kachenWinStar = add([
+            text("✴"),
+            pos(
+                winner.pos.x + 100,
+                winner.pos.y
+            ),
+            anchor("center"),
+            scale(1.2),
+            z(10),
+        ]);
+
+        kachenWinStar.onUpdate(() => {
+
+            const starAngle = time() * 4;
+
+            const starX =
+                winner.pos.x +
+                Math.cos(starAngle) * 100;
+
+            const starY =
+                winner.pos.y +
+                Math.sin(starAngle) * 70;
+
+            kachenWinStar.moveTo(
+                vec2(
+                    starX,
+                    starY
+                )
+            );
+
+            kachenWinStar.angle =
+                time() * 360;
+        });
+    }
+
+// ==================================================
+// GENERAL WIN ANIMATION
+// KACHEN IS EXCLUDED
+// ==================================================
+
     onUpdate(() => {
+
+        // Kachen stays completely still
+        if (data.winner === "KACHEN") {
+            return;
+        }
 
         winTime += dt();
 
@@ -12084,6 +12618,10 @@ if (
         );
     });
 
+// ==================================================
+// FIGHT AGAIN
+// ==================================================
+
     add([
         text("PRESS ENTER TO FIGHT AGAIN"),
         pos(400, 410),
@@ -12095,6 +12633,7 @@ if (
         go("characterSelect");
     });
 });
+
 // ==================================================
 // START GAME
 // ==================================================
