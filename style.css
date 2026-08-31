@@ -381,19 +381,104 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
     pointer-events: none;
     z-index: 2;
 }
+/* ==================================================
+   💬 DISCORD BUTTON
+   ================================================== */
+
 .discord-button {
     display: inline-block;
-    padding: 12px 20px;
-    margin: 8px;
-    background: #5865F2;
+    position: relative;
+
+    margin: 30px auto;
+    padding: 20px 40px;
+
+    background: linear-gradient(
+        135deg,
+        #5865f2,
+        #7289da,
+        #a970ff
+    );
+
     color: white;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+
     text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: 0.2s;
+
+    border: 3px solid white;
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 15px rgba(88, 101, 242, 0.8),
+        0 0 30px rgba(114, 137, 218, 0.6),
+        0 10px 30px rgba(0, 0, 0, 0.35);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    animation:
+        discordPulse 1.8s infinite;
 }
 
+/* Shiny animated streak */
+.discord-button::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: -120%;
+
+    width: 80%;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.3);
+
+    transform: skewX(-25deg);
+
+    transition: left 0.5s ease;
+}
+
+/* 💜 Discord pulse */
+@keyframes discordPulse {
+
+    0%, 100% {
+        box-shadow:
+            0 0 15px rgba(88, 101, 242, 0.8),
+            0 0 30px rgba(114, 137, 218, 0.6),
+            0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    50% {
+        box-shadow:
+            0 0 25px rgba(88, 101, 242, 1),
+            0 0 50px rgba(169, 112, 255, 0.9),
+            0 12px 38px rgba(0, 0, 0, 0.45);
+    }
+}
+
+/* Hover */
 .discord-button:hover {
-    background: #4752C4;
-    transform: scale(1.05);
+    transform:
+        translateY(-5px)
+        scale(1.06)
+        rotate(1deg);
+
+    box-shadow:
+        0 0 25px rgba(88, 101, 242, 1),
+        0 0 55px rgba(169, 112, 255, 0.9),
+        0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.discord-button:hover::before {
+    left: 130%;
+}
+
+/* Click */
+.discord-button:active {
+    transform: scale(0.98);
 }
