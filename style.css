@@ -381,3 +381,19 @@ footer{width:min(var(--max),calc(100% - 40px));margin:auto;padding:30px 0 50px;d
     pointer-events: none;
     z-index: 2;
 }
+.discord-button {
+    display: inline-block;
+    padding: 12px 20px;
+    margin: 8px;
+    background: #5865F2;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.discord-button:hover {
+    background: #4752C4;
+    transform: scale(1.05);
+}
