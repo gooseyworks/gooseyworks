@@ -3704,7 +3704,7 @@ window.gooseyScene = "fight";
     const currentMap =
         Math.floor(Math.random() * 6);
 window.gooseyMap =
-    selectedMap;
+    currentMap;
     let player;
 
     // ==================================================
