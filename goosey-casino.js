@@ -1,7 +1,6 @@
 // ============================================
 // GOOSEY CASINO
 // ============================================
-
 const STARTING_BALANCE = 7500;
 const BALANCE_KEY = "gooseyCasinoBalance";
 
@@ -9,10 +8,20 @@ function loadBalance() {
     try {
         const saved = localStorage.getItem(BALANCE_KEY);
 
+        // Reset old/broken 0 balance
+        if (saved === "0") {
+            localStorage.setItem(
+                BALANCE_KEY,
+                String(STARTING_BALANCE)
+            );
+
+            return STARTING_BALANCE;
+        }
+
         if (saved !== null) {
             const value = Number(saved);
 
-            if (Number.isFinite(value) && value >= 0) {
+            if (Number.isFinite(value) && value > 0) {
                 return value;
             }
         }
@@ -25,7 +34,6 @@ function loadBalance() {
         return STARTING_BALANCE;
 
     } catch (error) {
-        console.error("GooseBucks load error:", error);
         return STARTING_BALANCE;
     }
 }
@@ -38,16 +46,13 @@ function saveBalance() {
             BALANCE_KEY,
             String(balance)
         );
-
-        console.log("GooseBucks saved:", balance);
     } catch (error) {
-        console.error("GooseBucks save error:", error);
+        console.error("Could not save GooseBucks.");
     }
 }
 
 function updateBalance() {
-    const element =
-        document.getElementById("balance");
+    const element = document.getElementById("balance");
 
     if (element) {
         element.textContent =
@@ -56,7 +61,6 @@ function updateBalance() {
 
     saveBalance();
 }
-
 let deck = [];
 let playerHand = [];
 let botHand = [];
