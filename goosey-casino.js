@@ -2,26 +2,16 @@
 // GOOSEY CASINO
 // ============================================
 const STARTING_BALANCE = 7500;
-const BALANCE_KEY = "gooseyCasinoBalanceV2";
+const BALANCE_KEY = "gooseyCasinoBalanceV3";
 
 function loadBalance() {
     try {
         const saved = localStorage.getItem(BALANCE_KEY);
 
-        // Reset old/broken 0 balance
-        if (saved === "0") {
-            localStorage.setItem(
-                BALANCE_KEY,
-                String(STARTING_BALANCE)
-            );
-
-            return STARTING_BALANCE;
-        }
-
         if (saved !== null) {
             const value = Number(saved);
 
-            if (Number.isFinite(value) && value > 0) {
+            if (Number.isFinite(value) && value >= 0) {
                 return value;
             }
         }
