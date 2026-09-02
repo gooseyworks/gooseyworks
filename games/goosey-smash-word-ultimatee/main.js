@@ -3844,9 +3844,10 @@ window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-window.gooseyMap = selectedMap;
     let player;
 
+window.gooseyMap = selectedMap;
+    
     // ==================================================
     // P1 CREATION
     // ==================================================
