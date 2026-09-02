@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goosey Casino</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#193d2b 0%,#07140d 55%,#030805 100%);color:white;display:flex;justify-content:center;align-items:center;padding:20px}.casino{width:min(1000px,94%);min-height:700px;padding:35px;border:3px solid #d4af37;border-radius:25px;background:rgba(5,20,12,.94);box-shadow:0 0 30px rgba(212,175,55,.25),inset 0 0 30px rgba(0,0,0,.5);text-align:center}.goose{font-size:70px;margin-bottom:-10px}h1{margin:0;font-size:52px;color:#d4af37;text-shadow:0 0 15px rgba(212,175,55,.45)}.subtitle{margin-top:8px;color:#b8c8bd;font-size:18px}.balance{margin:30px auto;padding:20px;max-width:500px;border-radius:18px;background:linear-gradient(145deg,#132c1d,#09170e);border:2px solid #d4af37}.balance-title{color:#b8c8bd;font-size:16px}.balance-number{font-size:42px;font-weight:bold;color:#f3d36a;margin:5px 0}.balance-note{font-size:13px;color:#899b90}.main-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;max-width:700px;margin:25px auto}button{border:none;border-radius:14px;padding:18px;font-size:19px;font-weight:bold;cursor:pointer;transition:.15s}button:hover{transform:translateY(-3px);filter:brightness(1.15)}button:active{transform:translateY(1px)}.play{grid-column:1/-1;background:#d4af37;color:#111;font-size:25px}.normal{background:#183b27;color:white;border:1px solid #356f4b}.info{background:#182a3b;color:#b9dcff;border:1px solid #345878}.section{margin-top:30px;padding-top:25px;border-top:1px solid rgba(212,175,55,.3)}.section h2{color:#d4af37;margin-bottom:15px}.games{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.game{background:#102319;border:1px solid #284f37;color:white;padding:15px;border-radius:12px}.game:hover{border-color:#d4af37}.rules{margin-top:25px;padding:18px;background:rgba(255,255,255,.03);border-radius:12px;color:#aebbb2;font-size:14px;line-height:1.6}.back{margin-top:30px;background:#222;color:white;border:1px solid #555}.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}.panel{width:min(900px,96vw);max-height:92vh;overflow:auto;background:#07140d;border:3px solid #d4af37;border-radius:22px;padding:25px;box-shadow:0 0 35px rgba(212,175,55,.35)}.panel h2{color:#f3d36a;margin-top:0}.close{float:right;background:#222;color:white;border:1px solid #555;padding:9px 13px}.table{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0}.card{width:82px;height:116px;background:#fff;color:#111;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:bold;border:3px solid #ddd;cursor:pointer;position:relative}.card.selected{transform:translateY(-12px);border-color:#d4af37;box-shadow:0 0 12px rgba(212,175,55,.7)}.card.red{color:#c62828}.game-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px 0}.game-controls button{padding:13px 18px}.bet-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:12px}.bet-row input{width:130px;padding:12px;border-radius:10px;border:1px solid #456;background:#102319;color:white;font-size:17px}.status{min-height:45px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);color:#dce9df}.small{font-size:13px;color:#9eaea4}.bot-back{background:#222;color:white;border:1px solid #555}@media(max-width:700px){.casino{padding:20px}h1{font-size:38px}.main-buttons{grid-template-columns:1fr}.play{grid-column:auto}.games{grid-template-columns:1fr 1fr}.card{width:62px;height:90px;font-size:20px}}@media(max-width:450px){.games{grid-template-columns:1fr}.balance-number{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="casino">
+<div class="goose">🪿</div><h1>GOOSEY CASINO</h1><div class="subtitle">Welcome to the most questionable casino on the internet.</div>
+<div class="balance"><div class="balance-title">YOUR GOOSEBUCKS</div><div class="balance-number" id="balance">7,500 GB</div><div class="balance-note">Fictional reference: 7,500 GB ≈ $1,500<br>GooseBucks have NO cash value.</div></div>
+<div class="main-buttons">
+<button class="play" onclick="startGame()">🎮 PLAY</button><button class="normal" onclick="onlineMode()">🌎 ONLINE</button><button class="normal" onclick="privateRoom()">🔒 PRIVATE ROOM</button><button class="normal" onclick="bots()">🤖 PLAY BOTS</button><button class="info" onclick="howToPlay()">🎓 HOW TO PLAY</button><button class="info" onclick="rules()">📖 RULES</button><button class="info" onclick="leaderboard()">🏆 LEADERBOARD</button>
+</div>
+<div class="section"><h2>🎰 GAMES</h2><div class="games">
+<button class="game" onclick="openPoker()">🃏 5-Card Draw</button><button class="game" onclick="comingSoon('Texas Hold’em')">♠️ Texas Hold’em</button><button class="game" onclick="comingSoon('Goosey Slots')">🎰 Goosey Slots</button><button class="game" onclick="comingSoon('Goosey Wheel')">🎡 Goosey Wheel</button><button class="game" onclick="comingSoon('Coin Flip')">🪙 Coin Flip</button><button class="game" onclick="comingSoon('Dice Duel')">🎲 Dice Duel</button><button class="game" onclick="comingSoon('Chicken')">🐔 Chicken</button><button class="game" onclick="comingSoon('Goosey Crash')">📈 Goosey Crash</button><button class="game" onclick="comingSoon('Bomb Goose')">💣 Bomb Goose</button><button class="game" onclick="comingSoon('Goose Racing')">🏁 Goose Racing</button><button class="game" onclick="comingSoon('Goosey Pool')">🎱 Goosey Pool</button><button class="game" onclick="comingSoon('More Games')">❓ MORE</button>
+</div></div>
+<div class="rules"><strong>🚨 GOOSEY CASINO</strong><br>GooseBucks are fictional game currency only.<br>They cannot be bought, sold, or redeemed for real money or anything of monetary value.</div>
+<button class="back" onclick="backToWebsite()">← BACK TO GOOSEYWORKS</button>
+</div>
+
+<div class="modal" id="pokerModal">
+<div class="panel">
+<button class="close" onclick="closePoker()">✕ CLOSE</button>
+<h2>🃏 GOOSEY 5-CARD DRAW</h2>
+<p class="small">Choose cards to discard, then draw replacements. This is a single-player game against Goosey Bot.</p>
+<div class="bet-row"><label>Bet: <input id="bet" type="number" min="10" max="1000" step="10" value="100"></label><button class="normal" onclick="dealPoker()">DEAL NEW HAND</button></div>
+<h3>Your Hand</h3><div class="table" id="playerHand"></div>
+<div class="game-controls"><button class="play" id="drawButton" onclick="drawCards()" disabled>🔄 DRAW SELECTED</button></div>
+<h3>Goosey Bot</h3><div class="table" id="botHand"></div>
+<div class="status" id="pokerStatus">Set your bet and deal a hand!</div>
+<div class="game-controls"><button class="normal" onclick="dealPoker()">🔁 PLAY AGAIN</button><button class="bot-back" onclick="closePoker()">← BACK TO CASINO</button></div>
+</div></div>
+
+<script>
+let gooseBucks=7500,deck=[],playerHand=[],botHand=[],selected=new Set(),pokerBet=100,hasDrawn=false;
+const suits=['♠','♥','♦','♣'], ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+function updateBalance(){document.getElementById('balance').textContent=gooseBucks.toLocaleString()+' GB'}
+function startGame(){openPoker()}
+function onlineMode(){alert('🌎 ONLINE\n\nOnline multiplayer is coming soon!')}
+function privateRoom(){alert('🔒 PRIVATE ROOM\n\nPrivate rooms are coming soon!')}
+function bots(){openPoker()}
+function howToPlay(){alert('🎓 HOW TO PLAY\n\n5-Card Draw: choose a bet, get five cards, click cards to discard, then draw replacements. The best poker hand wins!\n\nMore interactive tutorials are coming soon.')}
+function rules(){alert('📖 GOOSEY CASINO RULES\n\n• GooseBucks are virtual only.\n• No real-money purchases.\n• No cashing out.\n• No real-money trading.\n• No cheating or exploiting bugs.\n• Keep multiplayer chat friendly.\n\nHave fun! 🪿')}
+function leaderboard(){alert('🏆 LEADERBOARD\n\nThe leaderboard is coming soon!')}
+function comingSoon(game){alert('🪿 '+game+'\n\nThis game is coming soon!')}
+function backToWebsite(){window.location.href='index.html'}
+function openPoker(){document.getElementById('pokerModal').classList.add('show');dealPoker()}
+function closePoker(){document.getElementById('pokerModal').classList.remove('show')}
+function makeDeck(){let d=[];for(const s of suits)for(const r of ranks)d.push({s,r});return d.sort(()=>Math.random()-.5)}
+function cardValue(r){return ranks.indexOf(r)+2}
+function dealPoker(){
+ let b=parseInt(document.getElementById('bet').value)||0;
+ if(b<10)b=10;if(b>1000)b=1000;document.getElementById('bet').value=b;
+ if(b>gooseBucks){document.getElementById('pokerStatus').textContent='❌ You do not have enough GooseBucks for that bet.';return}
+ pokerBet=b;gooseBucks-=pokerBet;updateBalance();deck=makeDeck();playerHand=deck.splice(0,5);botHand=deck.splice(0,5);selected.clear();hasDrawn=false;renderHands();document.getElementById('drawButton').disabled=false;document.getElementById('pokerStatus').textContent='Pick up to 3 cards to discard, then press DRAW SELECTED.'
+}
+function renderHands(){document.getElementById('playerHand').innerHTML=playerHand.map((c,i)=>`<div class="card ${'♥♦'.includes(c.s)?'red':''} ${selected.has(i)?'selected':''}" onclick="toggleCard(${i})">${c.r}${c.s}</div>`).join('');document.getElementById('botHand').innerHTML=botHand.map(()=>'<div class="card">🂠</div>').join('')}
+function toggleCard(i){if(hasDrawn)return;if(selected.has(i))selected.delete(i);else if(selected.size<3)selected.add(i);renderHands()}
+function drawCards(){if(hasDrawn)return;for(const i of selected)playerHand[i]=deck.shift();const botDiscard=chooseBotDiscards(botHand);for(const i of botDiscard)botHand[i]=deck.shift();hasDrawn=true;document.getElementById('drawButton').disabled=true;renderHands();finishPoker()}
+function chooseBotDiscards(hand){let evald=evaluate(hand);if(evald.rank>=4)return[];let counts={};hand.forEach(c=>counts[c.r]=(counts[c.r]||0)+1);let keep=new Set();Object.keys(counts).forEach(r=>{if(counts[r]>=2)hand.forEach((c,i)=>{if(c.r===r)keep.add(i)})});let out=[];for(let i=0;i<5;i++)if(!keep.has(i)&&out.length<3)out.push(i);return out}
+function evaluate(hand){let vals=hand.map(c=>cardValue(c.r)).sort((a,b)=>b-a),counts={};hand.forEach(c=>counts[c.r]=(counts[c.r]||0)+1);let groups=Object.values(counts).sort((a,b)=>b-a),flush=hand.every(c=>c.s===hand[0].s),straight=vals.every((v,i)=>i===0||v===vals[i-1]-1)||vals.join(',')==='14,5,4,3,2';if(straight&&flush)return{rank:8,name:'Straight Flush',vals};if(groups[0]===4)return{rank:7,name:'Four of a Kind',vals};if(groups[0]===3&&groups[1]===2)return{rank:6,name:'Full House',vals};if(flush)return{rank:5,name:'Flush',vals};if(straight)return{rank:4,name:'Straight',vals};if(groups[0]===3)return{rank:3,name:'Three of a Kind',vals};if(groups[0]===2&&groups[1]===2)return{rank:2,name:'Two Pair',vals};if(groups[0]===2)return{rank:1,name:'One Pair',vals};return{rank:0,name:'High Card',vals}}
+function compare(a,b){if(a.rank!==b.rank)return a.rank-b.rank;for(let i=0;i<Math.max(a.vals.length,b.vals.length);i++){if((a.vals[i]||0)!==(b.vals[i]||0))return(a.vals[i]||0)-(b.vals[i]||0)}return 0}
+function finishPoker(){let p=evaluate(playerHand),b=evaluate(botHand),cmp=compare(p,b);document.getElementById('botHand').innerHTML=botHand.map(c=>`<div class="card ${'♥♦'.includes(c.s)?'red':''}">${c.r}${c.s}</div>`).join('');let msg=`You: ${p.name} | Goosey Bot: ${b.name}. `;if(cmp>0){gooseBucks+=pokerBet*2;msg+='🏆 YOU WIN! +'+pokerBet+' GB';}else if(cmp===0){gooseBucks+=pokerBet;msg+='🤝 TIE! Your bet is returned.'}else{msg+='🪿 GOOSEY BOT WINS! -'+pokerBet+' GB';}updateBalance();document.getElementById('pokerStatus').textContent=msg}
+updateBalance();
+</script>
+</body>
+</html>
