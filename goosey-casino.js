@@ -699,3 +699,4 @@ function finishPoker() {
 // ============================================
 
 updateBalance();
+console.log("🪿 GOOSEY CASINO JS LOADED!");
