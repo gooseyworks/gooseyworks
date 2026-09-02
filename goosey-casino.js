@@ -2,7 +2,7 @@
 // GOOSEY CASINO
 // ============================================
 const STARTING_BALANCE = 7500;
-const BALANCE_KEY = "gooseyCasinoBalance";
+const BALANCE_KEY = "gooseyCasinoBalanceV2";
 
 function loadBalance() {
     try {
