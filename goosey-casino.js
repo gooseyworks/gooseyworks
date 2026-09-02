@@ -1,117 +1,8 @@
 // ============================================
-// GOOSEY CASINO - MAIN JAVASCRIPT
+// GOOSEY CASINO
 // ============================================
 
-// GooseBucks
 let balance = 7500;
-
-// Update the balance shown on screen
-function updateBalance() {
-    const balanceElement = document.getElementById("balance");
-
-    if (balanceElement) {
-        balanceElement.textContent =
-            balance.toLocaleString() + " GB";
-    }
-}
-
-// ============================================
-// MAIN MENU
-// ============================================
-
-function startGame() {
-    openPoker();
-}
-
-function onlineMode() {
-    alert(
-        "🌎 ONLINE\n\n" +
-        "Online multiplayer is coming soon!\n\n" +
-        "For now, play against Goosey Bot."
-    );
-}
-
-function privateRoom() {
-    alert(
-        "🔒 PRIVATE ROOM\n\n" +
-        "Private rooms are coming soon!\n\n" +
-        "Soon you'll be able to create a room and invite your friends."
-    );
-}
-
-function bots() {
-    openPoker();
-}
-
-function howToPlay() {
-    alert(
-        "🎓 HOW TO PLAY\n\n" +
-        "Choose a game from the casino menu.\n\n" +
-        "🃏 5-Card Draw\n" +
-        "Get 5 cards, choose cards to discard, " +
-        "then draw replacements.\n\n" +
-        "The player with the better poker hand wins!"
-    );
-}
-
-function rules() {
-    alert(
-        "📖 GOOSEY CASINO RULES\n\n" +
-        "• GooseBucks are fictional game currency only.\n" +
-        "• GooseBucks cannot be purchased.\n" +
-        "• GooseBucks cannot be cashed out.\n" +
-        "• GooseBucks cannot be traded for real-world value.\n" +
-        "• Don't cheat or exploit bugs.\n" +
-        "• Keep multiplayer chat friendly.\n\n" +
-        "Have fun! 🪿"
-    );
-}
-
-function leaderboard() {
-    alert(
-        "🏆 LEADERBOARD\n\n" +
-        "The leaderboard system is coming soon!"
-    );
-}
-
-function comingSoon(game) {
-    alert(
-        "🪿 " + game + "\n\n" +
-        "This game is coming soon!"
-    );
-}
-
-function backToWebsite() {
-    window.location.href = "index.html";
-}
-
-
-// ============================================
-// 5-CARD DRAW MENU
-// ============================================
-
-function openPoker() {
-    const modal = document.getElementById("pokerModal");
-
-    if (modal) {
-        modal.classList.add("show");
-    }
-}
-
-function closePoker() {
-    const modal = document.getElementById("pokerModal");
-
-    if (modal) {
-        modal.classList.remove("show");
-    }
-}
-
-
-// Start with the correct balance
-updateBalance();
-// ============================================
-// 5-CARD DRAW ENGINE
-// ============================================
 
 let deck = [];
 let playerHand = [];
@@ -139,6 +30,109 @@ const ranks = [
     { name: "A", value: 14 }
 ];
 
+
+// ============================================
+// BALANCE
+// ============================================
+
+function updateBalance() {
+
+    const element = document.getElementById("balance");
+
+    if (element) {
+        element.textContent =
+            balance.toLocaleString() + " GB";
+    }
+}
+
+
+// ============================================
+// MENU BUTTONS
+// ============================================
+
+function startGame() {
+    openPoker();
+}
+
+function bots() {
+    openPoker();
+}
+
+function onlineMode() {
+
+    alert(
+        "🌎 ONLINE\n\n" +
+        "Online multiplayer is coming soon!"
+    );
+
+}
+
+function privateRoom() {
+
+    alert(
+        "🔒 PRIVATE ROOM\n\n" +
+        "Private rooms are coming soon!"
+    );
+
+}
+
+function howToPlay() {
+
+    alert(
+        "🎓 HOW TO PLAY\n\n" +
+        "5-Card Draw:\n" +
+        "1. Choose your bet.\n" +
+        "2. Deal five cards.\n" +
+        "3. Click cards to discard.\n" +
+        "4. Draw replacements.\n" +
+        "5. Beat Goosey Bot!"
+    );
+
+}
+
+function rules() {
+
+    alert(
+        "📖 GOOSEY CASINO RULES\n\n" +
+        "• GooseBucks are fictional only.\n" +
+        "• No real-money purchases.\n" +
+        "• No cashing out.\n" +
+        "• No real-money trading.\n" +
+        "• Don't cheat.\n\n" +
+        "Have fun! 🪿"
+    );
+
+}
+
+function leaderboard() {
+
+    alert(
+        "🏆 LEADERBOARD\n\n" +
+        "Coming soon!"
+    );
+
+}
+
+function comingSoon(game) {
+
+    alert(
+        "🪿 " + game + "\n\n" +
+        "Coming soon!"
+    );
+
+}
+
+function backToWebsite() {
+
+    window.location.href = "index.html";
+
+}
+
+
+// ============================================
+// DECK
+// ============================================
+
 function makeDeck() {
 
     const newDeck = [];
@@ -158,13 +152,15 @@ function makeDeck() {
     }
 
     return newDeck;
+
 }
 
 function shuffle(array) {
 
     for (let i = array.length - 1; i > 0; i--) {
 
-        const j = Math.floor(Math.random() * (i + 1));
+        const j =
+            Math.floor(Math.random() * (i + 1));
 
         [array[i], array[j]] =
         [array[j], array[i]];
@@ -172,6 +168,7 @@ function shuffle(array) {
     }
 
     return array;
+
 }
 
 function drawOne() {
@@ -180,110 +177,10 @@ function drawOne() {
 
 }
 
-function cardText(card) {
 
-    return card.name + card.suit;
-
-}
-
-function renderCard(card, index, clickable) {
-
-    const div = document.createElement("div");
-
-    div.className =
-        "card" +
-        ((card.suit === "♥" || card.suit === "♦")
-            ? " red"
-            : "");
-
-    div.textContent = cardText(card);
-
-    if (clickable) {
-
-        if (selectedCards.has(index)) {
-
-            div.classList.add("selected");
-
-        }
-
-        div.onclick = function () {
-
-            toggleCard(index);
-
-        };
-
-    }
-
-    return div;
-
-}
-
-function renderPokerHands(showBot) {
-
-    const playerElement =
-        document.getElementById("playerHand");
-
-    const botElement =
-        document.getElementById("botHand");
-
-    if (!playerElement || !botElement) {
-        return;
-    }
-
-    playerElement.innerHTML = "";
-
-    playerHand.forEach(function(card, index) {
-
-        playerElement.appendChild(
-            renderCard(
-                card,
-                index,
-                pokerActive && !pokerDrawn
-            )
-        );
-
-    });
-
-    botElement.innerHTML = "";
-
-    botHand.forEach(function(card) {
-
-        const div = document.createElement("div");
-
-        div.className =
-            "card" +
-            ((card.suit === "♥" || card.suit === "♦")
-                ? " red"
-                : "");
-
-        if (showBot) {
-
-            div.textContent = cardText(card);
-
-        } else {
-
-            div.textContent = "🂠";
-
-        }
-
-        botElement.appendChild(div);
-
-    });
-
-}
-
-function setPokerStatus(text) {
-
-    const element =
-        document.getElementById("pokerStatus");
-
-    if (element) {
-
-        element.textContent = text;
-
-    }
-
-}
+// ============================================
+// 5-CARD DRAW
+// ============================================
 
 function openPoker() {
 
@@ -291,6 +188,7 @@ function openPoker() {
         document.getElementById("pokerModal");
 
     if (!modal) {
+        console.error("pokerModal not found!");
         return;
     }
 
@@ -311,9 +209,7 @@ function openPoker() {
         document.getElementById("drawButton");
 
     if (drawButton) {
-
         drawButton.disabled = true;
-
     }
 
 }
@@ -324,9 +220,7 @@ function closePoker() {
         document.getElementById("pokerModal");
 
     if (modal) {
-
         modal.classList.remove("show");
-
     }
 
     pokerActive = false;
@@ -342,9 +236,7 @@ function getBet() {
         Number(input ? input.value : 100);
 
     if (!Number.isFinite(bet)) {
-
         bet = 100;
-
     }
 
     bet =
@@ -354,9 +246,7 @@ function getBet() {
         Math.max(10, Math.min(1000, bet));
 
     if (input) {
-
         input.value = bet;
-
     }
 
     return bet;
@@ -374,14 +264,14 @@ function dealPoker() {
         );
 
         return;
-
     }
 
     balance -= bet;
 
     updateBalance();
 
-    deck = shuffle(makeDeck());
+    deck =
+        shuffle(makeDeck());
 
     playerHand = [
         drawOne(),
@@ -408,16 +298,109 @@ function dealPoker() {
         document.getElementById("drawButton");
 
     if (drawButton) {
-
         drawButton.disabled = false;
-
     }
 
     renderPokerHands(false);
 
     setPokerStatus(
-        "Select up to 3 cards to discard, then DRAW SELECTED!"
+        "Pick up to 3 cards to discard, then press DRAW SELECTED!"
     );
+
+}
+
+function renderPokerHands(showBot) {
+
+    const playerElement =
+        document.getElementById("playerHand");
+
+    const botElement =
+        document.getElementById("botHand");
+
+    if (!playerElement || !botElement) {
+        return;
+    }
+
+    playerElement.innerHTML = "";
+
+    playerHand.forEach(function(card, index) {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "card" +
+            (
+                card.suit === "♥" ||
+                card.suit === "♦"
+                    ? " red"
+                    : ""
+            );
+
+        div.textContent =
+            card.name + card.suit;
+
+        if (
+            pokerActive &&
+            !pokerDrawn
+        ) {
+
+            if (selectedCards.has(index)) {
+                div.classList.add("selected");
+            }
+
+            div.onclick =
+                function() {
+                    toggleCard(index);
+                };
+
+        }
+
+        playerElement.appendChild(div);
+
+    });
+
+    botElement.innerHTML = "";
+
+    botHand.forEach(function(card) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "card";
+
+        if (showBot) {
+
+            div.textContent =
+                card.name + card.suit;
+
+            if (
+                card.suit === "♥" ||
+                card.suit === "♦"
+            ) {
+                div.classList.add("red");
+            }
+
+        } else {
+
+            div.textContent = "🂠";
+
+        }
+
+        botElement.appendChild(div);
+
+    });
+
+}
+
+function setPokerStatus(text) {
+
+    const element =
+        document.getElementById("pokerStatus");
+
+    if (element) {
+        element.textContent = text;
+    }
 
 }
 
@@ -462,47 +445,40 @@ function chooseBotDiscards(hand) {
 
     });
 
-    const keepValues =
-        new Set(
-            Object.keys(counts)
-                .filter(function(value) {
-                    return counts[value] >= 2;
-                })
-                .map(Number)
-        );
+    const keep =
+        new Set();
+
+    hand.forEach(function(card) {
+
+        if (counts[card.value] >= 2) {
+            keep.add(card.value);
+        }
+
+    });
 
     const candidates =
-        hand.map(function(card, index) {
+        hand
+            .map(function(card, index) {
 
-            return {
-                index: index,
-                keep: keepValues.has(card.value),
-                value: card.value
-            };
+                return {
+                    index: index,
+                    value: card.value,
+                    keep: keep.has(card.value)
+                };
 
-        });
+            })
+            .filter(function(card) {
+                return !card.keep;
+            })
+            .sort(function(a, b) {
+                return a.value - b.value;
+            });
 
     return candidates
-        .filter(function(card) {
-            return !card.keep;
-        })
-        .sort(function(a, b) {
-            return a.value - b.value;
-        })
         .slice(0, 3)
         .map(function(card) {
             return card.index;
         });
-
-}
-
-function replaceSelected(hand, indexes) {
-
-    indexes.forEach(function(index) {
-
-        hand[index] = drawOne();
-
-    });
 
 }
 
@@ -518,15 +494,19 @@ function drawCards() {
     const botDiscards =
         chooseBotDiscards(botHand);
 
-    replaceSelected(
-        playerHand,
-        playerDiscards
-    );
+    playerDiscards.forEach(function(index) {
 
-    replaceSelected(
-        botHand,
-        botDiscards
-    );
+        playerHand[index] =
+            drawOne();
+
+    });
+
+    botDiscards.forEach(function(index) {
+
+        botHand[index] =
+            drawOne();
+
+    });
 
     pokerDrawn = true;
     pokerActive = false;
@@ -535,13 +515,187 @@ function drawCards() {
         document.getElementById("drawButton");
 
     if (drawButton) {
-
         drawButton.disabled = true;
-
     }
 
     renderPokerHands(true);
 
-    resolvePoker(getBet());
+    finishPoker();
 
 }
+
+
+// ============================================
+// POKER HAND EVALUATION
+// ============================================
+
+function evaluateHand(hand) {
+
+    const values =
+        hand
+            .map(function(card) {
+                return card.value;
+            })
+            .sort(function(a, b) {
+                return b - a;
+            });
+
+    const counts = {};
+
+    values.forEach(function(value) {
+
+        counts[value] =
+            (counts[value] || 0) + 1;
+
+    });
+
+    const groups =
+        Object.values(counts)
+            .sort(function(a, b) {
+                return b - a;
+            });
+
+    const flush =
+        hand.every(function(card) {
+            return card.suit === hand[0].suit;
+        });
+
+    let straight = false;
+
+    const unique =
+        [...new Set(values)];
+
+    if (unique.length === 5) {
+
+        if (
+            unique[0] - unique[4] === 4
+        ) {
+            straight = true;
+        }
+
+        if (
+            unique.join(",") ===
+            "14,5,4,3,2"
+        ) {
+            straight = true;
+        }
+
+    }
+
+    if (straight && flush) {
+        return {
+            rank: 8,
+            name: "Straight Flush"
+        };
+    }
+
+    if (groups[0] === 4) {
+        return {
+            rank: 7,
+            name: "Four of a Kind"
+        };
+    }
+
+    if (
+        groups[0] === 3 &&
+        groups[1] === 2
+    ) {
+        return {
+            rank: 6,
+            name: "Full House"
+        };
+    }
+
+    if (flush) {
+        return {
+            rank: 5,
+            name: "Flush"
+        };
+    }
+
+    if (straight) {
+        return {
+            rank: 4,
+            name: "Straight"
+        };
+    }
+
+    if (groups[0] === 3) {
+        return {
+            rank: 3,
+            name: "Three of a Kind"
+        };
+    }
+
+    if (
+        groups[0] === 2 &&
+        groups[1] === 2
+    ) {
+        return {
+            rank: 2,
+            name: "Two Pair"
+        };
+    }
+
+    if (groups[0] === 2) {
+        return {
+            rank: 1,
+            name: "One Pair"
+        };
+    }
+
+    return {
+        rank: 0,
+        name: "High Card"
+    };
+
+}
+
+function finishPoker() {
+
+    const player =
+        evaluateHand(playerHand);
+
+    const bot =
+        evaluateHand(botHand);
+
+    let message =
+        "You: " +
+        player.name +
+        " | Goosey Bot: " +
+        bot.name +
+        ". ";
+
+    if (player.rank > bot.rank) {
+
+        balance += getBet() * 2;
+
+        message +=
+            "🏆 YOU WIN!";
+
+    } else if (player.rank === bot.rank) {
+
+        balance += getBet();
+
+        message +=
+            "🤝 TIE! Your bet is returned.";
+
+    } else {
+
+        message +=
+            "🪿 GOOSEY BOT WINS!";
+
+    }
+
+    updateBalance();
+
+    setPokerStatus(message);
+
+}
+
+
+// ============================================
+// START
+// ============================================
+
+updateBalance();
