@@ -5,7 +5,57 @@
 const STARTING_BALANCE = 7500;
 const BALANCE_KEY = "gooseyCasinoBalance";
 
+function loadBalance() {
+    try {
+        const saved = localStorage.getItem(BALANCE_KEY);
+
+        if (saved !== null) {
+            const value = Number(saved);
+
+            if (Number.isFinite(value) && value >= 0) {
+                return value;
+            }
+        }
+
+        localStorage.setItem(
+            BALANCE_KEY,
+            String(STARTING_BALANCE)
+        );
+
+        return STARTING_BALANCE;
+
+    } catch (error) {
+        console.error("GooseBucks load error:", error);
+        return STARTING_BALANCE;
+    }
+}
+
 let balance = loadBalance();
+
+function saveBalance() {
+    try {
+        localStorage.setItem(
+            BALANCE_KEY,
+            String(balance)
+        );
+
+        console.log("GooseBucks saved:", balance);
+    } catch (error) {
+        console.error("GooseBucks save error:", error);
+    }
+}
+
+function updateBalance() {
+    const element =
+        document.getElementById("balance");
+
+    if (element) {
+        element.textContent =
+            balance.toLocaleString() + " GB";
+    }
+
+    saveBalance();
+}
 
 let deck = [];
 let playerHand = [];
@@ -32,51 +82,6 @@ const ranks = [
     { name: "K", value: 13 },
     { name: "A", value: 14 }
 ];
-
-// ============================================
-// SAVED BALANCE
-// ============================================
-
-function loadBalance() {
-    const saved = localStorage.getItem(BALANCE_KEY);
-    const value = Number(saved);
-
-    if (Number.isFinite(value) && value >= 0) {
-        return value;
-    }
-
-    localStorage.setItem(
-        BALANCE_KEY,
-        String(STARTING_BALANCE)
-    );
-
-    return STARTING_BALANCE;
-}
-
-function saveBalance() {
-    localStorage.setItem(
-        BALANCE_KEY,
-        String(balance)
-    );
-}
-
-// ============================================
-// BALANCE
-// ============================================
-
-function updateBalance() {
-
-    const element =
-        document.getElementById("balance");
-
-    if (element) {
-        element.textContent =
-            balance.toLocaleString() + " GB";
-    }
-
-    saveBalance();
-}
-
 // ============================================
 // MENU BUTTONS
 // ============================================
