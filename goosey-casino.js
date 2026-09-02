@@ -2,7 +2,10 @@
 // GOOSEY CASINO
 // ============================================
 
-let balance = 7500;
+const STARTING_BALANCE = 7500;
+const BALANCE_KEY = "gooseyCasinoBalance";
+
+let balance = loadBalance();
 
 let deck = [];
 let playerHand = [];
@@ -30,6 +33,32 @@ const ranks = [
     { name: "A", value: 14 }
 ];
 
+// ============================================
+// SAVED BALANCE
+// ============================================
+
+function loadBalance() {
+    const saved = localStorage.getItem(BALANCE_KEY);
+    const value = Number(saved);
+
+    if (Number.isFinite(value) && value >= 0) {
+        return value;
+    }
+
+    localStorage.setItem(
+        BALANCE_KEY,
+        String(STARTING_BALANCE)
+    );
+
+    return STARTING_BALANCE;
+}
+
+function saveBalance() {
+    localStorage.setItem(
+        BALANCE_KEY,
+        String(balance)
+    );
+}
 
 // ============================================
 // BALANCE
@@ -37,14 +66,16 @@ const ranks = [
 
 function updateBalance() {
 
-    const element = document.getElementById("balance");
+    const element =
+        document.getElementById("balance");
 
     if (element) {
         element.textContent =
             balance.toLocaleString() + " GB";
     }
-}
 
+    saveBalance();
+}
 
 // ============================================
 // MENU BUTTONS
@@ -128,7 +159,6 @@ function backToWebsite() {
 
 }
 
-
 // ============================================
 // DECK
 // ============================================
@@ -157,10 +187,16 @@ function makeDeck() {
 
 function shuffle(array) {
 
-    for (let i = array.length - 1; i > 0; i--) {
+    for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+    ) {
 
         const j =
-            Math.floor(Math.random() * (i + 1));
+            Math.floor(
+                Math.random() * (i + 1)
+            );
 
         [array[i], array[j]] =
         [array[j], array[i]];
@@ -177,7 +213,6 @@ function drawOne() {
 
 }
 
-
 // ============================================
 // 5-CARD DRAW
 // ============================================
@@ -188,8 +223,13 @@ function openPoker() {
         document.getElementById("pokerModal");
 
     if (!modal) {
-        console.error("pokerModal not found!");
+
+        console.error(
+            "pokerModal not found!"
+        );
+
         return;
+
     }
 
     modal.classList.add("show");
@@ -206,7 +246,9 @@ function openPoker() {
     );
 
     const drawButton =
-        document.getElementById("drawButton");
+        document.getElementById(
+            "drawButton"
+        );
 
     if (drawButton) {
         drawButton.disabled = true;
@@ -217,7 +259,9 @@ function openPoker() {
 function closePoker() {
 
     const modal =
-        document.getElementById("pokerModal");
+        document.getElementById(
+            "pokerModal"
+        );
 
     if (modal) {
         modal.classList.remove("show");
@@ -233,7 +277,11 @@ function getBet() {
         document.getElementById("bet");
 
     let bet =
-        Number(input ? input.value : 100);
+        Number(
+            input
+                ? input.value
+                : 100
+        );
 
     if (!Number.isFinite(bet)) {
         bet = 100;
@@ -243,7 +291,10 @@ function getBet() {
         Math.floor(bet / 10) * 10;
 
     bet =
-        Math.max(10, Math.min(1000, bet));
+        Math.max(
+            10,
+            Math.min(1000, bet)
+        );
 
     if (input) {
         input.value = bet;
@@ -264,6 +315,7 @@ function dealPoker() {
         );
 
         return;
+
     }
 
     balance -= bet;
@@ -295,7 +347,9 @@ function dealPoker() {
     pokerDrawn = false;
 
     const drawButton =
-        document.getElementById("drawButton");
+        document.getElementById(
+            "drawButton"
+        );
 
     if (drawButton) {
         drawButton.disabled = false;
@@ -312,91 +366,124 @@ function dealPoker() {
 function renderPokerHands(showBot) {
 
     const playerElement =
-        document.getElementById("playerHand");
+        document.getElementById(
+            "playerHand"
+        );
 
     const botElement =
-        document.getElementById("botHand");
+        document.getElementById(
+            "botHand"
+        );
 
-    if (!playerElement || !botElement) {
+    if (
+        !playerElement ||
+        !botElement
+    ) {
         return;
     }
 
     playerElement.innerHTML = "";
 
-    playerHand.forEach(function(card, index) {
+    playerHand.forEach(
+        function(card, index) {
 
-        const div =
-            document.createElement("div");
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-        div.className =
-            "card" +
-            (
-                card.suit === "♥" ||
-                card.suit === "♦"
-                    ? " red"
-                    : ""
-            );
-
-        div.textContent =
-            card.name + card.suit;
-
-        if (
-            pokerActive &&
-            !pokerDrawn
-        ) {
-
-            if (selectedCards.has(index)) {
-                div.classList.add("selected");
-            }
-
-            div.onclick =
-                function() {
-                    toggleCard(index);
-                };
-
-        }
-
-        playerElement.appendChild(div);
-
-    });
-
-    botElement.innerHTML = "";
-
-    botHand.forEach(function(card) {
-
-        const div =
-            document.createElement("div");
-
-        div.className = "card";
-
-        if (showBot) {
+            div.className =
+                "card" +
+                (
+                    card.suit === "♥" ||
+                    card.suit === "♦"
+                        ? " red"
+                        : ""
+                );
 
             div.textContent =
                 card.name + card.suit;
 
             if (
-                card.suit === "♥" ||
-                card.suit === "♦"
+                pokerActive &&
+                !pokerDrawn
             ) {
-                div.classList.add("red");
+
+                if (
+                    selectedCards.has(
+                        index
+                    )
+                ) {
+
+                    div.classList.add(
+                        "selected"
+                    );
+
+                }
+
+                div.onclick =
+                    function() {
+                        toggleCard(index);
+                    };
+
             }
 
-        } else {
-
-            div.textContent = "🂠";
+            playerElement.appendChild(
+                div
+            );
 
         }
+    );
 
-        botElement.appendChild(div);
+    botElement.innerHTML = "";
 
-    });
+    botHand.forEach(
+        function(card) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className = "card";
+
+            if (showBot) {
+
+                div.textContent =
+                    card.name + card.suit;
+
+                if (
+                    card.suit === "♥" ||
+                    card.suit === "♦"
+                ) {
+
+                    div.classList.add(
+                        "red"
+                    );
+
+                }
+
+            } else {
+
+                div.textContent = "🂠";
+
+            }
+
+            botElement.appendChild(
+                div
+            );
+
+        }
+    );
 
 }
 
 function setPokerStatus(text) {
 
     const element =
-        document.getElementById("pokerStatus");
+        document.getElementById(
+            "pokerStatus"
+        );
 
     if (element) {
         element.textContent = text;
@@ -406,17 +493,24 @@ function setPokerStatus(text) {
 
 function toggleCard(index) {
 
-    if (!pokerActive || pokerDrawn) {
+    if (
+        !pokerActive ||
+        pokerDrawn
+    ) {
         return;
     }
 
-    if (selectedCards.has(index)) {
+    if (
+        selectedCards.has(index)
+    ) {
 
         selectedCards.delete(index);
 
     } else {
 
-        if (selectedCards.size < 3) {
+        if (
+            selectedCards.size < 3
+        ) {
 
             selectedCards.add(index);
 
@@ -438,53 +532,79 @@ function chooseBotDiscards(hand) {
 
     const counts = {};
 
-    hand.forEach(function(card) {
+    hand.forEach(
+        function(card) {
 
-        counts[card.value] =
-            (counts[card.value] || 0) + 1;
+            counts[card.value] =
+                (
+                    counts[card.value] ||
+                    0
+                ) + 1;
 
-    });
-
-    const keep =
-        new Set();
-
-    hand.forEach(function(card) {
-
-        if (counts[card.value] >= 2) {
-            keep.add(card.value);
         }
+    );
 
-    });
+    const keep = new Set();
+
+    hand.forEach(
+        function(card) {
+
+            if (
+                counts[card.value] >= 2
+            ) {
+
+                keep.add(
+                    card.value
+                );
+
+            }
+
+        }
+    );
 
     const candidates =
         hand
-            .map(function(card, index) {
+            .map(
+                function(card, index) {
 
-                return {
-                    index: index,
-                    value: card.value,
-                    keep: keep.has(card.value)
-                };
+                    return {
+                        index: index,
+                        value: card.value,
+                        keep:
+                            keep.has(
+                                card.value
+                            )
+                    };
 
-            })
-            .filter(function(card) {
-                return !card.keep;
-            })
-            .sort(function(a, b) {
-                return a.value - b.value;
-            });
+                }
+            )
+            .filter(
+                function(card) {
+                    return !card.keep;
+                }
+            )
+            .sort(
+                function(a, b) {
+                    return a.value - b.value;
+                }
+            );
 
     return candidates
         .slice(0, 3)
-        .map(function(card) {
-            return card.index;
-        });
+        .map(
+            function(card) {
+                return card.index;
+            }
+        );
 
 }
 
 function drawCards() {
 
-    if (!pokerActive || pokerDrawn) {
+    if (
+        !pokerActive ||
+        pokerDrawn
+    ) {
         return;
     }
 
@@ -492,27 +612,35 @@ function drawCards() {
         Array.from(selectedCards);
 
     const botDiscards =
-        chooseBotDiscards(botHand);
+        chooseBotDiscards(
+            botHand
+        );
 
-    playerDiscards.forEach(function(index) {
+    playerDiscards.forEach(
+        function(index) {
 
-        playerHand[index] =
-            drawOne();
+            playerHand[index] =
+                drawOne();
 
-    });
+        }
+    );
 
-    botDiscards.forEach(function(index) {
+    botDiscards.forEach(
+        function(index) {
 
-        botHand[index] =
-            drawOne();
+            botHand[index] =
+                drawOne();
 
-    });
+        }
+    );
 
     pokerDrawn = true;
     pokerActive = false;
 
     const drawButton =
-        document.getElementById("drawButton");
+        document.getElementById(
+            "drawButton"
+        );
 
     if (drawButton) {
         drawButton.disabled = true;
@@ -524,7 +652,6 @@ function drawCards() {
 
 }
 
-
 // ============================================
 // POKER HAND EVALUATION
 // ============================================
@@ -533,32 +660,48 @@ function evaluateHand(hand) {
 
     const values =
         hand
-            .map(function(card) {
-                return card.value;
-            })
-            .sort(function(a, b) {
-                return b - a;
-            });
+            .map(
+                function(card) {
+                    return card.value;
+                }
+            )
+            .sort(
+                function(a, b) {
+                    return b - a;
+                }
+            );
 
     const counts = {};
 
-    values.forEach(function(value) {
+    values.forEach(
+        function(value) {
 
-        counts[value] =
-            (counts[value] || 0) + 1;
+            counts[value] =
+                (
+                    counts[value] ||
+                    0
+                ) + 1;
 
-    });
+        }
+    );
 
     const groups =
         Object.values(counts)
-            .sort(function(a, b) {
-                return b - a;
-            });
+            .sort(
+                function(a, b) {
+                    return b - a;
+                }
+            );
 
     const flush =
-        hand.every(function(card) {
-            return card.suit === hand[0].suit;
-        });
+        hand.every(
+            function(card) {
+                return (
+                    card.suit ===
+                    hand[0].suit
+                );
+            }
+        );
 
     let straight = false;
 
@@ -568,80 +711,104 @@ function evaluateHand(hand) {
     if (unique.length === 5) {
 
         if (
-            unique[0] - unique[4] === 4
+            unique[0] -
+            unique[4] === 4
         ) {
+
             straight = true;
+
         }
 
         if (
             unique.join(",") ===
             "14,5,4,3,2"
         ) {
+
             straight = true;
+
         }
 
     }
 
-    if (straight && flush) {
+    if (
+        straight &&
+        flush
+    ) {
+
         return {
             rank: 8,
             name: "Straight Flush"
         };
+
     }
 
     if (groups[0] === 4) {
+
         return {
             rank: 7,
             name: "Four of a Kind"
         };
+
     }
 
     if (
         groups[0] === 3 &&
         groups[1] === 2
     ) {
+
         return {
             rank: 6,
             name: "Full House"
         };
+
     }
 
     if (flush) {
+
         return {
             rank: 5,
             name: "Flush"
         };
+
     }
 
     if (straight) {
+
         return {
             rank: 4,
             name: "Straight"
         };
+
     }
 
     if (groups[0] === 3) {
+
         return {
             rank: 3,
             name: "Three of a Kind"
         };
+
     }
 
     if (
         groups[0] === 2 &&
         groups[1] === 2
     ) {
+
         return {
             rank: 2,
             name: "Two Pair"
         };
+
     }
 
     if (groups[0] === 2) {
+
         return {
             rank: 1,
             name: "One Pair"
         };
+
     }
 
     return {
@@ -654,10 +821,16 @@ function evaluateHand(hand) {
 function finishPoker() {
 
     const player =
-        evaluateHand(playerHand);
+        evaluateHand(
+            playerHand
+        );
 
     const bot =
-        evaluateHand(botHand);
+        evaluateHand(
+            botHand
+        );
+
+    const bet = getBet();
 
     let message =
         "You: " +
@@ -666,16 +839,22 @@ function finishPoker() {
         bot.name +
         ". ";
 
-    if (player.rank > bot.rank) {
+    if (
+        player.rank >
+        bot.rank
+    ) {
 
-        balance += getBet() * 2;
+        balance += bet * 2;
 
         message +=
             "🏆 YOU WIN!";
 
-    } else if (player.rank === bot.rank) {
+    } else if (
+        player.rank ===
+        bot.rank
+    ) {
 
-        balance += getBet();
+        balance += bet;
 
         message +=
             "🤝 TIE! Your bet is returned.";
@@ -693,10 +872,8 @@ function finishPoker() {
 
 }
 
-
 // ============================================
 // START
 // ============================================
 
 updateBalance();
-console.log("🪿 GOOSEY CASINO JS LOADED!");
