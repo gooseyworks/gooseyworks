@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goosey Casino</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#193d2b 0%,#07140d 55%,#030805 100%);color:white;display:flex;justify-content:center;align-items:center}.casino{width:min(1000px,94%);min-height:700px;padding:35px;border:3px solid #d4af37;border-radius:25px;background:rgba(5,20,12,.94);box-shadow:0 0 30px rgba(212,175,55,.25),inset 0 0 30px rgba(0,0,0,.5);text-align:center}.goose{font-size:70px;margin-bottom:-10px}h1{margin:0;font-size:52px;color:#d4af37;text-shadow:0 0 15px rgba(212,175,55,.45)}.subtitle{margin-top:8px;color:#b8c8bd;font-size:18px}.balance{margin:30px auto;padding:20px;max-width:500px;border-radius:18px;background:linear-gradient(145deg,#132c1d,#09170e);border:2px solid #d4af37}.balance-title{color:#b8c8bd;font-size:16px}.balance-number{font-size:42px;font-weight:bold;color:#f3d36a;margin:5px 0}.balance-note{font-size:13px;color:#899b90}.main-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;max-width:700px;margin:25px auto}button{border:none;border-radius:14px;padding:18px;font-size:19px;font-weight:bold;cursor:pointer;transition:.15s}button:hover{transform:translateY(-3px);filter:brightness(1.15)}button:active{transform:translateY(1px)}.play{grid-column:1/-1;background:#d4af37;color:#111;font-size:25px}.normal{background:#183b27;color:white;border:1px solid #356f4b}.info{background:#182a3b;color:#b9dcff;border:1px solid #345878}.section{margin-top:30px;padding-top:25px;border-top:1px solid rgba(212,175,55,.3)}.section h2{color:#d4af37;margin-bottom:15px}.games{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.game{background:#102319;border:1px solid #284f37;color:white;padding:15px;border-radius:12px}.game:hover{border-color:#d4af37}.rules{margin-top:25px;padding:18px;background:rgba(255,255,255,.03);border-radius:12px;color:#aebbb2;font-size:14px;line-height:1.6}.back{margin-top:30px;background:#222;color:white;border:1px solid #555}@media(max-width:700px){.casino{padding:20px}h1{font-size:38px}.main-buttons{grid-template-columns:1fr}.play{grid-column:auto}.games{grid-template-columns:1fr 1fr}}@media(max-width:450px){.games{grid-template-columns:1fr}.balance-number{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="casino">
+<div class="goose">🪿</div><h1>GOOSEY CASINO</h1><div class="subtitle">Welcome to the most questionable casino on the internet.</div>
+<div class="balance"><div class="balance-title">YOUR GOOSEBUCKS</div><div class="balance-number">7,500 GB</div><div class="balance-note">Fictional reference: 7,500 GB ≈ $1,500<br>GooseBucks have NO cash value.</div></div>
+<div class="main-buttons">
+<button class="play" onclick="startGame()">🎮 PLAY</button><button class="normal" onclick="onlineMode()">🌎 ONLINE</button><button class="normal" onclick="privateRoom()">🔒 PRIVATE ROOM</button><button class="normal" onclick="bots()">🤖 PLAY BOTS</button><button class="info" onclick="howToPlay()">🎓 HOW TO PLAY</button><button class="info" onclick="rules()">📖 RULES</button><button class="info" onclick="leaderboard()">🏆 LEADERBOARD</button>
+</div>
+<div class="section"><h2>🎰 GAMES</h2><div class="games">
+<button class="game" onclick="comingSoon('5-Card Draw')">🃏 5-Card Draw</button><button class="game" onclick="comingSoon('Texas Hold’em')">♠️ Texas Hold’em</button><button class="game" onclick="comingSoon('Goosey Slots')">🎰 Goosey Slots</button><button class="game" onclick="comingSoon('Goosey Wheel')">🎡 Goosey Wheel</button><button class="game" onclick="comingSoon('Coin Flip')">🪙 Coin Flip</button><button class="game" onclick="comingSoon('Dice Duel')">🎲 Dice Duel</button><button class="game" onclick="comingSoon('Chicken')">🐔 Chicken</button><button class="game" onclick="comingSoon('Goosey Crash')">📈 Goosey Crash</button><button class="game" onclick="comingSoon('Bomb Goose')">💣 Bomb Goose</button><button class="game" onclick="comingSoon('Goose Racing')">🏁 Goose Racing</button><button class="game" onclick="comingSoon('Goosey Pool')">🎱 Goosey Pool</button><button class="game" onclick="comingSoon('More Games')">❓ MORE</button>
+</div></div>
+<div class="rules"><strong>🚨 GOOSEY CASINO</strong><br>GooseBucks are fictional game currency only.<br>They cannot be bought, sold, or redeemed for real money or anything of monetary value.</div>
+<button class="back" onclick="backToWebsite()">← BACK TO GOOSEYWORKS</button>
+</div>
+<script>
+function startGame(){alert('🎮 GAME LOBBY\n\nThe Goosey Casino lobby is coming next!')}function onlineMode(){alert('🌎 ONLINE\n\nOnline multiplayer is coming soon!')}function privateRoom(){alert('🔒 PRIVATE ROOM\n\nPrivate rooms are coming soon!')}function bots(){alert('🤖 BOTS\n\nBot games are coming soon!')}function howToPlay(){alert('🎓 HOW TO PLAY\n\nChoose a game and learn how it works!\n\nPoker games will include interactive tutorials for new players.')}function rules(){alert('📖 GOOSEY CASINO RULES\n\n• GooseBucks are virtual only.\n• No real-money purchases.\n• No cashing out.\n• No real-money trading.\n• No cheating or exploiting bugs.\n• Keep multiplayer chat friendly.\n\nHave fun! 🪿')}function leaderboard(){alert('🏆 LEADERBOARD\n\nThe leaderboard is coming soon!')}function comingSoon(game){alert('🪿 '+game+'\n\nThis game is coming soon!')}function backToWebsite(){window.location.href='index.html'}
+</script>
+</body>
+</html>
