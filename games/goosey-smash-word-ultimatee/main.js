@@ -83,6 +83,19 @@ loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
     },
 });
 loadSprite("Kachen", "assets/sprites/Kachen.png");
+// DENKU SPRITE
+loadSprite("Denku", "assets/sprites/Denku.png", {
+    sliceX: 7,
+    anims: {
+        idle: 0,
+        superhero: {
+            from: 1,
+            to: 6,
+            loop: true,
+            speed: 8,
+        },
+    },
+});
 // ==================================================
 // CONSTANTS
 // ==================================================
@@ -134,6 +147,10 @@ const CAT_MOD_SCALE = 0.25;
 // Angy Cap
 const ANGY_CAP_DAMAGE = 10;
 const ANGY_CAP_KNOCKBACK = 1800;
+//Denku
+const DENKU_KNOCKBACK = 1100;
+const DENKU_SPECIAL_TIME = 10;
+const DENKU_SELF_DAMAGE = 10;
 // ==================================================
 // ⚽ BACH BALL SYSTEM
 // ==================================================
@@ -270,6 +287,7 @@ scene("title", () => {
         "BACH",
         "NATHANIEL",
         "KACHEN",
+        "DENKU",
     ];
 
     let currentSpecial = null;
@@ -1029,8 +1047,121 @@ scene("title", () => {
                 );
             }
         }
+    // ==================================================
+// ⚡ DENKU LIGHTNING STORM
+// ==================================================
 
+else if (
+    currentSpecial ===
+    "DENKU"
+) {
 
+    specialObjects.push(
+        add([
+            text(
+                "DENKU MODE!!!"
+            ),
+            pos(400, 205),
+            anchor("center"),
+            scale(1.2),
+            color(
+                80,
+                255,
+                80
+            ),
+            z(45),
+        ])
+    );
+
+    function denkuLightningStrike() {
+
+        if (
+            currentSpecial !==
+            "DENKU"
+        ) {
+            return;
+        }
+
+        const strikeX =
+            Math.random() * 700 + 50;
+
+        const boltColor =
+            Math.random() < 0.5
+                ? rgb(80, 255, 80)
+                : rgb(200, 255, 200);
+
+        add([
+            rect(10, 140),
+            pos(
+                strikeX - 20,
+                60
+            ),
+            rotate(
+                Math.random() * 24 - 12
+            ),
+            color(boltColor),
+            opacity(1),
+            z(44),
+            lifespan(
+                0.15,
+                {
+                    fade: 0.1,
+                }
+            ),
+        ]);
+
+        add([
+            rect(10, 130),
+            pos(
+                strikeX + 10,
+                190
+            ),
+            rotate(
+                Math.random() * 24 - 12
+            ),
+            color(boltColor),
+            opacity(1),
+            z(44),
+            lifespan(
+                0.15,
+                {
+                    fade: 0.1,
+                }
+            ),
+        ]);
+
+        add([
+            circle(
+                Math.random() * 20 + 15
+            ),
+            pos(
+                strikeX,
+                320
+            ),
+            anchor("center"),
+            color(
+                150,
+                255,
+                150
+            ),
+            opacity(0.8),
+            z(43),
+            lifespan(
+                0.12,
+                {
+                    fade: 0.1,
+                }
+            ),
+        ]);
+
+        wait(
+            Math.random() * 0.25 + 0.15,
+            denkuLightningStrike
+        );
+    }
+
+    denkuLightningStrike();
+}   
         // ==================================================
         // 🟣 NATHANIEL
         // ==================================================
@@ -1092,7 +1223,6 @@ scene("title", () => {
             }
         }
     }
-
 
     // ==================================================
     // 🎬 START FIRST SPECIAL
@@ -1403,6 +1533,7 @@ if (
         }
     }
 }
+   
 // ==================================================
 // 🟣 NATHANIEL SPECIAL ANIMATION
 // ==================================================
@@ -2513,6 +2644,10 @@ const kachenUnlocked =
     localStorage.getItem(
         "goosey_kachen_unlocked_v101"
     ) === "true";
+    const denkuUnlocked =
+    localStorage.getItem(
+        "goosey_denku_unlocked_v101"
+    ) === "true";
         // ==================================================
     // 🌌 WEBSITE BACKGROUND
     // ==================================================
@@ -2561,6 +2696,7 @@ const kachenUnlocked =
         "BACH",
         "NATHANIEL",
         "KACHEN",
+        "DENKU",
     ];
 
 
@@ -2601,7 +2737,13 @@ function isCharacterLocked(
 
         return true;
     }
+if (
+    character === "DENKU" &&
+    !denkuUnlocked
+) {
 
+    return true;
+}
     return false;
 }
     // ==================================================
@@ -3698,13 +3840,11 @@ onUpdate(() => {
 // ==================================================
 
 scene("fight", (data) => {
-
 window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-window.gooseyMap =
-    currentMap;
+window.gooseyMap = selectedMap;
     let player;
 
     // ==================================================
@@ -4114,6 +4254,47 @@ window.gooseyMap =
             catMod: false,
 
             fighter: "KACHEN",
+        },
+
+        "player",
+    ]);
+    } else if (data.player1Special === 11) {
+
+    player = add([
+        sprite("Denku", {
+            anim: "idle",
+        }),
+
+        pos(
+            200,
+            200
+        ),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: 1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "DENKU",
         },
 
         "player",
@@ -4554,6 +4735,47 @@ window.gooseyMap =
             catMod: false,
 
             fighter: "KACHEN",
+        },
+
+        "player2",
+    ]);
+    } else if (data.player2Special === 11) {
+
+    player2 = add([
+        sprite("Denku", {
+            anim: "idle",
+        }),
+
+        pos(
+            550,
+            200
+        ),
+
+        scale(1.5),
+
+        area(),
+        body(),
+
+        {
+            facing: -1,
+            facingUp: false,
+
+            knockbackActive: false,
+            knockbackX: 0,
+
+            damage: START_DAMAGE,
+            stocks: START_STOCKS,
+
+            respawning: false,
+            frozen: false,
+
+            specialUsed: false,
+            invincible: false,
+
+            gregCooldown: false,
+            catMod: false,
+
+            fighter: "DENKU",
         },
 
         "player2",
@@ -7679,6 +7901,64 @@ window.gooseyMap =
 
                 return;
             }
+// ==================================================
+// DENKU — SUPA STRONG ATTACK
+// ==================================================
+
+if (player.fighter === "DENKU") {
+
+    const attack = add([
+        rect(130, 60),
+        pos(
+            player.pos.x +
+            player.facing * 80,
+            player.pos.y
+        ),
+        color(255, 50, 50),
+        opacity(0.7),
+        area(),
+        lifespan(0.15, {
+            fade: 0.05,
+        }),
+    ]);
+
+    // DAMAGE DENKU HIMSELF — no self-damage while in superhero mode
+    if (player.denkuMode !== "SUPERHERO") {
+        player.damage += 20;
+    }
+
+    // HIT PLAYER 2
+    if (
+        !player2.invincible &&
+        Math.abs(
+            attack.pos.x -
+            player2.pos.x
+        ) < 120 &&
+        Math.abs(
+            attack.pos.y -
+            player2.pos.y
+        ) < 70
+    ) {
+
+        // SUPA STRONG DAMAGE
+        player2.damage += 30;
+
+        player2.knockbackActive = true;
+
+        // HUGE KNOCKBACK
+        player2.knockbackX =
+            (1400 +
+            player2.damage * 12) *
+            player.facing;
+
+        player2.vel.x =
+            player2.knockbackX;
+
+        player2.vel.y = -650;
+    }
+
+    return;
+}
             // ==================================================
 // ✴️ KACHEN RANGED ATTACK — P1
 // ==================================================
@@ -8780,6 +9060,64 @@ player.play(
 
                 return;
             }
+// ==================================================
+// DENKU — SUPA STRONG ATTACK
+// ==================================================
+
+if (player2.fighter === "DENKU") {
+
+    const attack = add([
+        rect(130, 60),
+        pos(
+            player2.pos.x +
+            player2.facing * 80,
+            player2.pos.y
+        ),
+        color(255, 50, 50),
+        opacity(0.7),
+        area(),
+        lifespan(0.15, {
+            fade: 0.05,
+        }),
+    ]);
+
+    // DAMAGE DENKU HIMSELF — no self-damage while in superhero mode
+    if (player2.denkuMode !== "SUPERHERO") {
+        player2.damage += 20;
+    }
+
+    // HIT PLAYER 1
+    if (
+        !player.invincible &&
+        Math.abs(
+            attack.pos.x -
+            player.pos.x
+        ) < 120 &&
+        Math.abs(
+            attack.pos.y -
+            player.pos.y
+        ) < 70
+    ) {
+
+        // SUPA STRONG DAMAGE
+        player.damage += 30;
+
+        player.knockbackActive = true;
+
+        // HUGE KNOCKBACK
+        player.knockbackX =
+            (1400 +
+            player.damage * 12) *
+            player2.facing;
+
+        player.vel.x =
+            player.knockbackX;
+
+        player.vel.y = -650;
+    }
+
+    return;
+}
             // ==================================================
 // ✴️ KACHEN RANGED ATTACK — P2
 // ==================================================
@@ -10721,8 +11059,82 @@ if (
                 "";
         });
     }
+onKeyPress("enter", () => {
 
+    if (
+        player.fighter !== "DENKU" ||
+        player.respawning
+    ) {
+        return;
+    }
 
+    // TOGGLE OFF (manual)
+    if (player.denkuMode === "SUPERHERO") {
+
+        player.denkuMode = null;
+
+        player.play("idle");
+
+        return;
+    }
+
+    // TOGGLE ON — no self-damage while active, lasts 10 seconds
+    player.denkuMode = "SUPERHERO";
+
+    player.play("superhero");
+
+    wait(DENKU_SPECIAL_TIME, () => {
+
+        if (
+            player.fighter === "DENKU" &&
+            !player.respawning &&
+            player.denkuMode === "SUPERHERO"
+        ) {
+            player.denkuMode = null;
+            player.play("idle");
+        }
+    });
+});
+window.addEventListener("keydown", (event) => {
+
+    if (event.code !== "ShiftLeft") {
+        return;
+    }
+
+    if (
+        player2.fighter !== "DENKU" ||
+        player2.respawning
+    ) {
+        return;
+    }
+
+    // TOGGLE OFF (manual)
+    if (player2.denkuMode === "SUPERHERO") {
+
+        player2.denkuMode = null;
+
+        player2.play("idle");
+
+        return;
+    }
+
+    // TOGGLE ON — no self-damage while active, lasts 10 seconds
+    player2.denkuMode = "SUPERHERO";
+
+    player2.play("superhero");
+
+    wait(DENKU_SPECIAL_TIME, () => {
+
+        if (
+            player2.fighter === "DENKU" &&
+            !player2.respawning &&
+            player2.denkuMode === "SUPERHERO"
+        ) {
+            player2.denkuMode = null;
+            player2.play("idle");
+        }
+    });
+});
     // ==================================================
     // 🪿 GOOSEY P1 SPECIAL
     // ==================================================
@@ -12250,7 +12662,7 @@ scene("win", (data) => {
 if (
     window.singlePlayerMode === true &&
     window.cpuDifficulty === "HARD" &&
-    data.winner === "PLAYER 1"
+    data.player1Won === true
 ) {
 
     const bachIsUnlocked =
@@ -12263,33 +12675,27 @@ if (
             "goosey_kachen_unlocked_v101"
         ) === "true";
 
-    // ==============================================
-    // 🔓 BACH
-    // First HARD CPU victory
-    // ==============================================
+    const denkuIsUnlocked =
+        localStorage.getItem(
+            "goosey_denku_unlocked_v101"
+        ) === "true";
 
-    if (
-        !bachIsUnlocked
-    ) {
+    // 🔓 BACH — first HARD CPU victory
+
+    if (!bachIsUnlocked) {
 
         localStorage.setItem(
             "goosey_bach_unlocked_v101",
             "true"
         );
 
-        console.log(
-            "🔓 BACH UNLOCKED!"
-        );
+        console.log("🔓 BACH UNLOCKED!");
     }
 
-    // ==============================================
-    // 🔓 KACHEN
-    // Beat HARD CPU while CPU = BACH
-    // ==============================================
+    // 🔓 KACHEN — beat HARD CPU while CPU = BACH
 
     else if (
-        window.cpuCharacterName ===
-        "BACH" &&
+        window.cpuCharacterName === "BACH" &&
         !kachenIsUnlocked
     ) {
 
@@ -12298,19 +12704,13 @@ if (
             "true"
         );
 
-        console.log(
-            "🔓 KACHEN UNLOCKED!"
-        );
+        console.log("🔓 KACHEN UNLOCKED!");
     }
 
-    // ==============================================
-    // 🔓 NATHANIEL
-    // Beat HARD CPU while CPU = KACHEN
-    // ==============================================
+    // 🔓 NATHANIEL — beat HARD CPU while CPU = KACHEN
 
     else if (
-        window.cpuCharacterName ===
-        "KACHEN"
+        window.cpuCharacterName === "KACHEN"
     ) {
 
         localStorage.setItem(
@@ -12318,9 +12718,23 @@ if (
             "true"
         );
 
-        console.log(
-            "🔓 NATHANIEL UNLOCKED!"
+        console.log("🔓 NATHANIEL UNLOCKED!");
+    }
+
+    // 🔓 DENKU — beat HARD CPU AS Denku, once Bach is unlocked
+
+    if (
+        bachIsUnlocked &&
+        !denkuIsUnlocked &&
+        data.player1Fighter === "DENKU"
+    ) {
+
+        localStorage.setItem(
+            "goosey_denku_unlocked_v101",
+            "true"
         );
+
+        console.log("🔓 DENKU UNLOCKED!");
     }
 }
 // ==================================================
@@ -12451,6 +12865,16 @@ if (
             pos(400, 210),
             anchor("center"),
             scale(1.5),
+        ]);
+    } else if (data.winner === "DENKU") {
+
+        winner = add([
+            sprite("Denku", {
+                anim: "idle",
+            }),
+            pos(400, 210),
+            anchor("center"),
+            scale(3),
         ]);
 
     } else if (data.winner === "RED") {
