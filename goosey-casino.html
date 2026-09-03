@@ -143,6 +143,115 @@
 
     </div>
 </div>
+    <div class="modal" id="gooseRaceModal">
+    <div class="panel">
+
+        <button class="close" onclick="closeGooseRace()">
+            ✕ CLOSE
+        </button>
+
+        <h2>🏁 GOOSE RACING</h2>
+
+        <p class="small">
+            You are broke! Race to earn GooseBucks.
+        </p>
+
+        <div id="raceTrack"
+             style="
+                position:relative;
+                height:260px;
+                margin:20px 0;
+                overflow:hidden;
+                border-radius:15px;
+                background:linear-gradient(#67b7ff,#dff5ff);
+                border:3px solid #d4af37;
+             ">
+
+            <div style="
+                position:absolute;
+                left:0;
+                right:0;
+                bottom:0;
+                height:80px;
+                background:#4b8f38;
+            "></div>
+
+            <div id="goose1"
+                 style="
+                    position:absolute;
+                    left:10px;
+                    top:35px;
+                    font-size:42px;
+                    transition:left .15s linear;
+                 ">
+                🪿
+            </div>
+
+            <div id="goose2"
+                 style="
+                    position:absolute;
+                    left:10px;
+                    top:100px;
+                    font-size:42px;
+                    transition:left .15s linear;
+                 ">
+                🪿
+            </div>
+
+            <div id="goose3"
+                 style="
+                    position:absolute;
+                    left:10px;
+                    top:165px;
+                    font-size:42px;
+                    transition:left .15s linear;
+                 ">
+                🪿
+            </div>
+
+            <div style="
+                position:absolute;
+                right:10px;
+                top:0;
+                bottom:0;
+                width:8px;
+                background:white;
+            "></div>
+
+        </div>
+
+        <div class="game-controls">
+
+            <button
+                class="play"
+                id="startRaceButton"
+                onclick="startGooseRace()"
+            >
+                🏁 START RACE
+            </button>
+
+        </div>
+
+        <div
+            class="status"
+            id="gooseRaceStatus"
+        >
+            Ready to race!
+        </div>
+
+        <div class="game-controls">
+
+            <button
+                class="normal"
+                onclick="closeGooseRace()"
+            >
+                ← BACK TO CASINO
+            </button>
+
+        </div>
+
+    </div>
+</div>
 <script src="goosey-casino.js?v=4"></script>
 </body>
 </html>
