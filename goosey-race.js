@@ -2,52 +2,44 @@
 // GOOSEY RACE
 // ============================================
 
-let gooseRaceRunning = false;
-let gooseRaceTimer = null;
+let raceRunning = false;
+let raceTimer = null;
 let raceFinished = false;
 
-let racePositions = [100, 100, 100];
-let raceLanes = [1, 0, 2];
+let positions = [100, 100, 100];
+let lanes = [1, 0, 2];
 
-// Player boost energy.
-// Goosey always runs automatically.
-let playerBoost = 0;
+let boostTicks = 0;
 
-const RACE_FINISH = 4750;
-const PLAYER_SPEED = 2.0;
-const PLAYER_BOOST_SPEED = 4.5;
+const FINISH = 4750;
 
-const CPU_MIN_SPEED = 1.8;
-const CPU_MAX_SPEED = 3.0;
-// Lane vertical positions
-const LANE_TOPS = [
-    30,
-    140,
-    250
-];
+// Normal automatic running.
+const PLAYER_SPEED = 4.0;
+const BOOST_SPEED = 8.0;
 
-// ============================================
-// OBSTACLES
-// ============================================
+const CPU_MIN_SPEED = 3.4;
+const CPU_MAX_SPEED = 5.0;
+
+const LANES = [30, 140, 250];
 
 const obstacles = [
-    { position: 550, lane: 1 },
-    { position: 850, lane: 0 },
-    { position: 1150, lane: 2 },
+    { x: 550, lane: 1 },
+    { x: 850, lane: 0 },
+    { x: 1150, lane: 2 },
 
-    { position: 1450, lane: 1 },
-    { position: 1750, lane: 2 },
-    { position: 2050, lane: 0 },
+    { x: 1450, lane: 1 },
+    { x: 1750, lane: 2 },
+    { x: 2050, lane: 0 },
 
-    { position: 2350, lane: 1 },
-    { position: 2650, lane: 0 },
-    { position: 2950, lane: 2 },
+    { x: 2350, lane: 1 },
+    { x: 2650, lane: 0 },
+    { x: 2950, lane: 2 },
 
-    { position: 3300, lane: 1 },
-    { position: 3600, lane: 2 },
-    { position: 3900, lane: 0 },
+    { x: 3300, lane: 1 },
+    { x: 3600, lane: 2 },
+    { x: 3900, lane: 0 },
 
-    { position: 4200, lane: 1 }
+    { x: 4200, lane: 1 }
 ];
 
 // ============================================
@@ -59,65 +51,25 @@ function resetRace() {
     stopRace();
 
     raceFinished = false;
+    boostTicks = 0;
 
-    racePositions = [
+    positions = [
         100,
         100,
         100
     ];
 
-    // Player = center lane
-    // CPU 1 = left lane
-    // CPU 2 = right lane
-    raceLanes = [
+    lanes = [
         1,
         0,
         2
     ];
 
-    playerBoost = 0;
+    moveGoose("goose1", positions[0], lanes[0]);
+    moveGoose("goose2", positions[1], lanes[1]);
+    moveGoose("goose3", positions[2], lanes[2]);
 
-    moveGoose(
-        "goose1",
-        racePositions[0],
-        raceLanes[0]
-    );
-
-    moveGoose(
-        "goose2",
-        racePositions[1],
-        raceLanes[1]
-    );
-
-    moveGoose(
-        "goose3",
-        racePositions[2],
-        raceLanes[2]
-    );
-
-    centerCamera();
-
-    [
-        "goose1",
-        "goose2",
-        "goose3"
-    ].forEach(function(id) {
-
-        const goose =
-            document.getElementById(id);
-
-        if (goose) {
-            goose.classList.remove("running");
-        }
-
-    });
-
-    const button =
-        document.getElementById("startButton");
-
-    if (button) {
-        button.disabled = false;
-    }
+    setCamera(0);
 
     const status =
         document.getElementById("status");
@@ -125,6 +77,13 @@ function resetRace() {
     if (status) {
         status.textContent =
             "Press START RACE!";
+    }
+
+    const button =
+        document.getElementById("startButton");
+
+    if (button) {
+        button.disabled = false;
     }
 }
 
@@ -134,16 +93,15 @@ function resetRace() {
 
 function startRace() {
 
-    if (gooseRaceRunning) {
+    if (raceRunning) {
         return;
     }
 
-    // ALWAYS reset first.
+    // RESET FIRST.
     resetRace();
 
-    gooseRaceRunning = true;
+    raceRunning = true;
     raceFinished = false;
-    playerBoost = 0;
 
     const button =
         document.getElementById("startButton");
@@ -156,32 +114,18 @@ function startRace() {
         document.getElementById("status");
 
     if (status) {
-
         status.textContent =
-            "🏁 3... 2... 1... GOOOOOOOOSE!!!";
-
+            "🏁 3... 2... 1... GOOOOOOSE!!!";
     }
 
-    [
-        "goose1",
-        "goose2",
-        "goose3"
-    ].forEach(function(id) {
-
-        const goose =
-            document.getElementById(id);
-
-        if (goose) {
+    document
+        .querySelectorAll(".goose")
+        .forEach(function(goose) {
             goose.classList.add("running");
-        }
+        });
 
-    });
-
-    gooseRaceTimer =
-        setInterval(
-            updateRace,
-            100
-        );
+    raceTimer =
+        setInterval(updateRace, 50);
 }
 
 // ============================================
@@ -190,7 +134,7 @@ function startRace() {
 
 function updateRace() {
 
-    if (!gooseRaceRunning) {
+    if (!raceRunning) {
         return;
     }
 
@@ -198,95 +142,80 @@ function updateRace() {
     // PLAYER AUTO-RUN
     // ========================================
 
-    let playerSpeed =
-        PLAYER_SPEED;
+    let playerSpeed = PLAYER_SPEED;
 
-    // SPACE only makes the player faster.
-    if (playerBoost > 0) {
-
-        playerSpeed =
-            PLAYER_BOOST_SPEED;
-
-        playerBoost--;
-
+    if (boostTicks > 0) {
+        playerSpeed = BOOST_SPEED;
+        boostTicks--;
     }
 
-    let nextPlayerPosition =
-        racePositions[0] +
-        playerSpeed;
+    let nextPlayer =
+        positions[0] + playerSpeed;
 
-    // Obstacle blocks player.
+    // Obstacles block the player.
     if (
         hitsObstacle(
-            nextPlayerPosition,
-            raceLanes[0]
+            nextPlayer,
+            lanes[0]
         )
     ) {
 
-        nextPlayerPosition =
-            racePositions[0];
+        nextPlayer = positions[0];
 
-        playerBoost = 0;
+        boostTicks = 0;
 
-        showTemporaryStatus(
-            "💥 BONK! YOU HIT AN OBSTACLE!"
+        showStatus(
+            "💥 BONK! OBSTACLE!"
         );
     }
 
-    racePositions[0] =
-        nextPlayerPosition;
-// ========================================
-// CPU AUTO-RUN + OBSTACLES
-// ========================================
+    positions[0] = nextPlayer;
 
-for (let i = 1; i < 3; i++) {
+    // ========================================
+    // CPU AUTO-RUN
+    // ========================================
 
-    // CPU ALWAYS RUNS
-    let cpuSpeed =
-        CPU_MIN_SPEED +
-        Math.random() *
-        (CPU_MAX_SPEED - CPU_MIN_SPEED);
+    for (let i = 1; i < 3; i++) {
 
-    let nextPosition =
-        racePositions[i] + cpuSpeed;
-
-    // Check if the CPU is about to hit an obstacle.
-    if (
-        hitsObstacle(
-            nextPosition,
-            raceLanes[i]
-        )
-    ) {
-
-        // Try to change lanes BEFORE the obstacle.
-        const safeLane =
-            findSafeLane(
-                racePositions[i],
-                raceLanes[i]
+        const cpuSpeed =
+            CPU_MIN_SPEED +
+            Math.random() *
+            (
+                CPU_MAX_SPEED -
+                CPU_MIN_SPEED
             );
 
-        if (safeLane !== null) {
+        let next =
+            positions[i] + cpuSpeed;
 
-            raceLanes[i] = safeLane;
+        // CPU hits obstacle.
+        if (
+            hitsObstacle(
+                next,
+                lanes[i]
+            )
+        ) {
 
-            // Keep moving forward.
-            nextPosition =
-                racePositions[i] +
-                cpuSpeed;
+            const newLane =
+                findSafeLane(
+                    next,
+                    lanes[i]
+                );
 
-        } else {
+            if (newLane !== null) {
 
-            // No safe lane:
-            // the obstacle blocks the CPU.
-            nextPosition =
-                racePositions[i];
+                lanes[i] = newLane;
 
+            } else {
+
+                // Actually gets stopped.
+                next = positions[i];
+            }
         }
+
+        positions[i] = next;
     }
 
-    racePositions[i] =
-        nextPosition;
-}
     // ========================================
     // GOOSE COLLISIONS
     // ========================================
@@ -299,23 +228,26 @@ for (let i = 1; i < 3; i++) {
 
     moveGoose(
         "goose1",
-        racePositions[0],
-        raceLanes[0]
+        positions[0],
+        lanes[0]
     );
 
     moveGoose(
         "goose2",
-        racePositions[1],
-        raceLanes[1]
+        positions[1],
+        lanes[1]
     );
 
     moveGoose(
         "goose3",
-        racePositions[2],
-        raceLanes[2]
+        positions[2],
+        lanes[2]
     );
 
-    // Camera follows PLAYER.
+    // ========================================
+    // CAMERA
+    // ========================================
+
     updateCamera();
 
     // ========================================
@@ -323,25 +255,24 @@ for (let i = 1; i < 3; i++) {
     // ========================================
 
     if (
-        racePositions[0] >= RACE_FINISH ||
-        racePositions[1] >= RACE_FINISH ||
-        racePositions[2] >= RACE_FINISH
+        positions[0] >= FINISH ||
+        positions[1] >= FINISH ||
+        positions[2] >= FINISH
     ) {
 
         finishRace();
-
     }
 }
 
 // ============================================
-// PLAYER CONTROLS
+// CONTROLS
 // ============================================
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-        if (!gooseRaceRunning) {
+        if (!raceRunning) {
             return;
         }
 
@@ -353,11 +284,7 @@ document.addEventListener(
 
             event.preventDefault();
 
-            playerBoost =
-                Math.min(
-                    playerBoost + 4,
-                    12
-                );
+            boostTicks = 12;
 
             return;
         }
@@ -370,16 +297,16 @@ document.addEventListener(
 
             event.preventDefault();
 
-            raceLanes[0] =
+            lanes[0] =
                 Math.max(
                     0,
-                    raceLanes[0] - 1
+                    lanes[0] - 1
                 );
 
             moveGoose(
                 "goose1",
-                racePositions[0],
-                raceLanes[0]
+                positions[0],
+                lanes[0]
             );
 
             return;
@@ -393,23 +320,23 @@ document.addEventListener(
 
             event.preventDefault();
 
-            raceLanes[0] =
+            lanes[0] =
                 Math.min(
                     2,
-                    raceLanes[0] + 1
+                    lanes[0] + 1
                 );
 
             moveGoose(
                 "goose1",
-                racePositions[0],
-                raceLanes[0]
+                positions[0],
+                lanes[0]
             );
         }
     }
 );
 
 // ============================================
-// OBSTACLE COLLISION
+// OBSTACLES
 // ============================================
 
 function hitsObstacle(
@@ -427,15 +354,13 @@ function hitsObstacle(
             continue;
         }
 
-        const distance =
+        if (
             Math.abs(
                 position -
-                obstacle.position
-            );
-
-        if (
-            distance < 70
+                obstacle.x
+            ) < 55
         ) {
+
             return true;
         }
     }
@@ -443,34 +368,28 @@ function hitsObstacle(
     return false;
 }
 
-// ============================================
-// CPU LANE CHANGING
-// ============================================
-
 function findSafeLane(
     position,
     currentLane
 ) {
 
-    const possibleLanes = [
+    const choices = [
         currentLane - 1,
         currentLane + 1
     ];
 
-    // Randomize direction.
-    possibleLanes.sort(
-        function() {
-            return Math.random() - 0.5;
-        }
-    );
-
     for (
-        const lane of possibleLanes
+        const lane of choices
     ) {
 
         if (
-            lane >= 0 &&
-            lane <= 2 &&
+            lane < 0 ||
+            lane > 2
+        ) {
+            continue;
+        }
+
+        if (
             !hitsObstacle(
                 position,
                 lane
@@ -485,7 +404,7 @@ function findSafeLane(
 }
 
 // ============================================
-// GOOSE VS GOOSE
+// GOOSE COLLISIONS
 // ============================================
 
 function handleGooseCollisions() {
@@ -502,28 +421,22 @@ function handleGooseCollisions() {
             j++
         ) {
 
-            // Must be in the same lane.
             if (
-                raceLanes[i] !==
-                raceLanes[j]
+                lanes[i] !== lanes[j]
             ) {
                 continue;
             }
 
-            const distance =
+            if (
                 Math.abs(
-                    racePositions[i] -
-                    racePositions[j]
-                );
-
-            if (
-                distance >= 65
+                    positions[i] -
+                    positions[j]
+                ) > 55
             ) {
                 continue;
             }
 
-            // PLAYER COLLISION
-
+            // PLAYER GETS HIT
             if (i === 0) {
 
                 bumpPlayer(j);
@@ -532,94 +445,62 @@ function handleGooseCollisions() {
 
                 bumpPlayer(i);
 
-            }
+            } else {
 
-            // CPU VS CPU
-
-            if (
-                i !== 0 &&
-                j !== 0
-            ) {
-
-                const safeLane =
-                    findSafeLane(
-                        racePositions[i],
-                        raceLanes[i]
-                    );
-
-                if (
-                    safeLane !== null
-                ) {
-
-                    raceLanes[i] =
-                        safeLane;
-
-                }
-
-                racePositions[i] =
+                // CPU vs CPU
+                positions[i] =
                     Math.max(
                         100,
-                        racePositions[i] - 25
+                        positions[i] - 25
                     );
+
+                const safe =
+                    findSafeLane(
+                        positions[i],
+                        lanes[i]
+                    );
+
+                if (safe !== null) {
+                    lanes[i] = safe;
+                }
             }
         }
     }
 }
 
-// ============================================
-// PLAYER BUMP
-// ============================================
-
 function bumpPlayer(
-    otherGooseIndex
+    other
 ) {
 
-    const distance =
-        Math.abs(
-            racePositions[0] -
-            racePositions[otherGooseIndex]
-        );
-
-    if (
-        distance >= 65
-    ) {
-        return;
-    }
-
-    racePositions[0] =
+    positions[0] =
         Math.max(
             100,
-            racePositions[0] - 40
+            positions[0] - 30
         );
 
-    const currentLane =
-        raceLanes[0];
+    const current =
+        lanes[0];
 
-    // Knock sideways.
-    if (
-        currentLane === 0
-    ) {
+    if (current === 0) {
 
-        raceLanes[0] = 1;
+        lanes[0] = 1;
 
-    } else if (
-        currentLane === 2
-    ) {
+    } else if (current === 2) {
 
-        raceLanes[0] = 1;
+        lanes[0] = 1;
 
     } else {
 
-        raceLanes[0] =
+        lanes[0] =
             Math.random() < 0.5
                 ? 0
                 : 2;
     }
 
-    playerBoost = 0;
+    boostTicks = 0;
 
-    showTemporaryStatus(
-        "💥 GOOSE BUMP!!! YOU GOT KNOCKED!"
+    showStatus(
+        "💥 GOOSE BUMP!!!"
     );
 }
 
@@ -644,7 +525,7 @@ function moveGoose(
         position + "px";
 
     goose.style.top =
-        LANE_TOPS[lane] + "px";
+        LANES[lane] + "px";
 }
 
 // ============================================
@@ -656,65 +537,64 @@ function updateCamera() {
     const track =
         document.getElementById("track");
 
-    const trackWindow =
+    const windowElement =
         document.getElementById(
             "trackWindow"
         );
 
     if (
         !track ||
-        !trackWindow
+        !windowElement
     ) {
         return;
     }
 
-    // Goosey stays roughly here onscreen.
-    const targetScreenX = 220;
+    // Keep Goosey around 25% across
+    // the visible screen.
+    const targetX =
+        windowElement.clientWidth * 0.25;
 
     let cameraX =
-        racePositions[0] -
-        targetScreenX;
+        positions[0] - targetX;
 
-    const maxCameraX =
-        RACE_FINISH -
-        trackWindow.clientWidth;
+    const maximum =
+        FINISH -
+        windowElement.clientWidth;
 
     cameraX =
         Math.max(
             0,
             Math.min(
                 cameraX,
-                maxCameraX
+                maximum
             )
         );
 
-    track.style.transform =
-        "translateX(-" +
-        cameraX +
-        "px)";
+    setCamera(cameraX);
 }
 
-function centerCamera() {
+function setCamera(cameraX) {
 
     const track =
         document.getElementById("track");
 
-    if (track) {
-
-        track.style.transform =
-            "translateX(0)";
+    if (!track) {
+        return;
     }
+
+    track.style.transform =
+        "translate3d(" +
+        (-cameraX) +
+        "px, 0, 0)";
 }
 
 // ============================================
 // STATUS
 // ============================================
 
-let statusTimeout = null;
+let statusTimer = null;
 
-function showTemporaryStatus(
-    text
-) {
+function showStatus(text) {
 
     const status =
         document.getElementById("status");
@@ -723,27 +603,21 @@ function showTemporaryStatus(
         return;
     }
 
-    status.textContent =
-        text;
+    status.textContent = text;
 
-    clearTimeout(
-        statusTimeout
-    );
+    clearTimeout(statusTimer);
 
-    statusTimeout =
+    statusTimer =
         setTimeout(
             function() {
 
-                if (
-                    gooseRaceRunning
-                ) {
-
+                if (raceRunning) {
                     status.textContent =
                         "🏃 KEEP RUNNING!!!";
                 }
 
             },
-            900
+            700
         );
 }
 
@@ -761,28 +635,15 @@ function finishRace() {
 
     stopRace();
 
-    [
-        "goose1",
-        "goose2",
-        "goose3"
-    ].forEach(function(id) {
-
-        const goose =
-            document.getElementById(id);
-
-        if (goose) {
-            goose.classList.remove(
-                "running"
-            );
-        }
-    });
+    document
+        .querySelectorAll(".goose")
+        .forEach(function(goose) {
+            goose.classList.remove("running");
+        });
 
     const ranking =
-        racePositions
-            .map(function(
-                position,
-                index
-            ) {
+        positions
+            .map(function(position, index) {
 
                 return {
                     index: index,
@@ -792,36 +653,26 @@ function finishRace() {
             })
             .sort(function(a, b) {
 
-                return (
-                    b.position -
-                    a.position
-                );
+                return b.position -
+                    a.position;
 
             });
 
     const playerPlace =
         ranking.findIndex(
             function(entry) {
-
-                return (
-                    entry.index === 0
-                );
-
+                return entry.index === 0;
             }
         ) + 1;
 
-    let result = "";
+    let result;
 
-    if (
-        playerPlace === 1
-    ) {
+    if (playerPlace === 1) {
 
         result =
             "🥇 GOOSEY WINS!!!";
 
-    } else if (
-        playerPlace === 2
-    ) {
+    } else if (playerPlace === 2) {
 
         result =
             "🥈 GOOSEY FINISHED 2ND!";
@@ -843,21 +694,17 @@ function finishRace() {
         result +=
             " 👤 " +
             username;
-
     }
 
     const status =
         document.getElementById("status");
 
     if (status) {
-        status.textContent =
-            result;
+        status.textContent = result;
     }
 
     const button =
-        document.getElementById(
-            "startButton"
-        );
+        document.getElementById("startButton");
 
     if (button) {
         button.disabled = false;
@@ -870,18 +717,14 @@ function finishRace() {
 
 function stopRace() {
 
-    gooseRaceRunning =
-        false;
+    raceRunning = false;
 
-    if (gooseRaceTimer) {
+    if (raceTimer) {
 
-        clearInterval(
-            gooseRaceTimer
-        );
+        clearInterval(raceTimer);
 
-        gooseRaceTimer = null;
+        raceTimer = null;
     }
-
 }
 
 // ============================================
