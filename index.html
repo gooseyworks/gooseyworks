@@ -3705,7 +3705,257 @@
 
     }
   );
+  /* ========================= */
+  /* GOOSEYWORKS USERNAME */
+  /* ========================= */
 
+  const USERNAME_KEY =
+    "gooseyWorksUsername";
+
+
+  function getUsername() {
+
+    return (
+      localStorage.getItem(
+        USERNAME_KEY
+      ) || ""
+    );
+
+  }
+
+
+  function openUsernameBox() {
+
+    const modal =
+      document.getElementById(
+        "usernameModal"
+      );
+
+    const input =
+      document.getElementById(
+        "usernameInput"
+      );
+
+    const error =
+      document.getElementById(
+        "usernameError"
+      );
+
+
+    if (!modal) {
+      return;
+    }
+
+
+    modal.style.display =
+      "flex";
+
+
+    if (input) {
+
+      input.value =
+        getUsername();
+
+      input.focus();
+
+    }
+
+
+    if (error) {
+      error.textContent = "";
+    }
+
+  }
+
+
+  function closeUsernameBox() {
+
+    const modal =
+      document.getElementById(
+        "usernameModal"
+      );
+
+
+    if (modal) {
+
+      modal.style.display =
+        "none";
+
+    }
+
+  }
+
+
+  function isUsernameAllowed(
+    username
+  ) {
+
+    if (
+      username.length < 3 ||
+      username.length > 16
+    ) {
+
+      return false;
+
+    }
+
+
+    if (
+      !/^[a-zA-Z0-9 _-]+$/.test(
+        username
+      )
+    ) {
+
+      return false;
+
+    }
+
+
+    const lower =
+      username.toLowerCase();
+
+
+    const blockedWords = [
+      "fuck",
+      "shit",
+      "bitch",
+      "asshole",
+      "porn",
+      "sex",
+      "nigger",
+      "fag"
+    ];
+
+
+    for (
+      const word of blockedWords
+    ) {
+
+      if (
+        lower.includes(word)
+      ) {
+
+        return false;
+
+      }
+
+    }
+
+
+    // "crap" is allowed. 👍
+
+    return true;
+
+  }
+
+
+  function saveUsername() {
+
+    const input =
+      document.getElementById(
+        "usernameInput"
+      );
+
+    const error =
+      document.getElementById(
+        "usernameError"
+      );
+
+
+    if (!input) {
+      return;
+    }
+
+
+    const username =
+      input.value.trim();
+
+
+    if (
+      !isUsernameAllowed(
+        username
+      )
+    ) {
+
+      if (error) {
+
+        error.textContent =
+          "❌ That username isn't allowed.";
+
+      }
+
+      return;
+
+    }
+
+
+    localStorage.setItem(
+      USERNAME_KEY,
+      username
+    );
+
+
+    updateUsernameDisplay();
+
+    closeUsernameBox();
+
+  }
+
+
+  function updateUsernameDisplay() {
+
+    const display =
+      document.getElementById(
+        "usernameDisplay"
+      );
+
+    const button =
+      document.getElementById(
+        "usernameButton"
+      );
+
+    const username =
+      getUsername();
+
+
+    if (!display) {
+      return;
+    }
+
+
+    if (username) {
+
+      display.textContent =
+        "Signed in as: " +
+        username;
+
+
+      if (button) {
+
+        button.textContent =
+          "✏️ CHANGE USERNAME";
+
+      }
+
+    } else {
+
+      display.textContent =
+        "You are not signed in.";
+
+
+      if (button) {
+
+        button.textContent =
+          "✏️ CHOOSE USERNAME";
+
+      }
+
+    }
+
+  }
+
+
+  updateUsernameDisplay();
 </script>
 </body>
 </html>
