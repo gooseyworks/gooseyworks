@@ -870,7 +870,628 @@ function finishPoker() {
     setPokerStatus(message);
 
 }
+// ============================================
+// BLACKJACK
+// ============================================
 
+let blackjackDeck = [];
+let blackjackPlayerHand = [];
+let blackjackDealerHand = [];
+let blackjackActive = false;
+
+function openBlackjack() {
+
+    const modal =
+        document.getElementById("blackjackModal");
+
+    if (!modal) {
+        console.error("blackjackModal not found!");
+        return;
+    }
+
+    modal.classList.add("show");
+
+    blackjackActive = false;
+    blackjackPlayerHand = [];
+    blackjackDealerHand = [];
+
+    renderBlackjack();
+
+    setBlackjackStatus(
+        "Set your bet and deal!"
+    );
+
+    const hitButton =
+        document.getElementById(
+            "blackjackHitButton"
+        );
+
+    const standButton =
+        document.getElementById(
+            "blackjackStandButton"
+        );
+
+    if (hitButton) {
+        hitButton.disabled = true;
+    }
+
+    if (standButton) {
+        standButton.disabled = true;
+    }
+
+}
+
+function closeBlackjack() {
+
+    const modal =
+        document.getElementById(
+            "blackjackModal"
+        );
+
+    if (modal) {
+        modal.classList.remove("show");
+    }
+
+    blackjackActive = false;
+
+}
+
+function getBlackjackBet() {
+
+    const input =
+        document.getElementById(
+            "blackjackBet"
+        );
+
+    let bet =
+        Number(
+            input
+                ? input.value
+                : 100
+        );
+
+    if (!Number.isFinite(bet)) {
+        bet = 100;
+    }
+
+    bet =
+        Math.floor(bet / 10) * 10;
+
+    bet =
+        Math.max(
+            10,
+            Math.min(
+                1000,
+                bet
+            )
+        );
+
+    if (input) {
+        input.value = bet;
+    }
+
+    return bet;
+
+}
+
+function makeBlackjackDeck() {
+
+    return shuffle(makeDeck());
+
+}
+
+function blackjackDrawOne() {
+
+    return blackjackDeck.pop();
+
+}
+
+function blackjackCardValue(card) {
+
+    if (card.value >= 10) {
+        return 10;
+    }
+
+    if (card.value === 14) {
+        return 11;
+    }
+
+    return card.value;
+
+}
+
+function getBlackjackTotal(hand) {
+
+    let total = 0;
+    let aces = 0;
+
+    hand.forEach(function(card) {
+
+        total += blackjackCardValue(card);
+
+        if (card.value === 14) {
+            aces++;
+        }
+
+    });
+
+    while (
+        total > 21 &&
+        aces > 0
+    ) {
+
+        total -= 10;
+        aces--;
+
+    }
+
+    return total;
+
+}
+
+function isBlackjack(hand) {
+
+    return (
+        hand.length === 2 &&
+        getBlackjackTotal(hand) === 21
+    );
+
+}
+
+function renderBlackjack(showDealerCards) {
+
+    const playerElement =
+        document.getElementById(
+            "playerBlackjackHand"
+        );
+
+    const dealerElement =
+        document.getElementById(
+            "dealerBlackjackHand"
+        );
+
+    const playerTotalElement =
+        document.getElementById(
+            "playerBlackjackTotal"
+        );
+
+    const dealerTotalElement =
+        document.getElementById(
+            "dealerBlackjackTotal"
+        );
+
+    if (
+        !playerElement ||
+        !dealerElement
+    ) {
+        return;
+    }
+
+    playerElement.innerHTML = "";
+
+    blackjackPlayerHand.forEach(
+        function(card) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className =
+                "card" +
+                (
+                    card.suit === "♥" ||
+                    card.suit === "♦"
+                        ? " red"
+                        : ""
+                );
+
+            div.textContent =
+                card.name + card.suit;
+
+            playerElement.appendChild(
+                div
+            );
+
+        }
+    );
+
+    dealerElement.innerHTML = "";
+
+    blackjackDealerHand.forEach(
+        function(card, index) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className = "card";
+
+            if (
+                !showDealerCards &&
+                index === 1
+            ) {
+
+                div.textContent = "🂠";
+
+            } else {
+
+                div.textContent =
+                    card.name + card.suit;
+
+                if (
+                    card.suit === "♥" ||
+                    card.suit === "♦"
+                ) {
+
+                    div.classList.add(
+                        "red"
+                    );
+
+                }
+
+            }
+
+            dealerElement.appendChild(
+                div
+            );
+
+        }
+    );
+
+    if (playerTotalElement) {
+
+        if (blackjackPlayerHand.length > 0) {
+
+            playerTotalElement.textContent =
+                "Total: " +
+                getBlackjackTotal(
+                    blackjackPlayerHand
+                );
+
+        } else {
+
+            playerTotalElement.textContent = "";
+
+        }
+
+    }
+
+    if (dealerTotalElement) {
+
+        if (blackjackDealerHand.length === 0) {
+
+            dealerTotalElement.textContent = "";
+
+        } else if (showDealerCards) {
+
+            dealerTotalElement.textContent =
+                "Total: " +
+                getBlackjackTotal(
+                    blackjackDealerHand
+                );
+
+        } else {
+
+            dealerTotalElement.textContent =
+                "One card hidden";
+
+        }
+
+    }
+
+}
+
+function setBlackjackStatus(text) {
+
+    const element =
+        document.getElementById(
+            "blackjackStatus"
+        );
+
+    if (element) {
+        element.textContent = text;
+    }
+
+}
+
+function dealBlackjack() {
+
+    const bet = getBlackjackBet();
+
+    if (bet > balance) {
+
+        setBlackjackStatus(
+            "❌ You don't have enough GooseBucks!"
+        );
+
+        return;
+
+    }
+
+    balance -= bet;
+    updateBalance();
+
+    blackjackDeck =
+        makeBlackjackDeck();
+
+    blackjackPlayerHand = [
+        blackjackDrawOne(),
+        blackjackDrawOne()
+    ];
+
+    blackjackDealerHand = [
+        blackjackDrawOne(),
+        blackjackDrawOne()
+    ];
+
+    blackjackActive = true;
+
+    const hitButton =
+        document.getElementById(
+            "blackjackHitButton"
+        );
+
+    const standButton =
+        document.getElementById(
+            "blackjackStandButton"
+        );
+
+    if (hitButton) {
+        hitButton.disabled = false;
+    }
+
+    if (standButton) {
+        standButton.disabled = false;
+    }
+
+    renderBlackjack(false);
+
+    const playerBlackjack =
+        isBlackjack(
+            blackjackPlayerHand
+        );
+
+    const dealerBlackjack =
+        isBlackjack(
+            blackjackDealerHand
+        );
+
+    if (
+        playerBlackjack ||
+        dealerBlackjack
+    ) {
+
+        blackjackActive = false;
+
+        if (hitButton) {
+            hitButton.disabled = true;
+        }
+
+        if (standButton) {
+            standButton.disabled = true;
+        }
+
+        renderBlackjack(true);
+
+        if (
+            playerBlackjack &&
+            dealerBlackjack
+        ) {
+
+            balance += bet;
+
+            updateBalance();
+
+            setBlackjackStatus(
+                "🤝 BOTH HAVE BLACKJACK! PUSH!"
+            );
+
+        } else if (playerBlackjack) {
+
+            balance += bet * 2.5;
+
+            updateBalance();
+
+            setBlackjackStatus(
+                "🎉 BLACKJACK! YOU WIN 3:2!"
+            );
+
+        } else {
+
+            setBlackjackStatus(
+                "🪿 DEALER HAS BLACKJACK!"
+            );
+
+        }
+
+        return;
+    }
+
+    setBlackjackStatus(
+        "👀 Your move! HIT or STAND?"
+    );
+
+}
+
+function hitBlackjack() {
+
+    if (!blackjackActive) {
+        return;
+    }
+
+    blackjackPlayerHand.push(
+        blackjackDrawOne()
+    );
+
+    const total =
+        getBlackjackTotal(
+            blackjackPlayerHand
+        );
+
+    renderBlackjack(false);
+
+    if (total > 21) {
+
+        blackjackActive = false;
+
+        const hitButton =
+            document.getElementById(
+                "blackjackHitButton"
+            );
+
+        const standButton =
+            document.getElementById(
+                "blackjackStandButton"
+            );
+
+        if (hitButton) {
+            hitButton.disabled = true;
+        }
+
+        if (standButton) {
+            standButton.disabled = true;
+        }
+
+        setBlackjackStatus(
+            "💥 BUST! You went over 21!"
+        );
+
+        return;
+
+    }
+
+    if (total === 21) {
+
+        setBlackjackStatus(
+            "21! ✋ STAND!"
+        );
+
+        return;
+
+    }
+
+    setBlackjackStatus(
+        "You have " +
+        total +
+        ". HIT or STAND?"
+    );
+
+}
+
+function standBlackjack() {
+
+    if (!blackjackActive) {
+        return;
+    }
+
+    const hitButton =
+        document.getElementById(
+            "blackjackHitButton"
+        );
+
+    const standButton =
+        document.getElementById(
+            "blackjackStandButton"
+        );
+
+    if (hitButton) {
+        hitButton.disabled = true;
+    }
+
+    if (standButton) {
+        standButton.disabled = true;
+    }
+
+    while (
+        getBlackjackTotal(
+            blackjackDealerHand
+        ) < 17
+    ) {
+
+        blackjackDealerHand.push(
+            blackjackDrawOne()
+        );
+
+    }
+
+    blackjackActive = false;
+
+    renderBlackjack(true);
+
+    finishBlackjack();
+
+}
+
+function finishBlackjack() {
+
+    const bet =
+        getBlackjackBet();
+
+    const playerTotal =
+        getBlackjackTotal(
+            blackjackPlayerHand
+        );
+
+    const dealerTotal =
+        getBlackjackTotal(
+            blackjackDealerHand
+        );
+
+    let message = "";
+
+    if (dealerTotal > 21) {
+
+        balance += bet * 2;
+
+        message =
+            "💥 Dealer busts! YOU WIN!";
+
+    } else if (
+        playerTotal >
+        dealerTotal
+    ) {
+
+        balance += bet * 2;
+
+        message =
+            "🏆 YOU WIN! " +
+            playerTotal +
+            " beats " +
+            dealerTotal +
+            ".";
+
+    } else if (
+        playerTotal ===
+        dealerTotal
+    ) {
+
+        balance += bet;
+
+        message =
+            "🤝 PUSH! Both have " +
+            playerTotal +
+            ".";
+
+    } else {
+
+        message =
+            "🪿 DEALER WINS! " +
+            dealerTotal +
+            " beats " +
+            playerTotal +
+            ".";
+
+    }
+
+    updateBalance();
+
+    setBlackjackStatus(
+        message
+    );
+
+}
 // ============================================
 // START
 // ============================================
