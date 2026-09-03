@@ -5,176 +5,271 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Goosey Race</title>
-<style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, Helvetica, sans-serif;
-        background:
-            radial-gradient(
-                circle at top,
-                #193d2b 0%,
-                #07140d 55%,
-                #030805 100%
-            );
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-
-    .game {
-        width: min(1000px, 94%);
-        padding: 35px;
-        border: 3px solid #d4af37;
-        border-radius: 25px;
-        background: rgba(5, 20, 12, .94);
-        box-shadow:
-            0 0 30px rgba(212, 175, 55, .25),
-            inset 0 0 30px rgba(0, 0, 0, .5);
-        text-align: center;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 52px;
-        color: #d4af37;
-        text-shadow:
-            0 0 15px rgba(212, 175, 55, .45);
-    }
-
-    .subtitle {
-        margin-top: 8px;
-        color: #b8c8bd;
-        font-size: 18px;
-        margin-bottom: 30px;
-    }
-
-    .track {
-        position: relative;
-        height: 300px;
-        overflow: hidden;
-        border-radius: 18px;
-        background:
-            linear-gradient(
-                #10291b 0%,
-                #0b2015 70%,
-                #183b27 70%,
-                #183b27 100%
-            );
-        border: 2px solid #356f4b;
-        box-shadow:
-            inset 0 0 25px rgba(0,0,0,.5);
-    }
-
-    .lane {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 100px;
-        border-bottom: 2px dashed rgba(212,175,55,.25);
-    }
-
-    .finish {
-        position: absolute;
-        right: 45px;
-        top: 0;
-        bottom: 0;
-        width: 12px;
-
-        background:
-            repeating-linear-gradient(
-                to bottom,
-                #d4af37 0 15px,
-                #111 15px 30px
-            );
-
-        box-shadow: 0 0 12px rgba(212,175,55,.35);
-    }
-
-    .goose {
-        position: absolute;
-        left: 10px;
-        font-size: 48px;
-        transition: left .08s linear;
-        filter: drop-shadow(0 3px 3px rgba(0,0,0,.45));
-    }
-
-    #goose1 {
-        top: 18px;
-    }
-
-    #goose2 {
-        top: 118px;
-    }
-
-    #goose3 {
-        top: 218px;
-    }
-
-    .goose.running {
-        animation: run 0.16s infinite alternate;
-    }
-
-    @keyframes run {
-        from {
-            transform: translateY(0) rotate(-3deg);
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        to {
-            transform: translateY(-5px) rotate(3deg);
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #193d2b 0%,
+                    #07140d 55%,
+                    #030805 100%
+                );
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-    }
 
-    button {
-        border: none;
-        border-radius: 14px;
-        padding: 18px 25px;
-        margin-top: 20px;
-        font-size: 19px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: .15s;
-    }
+        .game {
+            width: min(1100px, 96%);
+            padding: 35px;
+            border: 3px solid #d4af37;
+            border-radius: 25px;
+            background: rgba(5, 20, 12, .94);
+            box-shadow:
+                0 0 30px rgba(212,175,55,.25),
+                inset 0 0 30px rgba(0,0,0,.5);
+            text-align: center;
+        }
 
-    button:hover {
-        transform: translateY(-3px);
-        filter: brightness(1.15);
-    }
+        h1 {
+            margin: 0;
+            font-size: 52px;
+            color: #d4af37;
+            text-shadow:
+                0 0 15px rgba(212,175,55,.45);
+        }
 
-    button:active {
-        transform: translateY(1px);
-    }
+        .subtitle {
+            margin: 8px 0 25px;
+            color: #b8c8bd;
+            font-size: 18px;
+        }
 
-    #startButton {
-        background: #d4af37;
-        color: #111;
-        font-size: 24px;
-    }
+        .controls {
+            margin-bottom: 18px;
+            color: #b8c8bd;
+            font-size: 15px;
+        }
 
-    #status {
-        min-height: 50px;
-        margin-top: 20px;
-        padding: 12px;
-        border-radius: 10px;
-        background: rgba(255,255,255,.05);
-        color: #dce9df;
-        font-size: 20px;
-        font-weight: bold;
-    }
+        .controls strong {
+            color: #f3d36a;
+        }
 
-    .back {
-        background: #222;
-        color: white;
-        border: 1px solid #555;
-        font-size: 16px;
-    }
-</style>
+        .track-window {
+            position: relative;
+            height: 330px;
+            overflow: hidden;
+            border: 2px solid #356f4b;
+            border-radius: 18px;
+            background: #0b2015;
+            box-shadow:
+                inset 0 0 25px rgba(0,0,0,.5);
+        }
+
+        .track {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5000px;
+            background:
+                linear-gradient(
+                    to bottom,
+                    #10291b 0%,
+                    #0b2015 100%
+                );
+        }
+
+        .lane {
+            position: absolute;
+            left: 0;
+            width: 5000px;
+            border-bottom: 2px dashed rgba(212,175,55,.25);
+        }
+
+        .lane1 {
+            top: 0;
+            height: 110px;
+        }
+
+        .lane2 {
+            top: 110px;
+            height: 110px;
+        }
+
+        .lane3 {
+            top: 220px;
+            height: 110px;
+        }
+
+        .finish {
+            position: absolute;
+            left: 4750px;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    #d4af37 0 15px,
+                    #111 15px 30px
+                );
+
+            box-shadow:
+                0 0 15px rgba(212,175,55,.4);
+        }
+
+        .obstacle {
+            position: absolute;
+            font-size: 42px;
+            user-select: none;
+        }
+
+        .goose {
+            position: absolute;
+            left: 80px;
+            font-size: 48px;
+            z-index: 5;
+            filter:
+                drop-shadow(
+                    0 3px 3px rgba(0,0,0,.45)
+                );
+        }
+
+        #goose1 {
+            top: 30px;
+        }
+
+        #goose2 {
+            top: 140px;
+        }
+
+        #goose3 {
+            top: 250px;
+        }
+
+        .goose.running {
+            animation:
+                run .16s infinite alternate;
+        }
+
+        @keyframes run {
+            from {
+                transform:
+                    translateY(0)
+                    rotate(-3deg);
+            }
+
+            to {
+                transform:
+                    translateY(-5px)
+                    rotate(3deg);
+            }
+        }
+
+        button {
+            border: none;
+            border-radius: 14px;
+            padding: 18px 25px;
+            margin-top: 20px;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.15);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #startButton {
+            background: #d4af37;
+            color: #111;
+            font-size: 24px;
+        }
+
+        #status {
+            min-height: 50px;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,.05);
+            color: #dce9df;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .back {
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            font-size: 16px;
+        }
+
+        @media (max-width: 700px) {
+
+            .game {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            .track-window {
+                height: 270px;
+            }
+
+            .lane1 {
+                top: 0;
+                height: 90px;
+            }
+
+            .lane2 {
+                top: 90px;
+                height: 90px;
+            }
+
+            .lane3 {
+                top: 180px;
+                height: 90px;
+            }
+
+            #goose1 {
+                top: 18px;
+            }
+
+            #goose2 {
+                top: 108px;
+            }
+
+            #goose3 {
+                top: 198px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -187,16 +282,84 @@
         RUN, GOOSEY, RUN!!!
     </div>
 
-    <div class="track" id="track">
+    <div class="controls">
+        <strong>A</strong> / <strong>D</strong> = change lanes
+        &nbsp; | &nbsp;
+        <strong>SPACE</strong> = boost
+    </div>
 
-        <div class="lane" style="top: 0;"></div>
-        <div class="lane" style="top: 90px;"></div>
+    <div class="track-window" id="trackWindow">
 
-        <div class="finish"></div>
+        <div class="track" id="track">
 
-        <div class="goose" id="goose1">🪿</div>
-        <div class="goose" id="goose2">🪿</div>
-        <div class="goose" id="goose3">🪿</div>
+            <div class="lane lane1"></div>
+            <div class="lane lane2"></div>
+            <div class="lane lane3"></div>
+
+            <div class="finish"></div>
+
+            <!-- OBSTACLES -->
+
+            <div class="obstacle"
+                 style="left:650px;top:35px;">
+                🪵
+            </div>
+
+            <div class="obstacle"
+                 style="left:950px;top:145px;">
+                🌳
+            </div>
+
+            <div class="obstacle"
+                 style="left:1250px;top:255px;">
+                🪨
+            </div>
+
+            <div class="obstacle"
+                 style="left:1650px;top:35px;">
+                🪵
+            </div>
+
+            <div class="obstacle"
+                 style="left:2050px;top:145px;">
+                🌳
+            </div>
+
+            <div class="obstacle"
+                 style="left:2450px;top:255px;">
+                🪨
+            </div>
+
+            <div class="obstacle"
+                 style="left:2900px;top:35px;">
+                🪵
+            </div>
+
+            <div class="obstacle"
+                 style="left:3350px;top:145px;">
+                🌳
+            </div>
+
+            <div class="obstacle"
+                 style="left:3800px;top:255px;">
+                🪨
+            </div>
+
+            <!-- GEESE -->
+
+            <div class="goose" id="goose1">
+                🪿
+            </div>
+
+            <div class="goose" id="goose2">
+                🪿
+            </div>
+
+            <div class="goose" id="goose3">
+                🪿
+            </div>
+
+        </div>
 
     </div>
 
