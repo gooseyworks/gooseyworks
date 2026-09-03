@@ -5,31 +5,117 @@
 let gooseRaceRunning = false;
 let gooseRaceTimer = null;
 
-let racePositions = [10, 10, 10];
+let racePositions = [80, 80, 80];
+let raceLanes = [0, 1, 2];
+
 let playerBoost = 0;
 let raceFinished = false;
 
+const RACE_FINISH = 4750;
+
+const LANE_TOPS = [
+    30,
+    140,
+    250
+];
+
+
 // ============================================
-// OPEN / CLOSE
+// START
 // ============================================
 
-function openGooseRace() {
+function startRace() {
+
+    if (gooseRaceRunning) {
+        return;
+    }
 
     resetRace();
 
+    gooseRaceRunning = true;
+    raceFinished = false;
+    playerBoost = 0;
+
+    const button =
+        document.getElementById("startButton");
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    const status =
+        document.getElementById("status");
+
+    if (status) {
+        status.textContent =
+            "🏁 3... 2... 1... GOOOOOOOOSE!!!";
+    }
+
+    const geese = [
+        "goose1",
+        "goose2",
+        "goose3"
+    ];
+
+    geese.forEach(function(id) {
+
+        const goose =
+            document.getElementById(id);
+
+        if (goose) {
+            goose.classList.add("running");
+        }
+
+    });
+
+    gooseRaceTimer =
+        setInterval(updateRace, 80);
+
 }
+
+
+// ============================================
+// RESET
+// ============================================
 
 function resetRace() {
 
     stopRace();
 
-    racePositions = [10, 10, 10];
+    racePositions = [
+        80,
+        80,
+        80
+    ];
+
+    raceLanes = [
+        0,
+        1,
+        2
+    ];
+
     playerBoost = 0;
     raceFinished = false;
 
-    moveGoose("goose1", 10);
-    moveGoose("goose2", 10);
-    moveGoose("goose3", 10);
+    moveGoose(
+        "goose1",
+        racePositions[0],
+        raceLanes[0]
+    );
+
+    moveGoose(
+        "goose2",
+        racePositions[1],
+        raceLanes[1]
+    );
+
+    moveGoose(
+        "goose3",
+        racePositions[2],
+        raceLanes[2]
+    );
+
+    centerCamera();
 
     const button =
         document.getElementById("startButton");
@@ -48,138 +134,167 @@ function resetRace() {
 
 }
 
+
 // ============================================
-// START
+// GAME LOOP
 // ============================================
 
-function startRace() {
+function updateRace() {
 
-    if (gooseRaceRunning) {
+    if (!gooseRaceRunning) {
         return;
     }
 
-    gooseRaceRunning = true;
-    raceFinished = false;
-    playerBoost = 0;
+    // ========================================
+    // PLAYER
+    // ========================================
 
-    const button =
-        document.getElementById("startButton");
+    let playerSpeed =
+        3 +
+        Math.random() * 1.5;
 
-    if (button) {
-        button.disabled = true;
+    if (playerBoost > 0) {
+
+        playerSpeed += 7;
+
+        playerBoost--;
+
     }
 
-    const status =
-        document.getElementById("status");
+    racePositions[0] += playerSpeed;
 
-    if (status) {
-        status.textContent =
-            "🏁 3... 2... 1... GOOOOOOSE!!!";
+
+    // ========================================
+    // CPU
+    // ========================================
+
+    racePositions[1] +=
+        3 +
+        Math.random() * 4;
+
+    racePositions[2] +=
+        3 +
+        Math.random() * 4;
+
+
+    // ========================================
+    // MOVE
+    // ========================================
+
+    moveGoose(
+        "goose1",
+        racePositions[0],
+        raceLanes[0]
+    );
+
+    moveGoose(
+        "goose2",
+        racePositions[1],
+        raceLanes[1]
+    );
+
+    moveGoose(
+        "goose3",
+        racePositions[2],
+        raceLanes[2]
+    );
+
+
+    // ========================================
+    // CAMERA
+    // ========================================
+
+    updateCamera();
+
+
+    // ========================================
+    // FINISH
+    // ========================================
+
+    if (
+        racePositions[0] >= RACE_FINISH ||
+        racePositions[1] >= RACE_FINISH ||
+        racePositions[2] >= RACE_FINISH
+    ) {
+
+        finishRace();
+
     }
-
-    const playerGoose =
-        document.getElementById("goose1");
-
-    if (playerGoose) {
-        playerGoose.classList.add("running");
-    }
-
-    const cpu1 =
-        document.getElementById("goose2");
-
-    const cpu2 =
-        document.getElementById("goose3");
-
-    if (cpu1) {
-        cpu1.classList.add("running");
-    }
-
-    if (cpu2) {
-        cpu2.classList.add("running");
-    }
-
-    gooseRaceTimer =
-        setInterval(function() {
-
-            // ============================================
-            // PLAYER GOOSE
-            // ============================================
-
-            let playerSpeed =
-                2.2 + Math.random() * 1.5;
-
-            if (playerBoost > 0) {
-
-                playerSpeed += 6;
-
-                playerBoost--;
-
-            }
-
-            racePositions[0] += playerSpeed;
-
-            // ============================================
-            // CPU GEESE
-            // ============================================
-
-            racePositions[1] +=
-                2.3 + Math.random() * 5;
-
-            racePositions[2] +=
-                2.3 + Math.random() * 5;
-
-            moveGoose(
-                "goose1",
-                racePositions[0]
-            );
-
-            moveGoose(
-                "goose2",
-                racePositions[1]
-            );
-
-            moveGoose(
-                "goose3",
-                racePositions[2]
-            );
-
-            // ============================================
-            // CHECK FINISH
-            // ============================================
-
-            if (
-                racePositions[0] >= 100 ||
-                racePositions[1] >= 100 ||
-                racePositions[2] >= 100
-            ) {
-
-                finishRace();
-
-            }
-
-        }, 100);
 
 }
 
+
 // ============================================
-// PLAYER CONTROL
+// PLAYER CONTROLS
 // ============================================
 
 document.addEventListener(
     "keydown",
     function(event) {
 
+        if (!gooseRaceRunning) {
+            return;
+        }
+
+
+        // SPACE = BOOST
+
         if (
-            event.code === "Space" &&
-            gooseRaceRunning
+            event.code === "Space"
         ) {
 
             event.preventDefault();
 
-            // Give Goosey a boost.
-            playerBoost = Math.min(
-                playerBoost + 5,
-                12
+            playerBoost =
+                Math.min(
+                    playerBoost + 4,
+                    15
+                );
+
+        }
+
+
+        // A = LEFT
+
+        if (
+            event.key.toLowerCase() === "a"
+        ) {
+
+            event.preventDefault();
+
+            raceLanes[0] =
+                Math.max(
+                    0,
+                    raceLanes[0] - 1
+                );
+
+            moveGoose(
+                "goose1",
+                racePositions[0],
+                raceLanes[0]
+            );
+
+        }
+
+
+        // D = RIGHT
+
+        if (
+            event.key.toLowerCase() === "d"
+        ) {
+
+            event.preventDefault();
+
+            raceLanes[0] =
+                Math.min(
+                    2,
+                    raceLanes[0] + 1
+                );
+
+            moveGoose(
+                "goose1",
+                racePositions[0],
+                raceLanes[0]
             );
 
         }
@@ -187,36 +302,83 @@ document.addEventListener(
     }
 );
 
+
 // ============================================
 // MOVE GOOSE
 // ============================================
 
-function moveGoose(id, progress) {
-
-    const track =
-        document.getElementById("track");
+function moveGoose(
+    id,
+    position,
+    lane
+) {
 
     const goose =
         document.getElementById(id);
 
-    if (!track || !goose) {
+    if (!goose) {
         return;
     }
 
-    const maxX =
-        track.clientWidth -
-        goose.offsetWidth -
-        55;
-
-    const newX =
-        10 +
-        (Math.min(progress, 100) / 100) *
-        (maxX - 10);
-
     goose.style.left =
-        newX + "px";
+        position + "px";
+
+    goose.style.top =
+        LANE_TOPS[lane] + "px";
 
 }
+
+
+// ============================================
+// CAMERA
+// ============================================
+
+function updateCamera() {
+
+    const track =
+        document.getElementById("track");
+
+    const windowElement =
+        document.getElementById(
+            "trackWindow"
+        );
+
+    if (
+        !track ||
+        !windowElement
+    ) {
+        return;
+    }
+
+    const cameraX =
+        Math.max(
+            0,
+            Math.min(
+                racePositions[0] - 180,
+                RACE_FINISH -
+                windowElement.clientWidth
+            )
+        );
+
+    track.style.transform =
+        "translateX(-" +
+        cameraX +
+        "px)";
+
+}
+
+function centerCamera() {
+
+    const track =
+        document.getElementById("track");
+
+    if (track) {
+        track.style.transform =
+            "translateX(0)";
+    }
+
+}
+
 
 // ============================================
 // FINISH
@@ -229,13 +391,16 @@ function finishRace() {
     }
 
     raceFinished = true;
+
     stopRace();
+
 
     const geese = [
         document.getElementById("goose1"),
         document.getElementById("goose2"),
         document.getElementById("goose3")
     ];
+
 
     geese.forEach(function(goose) {
 
@@ -245,9 +410,13 @@ function finishRace() {
 
     });
 
+
     const ranking =
         racePositions
-            .map(function(position, index) {
+            .map(function(
+                position,
+                index
+            ) {
 
                 return {
                     index: index,
@@ -257,18 +426,24 @@ function finishRace() {
             })
             .sort(function(a, b) {
 
-                return b.position - a.position;
+                return b.position -
+                       a.position;
 
             });
 
+
     const playerPlace =
-        ranking.findIndex(function(entry) {
+        ranking.findIndex(
+            function(entry) {
 
-            return entry.index === 0;
+                return entry.index === 0;
 
-        }) + 1;
+            }
+        ) + 1;
+
 
     let result = "";
+
 
     if (playerPlace === 1) {
 
@@ -287,21 +462,30 @@ function finishRace() {
 
     }
 
+
     const status =
         document.getElementById("status");
 
     if (status) {
-        status.textContent = result;
+
+        status.textContent =
+            result +
+            " 🪿";
+
     }
 
+
     const button =
-        document.getElementById("startButton");
+        document.getElementById(
+            "startButton"
+        );
 
     if (button) {
         button.disabled = false;
     }
 
 }
+
 
 // ============================================
 // STOP
@@ -313,7 +497,10 @@ function stopRace() {
 
     if (gooseRaceTimer) {
 
-        clearInterval(gooseRaceTimer);
+        clearInterval(
+            gooseRaceTimer
+        );
+
         gooseRaceTimer = null;
 
     }
