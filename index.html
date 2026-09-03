@@ -1410,6 +1410,90 @@
 
   </footer>
   <!-- ========================= -->
+<!-- USERNAME WINDOW -->
+<!-- ========================= -->
+
+<div
+  id="usernameModal"
+  style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  "
+>
+
+  <div
+    style="
+      width:min(500px,95vw);
+      background:#07140d;
+      color:white;
+      border:3px solid #d4af37;
+      border-radius:22px;
+      padding:30px;
+      text-align:center;
+      box-shadow:0 0 30px rgba(212,175,55,.3);
+    "
+  >
+
+    <div style="font-size:55px;">
+      🪿
+    </div>
+
+    <h2>
+      CHOOSE YOUR GOOSEYWORKS USERNAME
+    </h2>
+
+    <p>
+      Pick a funny, appropriate username!
+    </p>
+
+    <input
+      id="usernameInput"
+      type="text"
+      maxlength="16"
+      placeholder="GooseyFan123"
+      style="
+        width:90%;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid #456;
+        background:#102319;
+        color:white;
+        font-size:18px;
+      "
+    >
+
+    <p
+      id="usernameError"
+      style="
+        color:#ff7777;
+        min-height:24px;
+      "
+    ></p>
+
+    <button
+      class="game-button"
+      onclick="saveUsername()"
+    >
+      ✅ SAVE USERNAME
+    </button>
+
+    <button
+      class="game-button"
+      onclick="closeUsernameBox()"
+    >
+      ← CANCEL
+    </button>
+
+  </div>
+
+</div>
+  <!-- ========================= -->
 <!-- LANGUAGE SYSTEM -->
 <!-- ========================= -->
 
