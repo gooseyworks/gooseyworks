@@ -35,5 +35,114 @@
 <div class="game-controls"><button class="normal" onclick="dealPoker()">🔁 PLAY AGAIN</button><button class="bot-back" onclick="closePoker()">← BACK TO CASINO</button></div>
 </div></div>
 <script src="goosey-casino.js?v=4"></script>
+  <div class="modal" id="blackjackModal">
+    <div class="panel">
+
+        <button class="close" onclick="closeBlackjack()">
+            ✕ CLOSE
+        </button>
+
+        <h2>🂡 GOOSEY BLACKJACK</h2>
+
+        <p class="small">
+            Get as close to 21 as possible without going over.
+            Beat the Goosey Dealer!
+        </p>
+
+        <div class="bet-row">
+            <label>
+                Bet:
+                <input
+                    id="blackjackBet"
+                    type="number"
+                    min="10"
+                    max="1000"
+                    step="10"
+                    value="100"
+                >
+            </label>
+
+            <button
+                class="normal"
+                id="blackjackDealButton"
+                onclick="dealBlackjack()"
+            >
+                🃏 DEAL
+            </button>
+        </div>
+
+        <h3>Goosey Dealer</h3>
+
+        <div
+            class="table"
+            id="dealerBlackjackHand"
+        ></div>
+
+        <div
+            class="small"
+            id="dealerBlackjackTotal"
+        ></div>
+
+        <h3>Your Hand</h3>
+
+        <div
+            class="table"
+            id="playerBlackjackHand"
+        ></div>
+
+        <div
+            class="small"
+            id="playerBlackjackTotal"
+        ></div>
+
+        <div class="game-controls">
+
+            <button
+                class="play"
+                id="blackjackHitButton"
+                onclick="hitBlackjack()"
+                disabled
+            >
+                👊 HIT
+            </button>
+
+            <button
+                class="normal"
+                id="blackjackStandButton"
+                onclick="standBlackjack()"
+                disabled
+            >
+                ✋ STAND
+            </button>
+
+        </div>
+
+        <div
+            class="status"
+            id="blackjackStatus"
+        >
+            Set your bet and deal!
+        </div>
+
+        <div class="game-controls">
+
+            <button
+                class="normal"
+                onclick="dealBlackjack()"
+            >
+                🔁 PLAY AGAIN
+            </button>
+
+            <button
+                class="bot-back"
+                onclick="closeBlackjack()"
+            >
+                ← BACK TO CASINO
+            </button>
+
+        </div>
+
+    </div>
+</div>
 </body>
 </html>
