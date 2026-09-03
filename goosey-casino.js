@@ -1493,6 +1493,295 @@ function finishBlackjack() {
 
 }
 // ============================================
+// GOOSE RACING
+// ============================================
+
+let gooseRaceRunning = false;
+let gooseRaceTimer = null;
+
+function openGooseRace() {
+
+    const modal =
+        document.getElementById("gooseRaceModal");
+
+    if (!modal) {
+        console.error("gooseRaceModal not found!");
+        return;
+    }
+
+    modal.classList.add("show");
+
+    resetGooseRace();
+
+    if (balance > 0) {
+        setGooseRaceStatus(
+            "🏁 Goose Racing is available for everyone!"
+        );
+    } else {
+        setGooseRaceStatus(
+            "💸 You're broke! Win GooseBucks by racing!"
+        );
+    }
+
+}
+
+function closeGooseRace() {
+
+    const modal =
+        document.getElementById("gooseRaceModal");
+
+    if (modal) {
+        modal.classList.remove("show");
+    }
+
+    stopGooseRace();
+
+}
+
+function setGooseRaceStatus(text) {
+
+    const element =
+        document.getElementById(
+            "gooseRaceStatus"
+        );
+
+    if (element) {
+        element.textContent = text;
+    }
+
+}
+
+function resetGooseRace() {
+
+    stopGooseRace();
+
+    const positions = [
+        ["goose1", 10],
+        ["goose2", 10],
+        ["goose3", 10]
+    ];
+
+    positions.forEach(function(item) {
+
+        const element =
+            document.getElementById(item[0]);
+
+        if (element) {
+            element.style.left =
+                item[1] + "px";
+        }
+
+    });
+
+    const button =
+        document.getElementById(
+            "startRaceButton"
+        );
+
+    if (button) {
+        button.disabled = false;
+    }
+
+}
+
+function stopGooseRace() {
+
+    gooseRaceRunning = false;
+
+    if (gooseRaceTimer) {
+        clearInterval(gooseRaceTimer);
+        gooseRaceTimer = null;
+    }
+
+}
+
+function startGooseRace() {
+
+    if (gooseRaceRunning) {
+        return;
+    }
+
+    gooseRaceRunning = true;
+
+    const button =
+        document.getElementById(
+            "startRaceButton"
+        );
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    resetGooseRacePositions();
+
+    setGooseRaceStatus(
+        "🏁 AND THEY'RE OFF!!!"
+    );
+
+    let positions = [10, 10, 10];
+
+    gooseRaceTimer =
+        setInterval(function() {
+
+            for (
+                let i = 0;
+                i < positions.length;
+                i++
+            ) {
+
+                const boost =
+                    Math.random() * 7 + 2;
+
+                positions[i] += boost;
+
+            }
+
+            moveGoose(
+                "goose1",
+                positions[0]
+            );
+
+            moveGoose(
+                "goose2",
+                positions[1]
+            );
+
+            moveGoose(
+                "goose3",
+                positions[2]
+            );
+
+            const winner =
+                positions.findIndex(
+                    function(position) {
+                        return position >= 85;
+                    }
+                );
+
+            if (winner !== -1) {
+
+                finishGooseRace(
+                    winner,
+                    positions
+                );
+
+            }
+
+        }, 120);
+
+}
+
+function resetGooseRacePositions() {
+
+    ["goose1", "goose2", "goose3"]
+        .forEach(function(id) {
+
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+                element.style.left = "10px";
+            }
+
+        });
+
+}
+
+function moveGoose(id, progress) {
+
+    const track =
+        document.getElementById(
+            "raceTrack"
+        );
+
+    const goose =
+        document.getElementById(id);
+
+    if (!track || !goose) {
+        return;
+    }
+
+    const maxWidth =
+        track.clientWidth -
+        goose.offsetWidth -
+        20;
+
+    const left =
+        Math.min(
+            maxWidth,
+            10 + (progress / 85) * (maxWidth - 10)
+        );
+
+    goose.style.left =
+        left + "px";
+
+}
+
+function finishGooseRace(
+    winner,
+    positions
+) {
+
+    stopGooseRace();
+
+    const ranking =
+        positions
+            .map(function(position, index) {
+                return {
+                    index: index,
+                    position: position
+                };
+            })
+            .sort(function(a, b) {
+                return b.position - a.position;
+            });
+
+    const first =
+        ranking[0].index;
+
+    const second =
+        ranking[1].index;
+
+    const third =
+        ranking[2].index;
+
+    let reward = 50;
+    let placeText = "🐌 4th-ish";
+
+    if (first === winner) {
+        reward = 500;
+        placeText = "🥇 1ST PLACE";
+    } else if (second === winner) {
+        reward = 300;
+        placeText = "🥈 2ND PLACE";
+    } else if (third === winner) {
+        reward = 150;
+        placeText = "🥉 3RD PLACE";
+    }
+
+    balance += reward;
+
+    updateBalance();
+
+    setGooseRaceStatus(
+        placeText +
+        "!\n" +
+        "🪿 You earned " +
+        reward +
+        " GB!"
+    );
+
+    const button =
+        document.getElementById(
+            "startRaceButton"
+        );
+
+    if (button) {
+        button.disabled = false;
+    }
+
+}
+// ============================================
 // START
 // ============================================
 
