@@ -14,13 +14,11 @@ let raceLanes = [1, 0, 2];
 let playerBoost = 0;
 
 const RACE_FINISH = 4750;
+const PLAYER_SPEED = 2.0;
+const PLAYER_BOOST_SPEED = 4.5;
 
-const PLAYER_SPEED = 1.15;
-const PLAYER_BOOST_SPEED = 3.4;
-
-const CPU_MIN_SPEED = 0.9;
-const CPU_MAX_SPEED = 1.8;
-
+const CPU_MIN_SPEED = 1.8;
+const CPU_MAX_SPEED = 3.0;
 // Lane vertical positions
 const LANE_TOPS = [
     30,
@@ -237,62 +235,58 @@ function updateRace() {
 
     racePositions[0] =
         nextPlayerPosition;
+// ========================================
+// CPU AUTO-RUN + OBSTACLES
+// ========================================
 
-    // ========================================
-    // CPU AUTO-RUN
-    // ========================================
+for (let i = 1; i < 3; i++) {
 
-    for (
-        let i = 1;
-        i < 3;
-        i++
+    // CPU ALWAYS RUNS
+    let cpuSpeed =
+        CPU_MIN_SPEED +
+        Math.random() *
+        (CPU_MAX_SPEED - CPU_MIN_SPEED);
+
+    let nextPosition =
+        racePositions[i] + cpuSpeed;
+
+    // Check if the CPU is about to hit an obstacle.
+    if (
+        hitsObstacle(
+            nextPosition,
+            raceLanes[i]
+        )
     ) {
 
-        let cpuSpeed =
-            CPU_MIN_SPEED +
-            Math.random() *
-            (
-                CPU_MAX_SPEED -
-                CPU_MIN_SPEED
+        // Try to change lanes BEFORE the obstacle.
+        const safeLane =
+            findSafeLane(
+                racePositions[i],
+                raceLanes[i]
             );
 
-        let nextPosition =
-            racePositions[i] +
-            cpuSpeed;
+        if (safeLane !== null) {
 
-        // CPU gets blocked too.
-        if (
-            hitsObstacle(
-                nextPosition,
-                raceLanes[i]
-            )
-        ) {
+            raceLanes[i] = safeLane;
 
-            const safeLane =
-                findSafeLane(
-                    nextPosition,
-                    raceLanes[i]
-                );
+            // Keep moving forward.
+            nextPosition =
+                racePositions[i] +
+                cpuSpeed;
 
-            if (
-                safeLane !== null
-            ) {
+        } else {
 
-                raceLanes[i] =
-                    safeLane;
+            // No safe lane:
+            // the obstacle blocks the CPU.
+            nextPosition =
+                racePositions[i];
 
-            } else {
-
-                nextPosition =
-                    racePositions[i];
-
-            }
         }
-
-        racePositions[i] =
-            nextPosition;
     }
 
+    racePositions[i] =
+        nextPosition;
+}
     // ========================================
     // GOOSE COLLISIONS
     // ========================================
