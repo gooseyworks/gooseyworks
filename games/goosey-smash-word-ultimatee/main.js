@@ -3836,8 +3836,6 @@ onUpdate(() => {
 });
 });
 
-window.gooseyMap = selectedMap;
-    
 // ==================================================
 // FIGHT
 // ==================================================
@@ -3847,6 +3845,8 @@ window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
+window.gooseyMap = selectedMap;
+    
     let player;
     // ==================================================
     // P1 CREATION
