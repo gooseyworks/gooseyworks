@@ -3845,7 +3845,7 @@ window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-window.gooseyMap = selectedMap;
+window.gooseyMap = currentMap;
     
     let player;
     // ==================================================
