@@ -13,19 +13,11 @@ let boostTicks = 0;
 
 const FINISH = 4750;
 
-// ============================================
-// SPEED
-// ============================================
-
 const PLAYER_SPEED = 4.0;
 const BOOST_SPEED = 8.0;
 
 const CPU_MIN_SPEED = 3.4;
 const CPU_MAX_SPEED = 5.0;
-
-// ============================================
-// LANE POSITIONS
-// ============================================
 
 const LANES = [
     30,
@@ -34,28 +26,29 @@ const LANES = [
 ];
 
 // ============================================
-// OBSTACLES
-// ============================================
-//
-// IMPORTANT:
-//
-// The HTML contains the REAL visible obstacles.
-//
-// We read those obstacles here instead of having
-// a second, different obstacle list.
-//
-// This prevents invisible collision obstacles.
+// RANDOM OBSTACLES
 // ============================================
 
-const obstacles = [];
+let obstacles = [];
+
+const OBSTACLE_TYPES = [
+    "🌳",
+    "🪨",
+    "🪵",
+    "🌵",
+    "🌲",
+    "🪨",
+    "🌳",
+    "🪵"
+];
 
 // ============================================
-// LOAD OBSTACLES FROM HTML
+// GENERATE RANDOM COURSE
 // ============================================
 
-function loadObstacles() {
+function generateObstacles() {
 
-    obstacles.length = 0;
+    obstacles = [];
 
     const track =
         document.getElementById("track");
@@ -64,54 +57,183 @@ function loadObstacles() {
         return;
     }
 
-    const obstacleElements =
-        track.querySelectorAll(".obstacle");
+    // Remove old generated obstacles.
 
-    obstacleElements.forEach(
-        function(element) {
+    track
+        .querySelectorAll(
+            ".race-generated-obstacle"
+        )
+        .forEach(
+            function(element) {
+                element.remove();
+            }
+        );
 
-            const x =
-                parseFloat(
-                    element.style.left
+    let x = 500;
+
+    let previousLane = -1;
+
+    let previousType = "";
+
+    while (
+        x < FINISH - 200
+    ) {
+
+        // ========================================
+        // RANDOM NUMBER OF OBSTACLES IN THIS AREA
+        // ========================================
+
+        const groupSize =
+            Math.random() < 0.18
+                ? 2
+                : 1;
+
+        for (
+            let g = 0;
+            g < groupSize;
+            g++
+        ) {
+
+            // ====================================
+            // RANDOM LANE
+            // ====================================
+
+            let lane =
+                Math.floor(
+                    Math.random() * 3
                 );
 
-            const top =
-                parseFloat(
-                    element.style.top
+            // Don't endlessly repeat
+            // the same lane.
+
+            if (
+                lane === previousLane &&
+                Math.random() < 0.75
+            ) {
+
+                lane =
+                    (lane +
+                        1 +
+                        Math.floor(
+                            Math.random() * 2
+                        )
+                    ) % 3;
+            }
+
+            // ====================================
+            // RANDOM LOOK
+            // ====================================
+
+            let type;
+
+            do {
+
+                type =
+                    OBSTACLE_TYPES[
+                        Math.floor(
+                            Math.random() *
+                            OBSTACLE_TYPES.length
+                        )
+                    ];
+
+            } while (
+                type === previousType &&
+                Math.random() < 0.8
+            );
+
+            // ====================================
+            // RANDOM POSITION
+            // ====================================
+
+            const obstacleX =
+                x +
+                Math.floor(
+                    Math.random() * 90
                 );
 
-            let lane;
+            // ====================================
+            // CREATE OBSTACLE DATA
+            // ====================================
 
-            // HTML top positions:
-            //
-            // 35  = lane 0
-            // 145 = lane 1
-            // 255 = lane 2
-
-            if (top < 110) {
-
-                lane = 0;
-
-            } else if (top < 220) {
-
-                lane = 1;
-
-            } else {
-
-                lane = 2;
-            }
-
-            if (!Number.isFinite(x)) {
-                return;
-            }
-
-            obstacles.push({
-                x: x,
+            const obstacle = {
+                x: obstacleX,
                 lane: lane,
-                element: element
-            });
+                type: type
+            };
+
+            obstacles.push(
+                obstacle
+            );
+
+            previousLane =
+                lane;
+
+            previousType =
+                type;
+
+            // ====================================
+            // CREATE VISIBLE OBSTACLE
+            // ====================================
+
+            const element =
+                document.createElement(
+                    "div"
+                );
+
+            element.className =
+                "obstacle race-generated-obstacle";
+
+            element.textContent =
+                type;
+
+            element.style.left =
+                obstacleX + "px";
+
+            element.style.top =
+                LANES[lane] + "px";
+
+            element.style.position =
+                "absolute";
+
+            element.style.fontSize =
+                "42px";
+
+            element.style.width =
+                "55px";
+
+            element.style.height =
+                "55px";
+
+            element.style.display =
+                "flex";
+
+            element.style.alignItems =
+                "center";
+
+            element.style.justifyContent =
+                "center";
+
+            element.style.zIndex =
+                "10";
+
+            element.style.pointerEvents =
+                "none";
+
+            track.appendChild(
+                element
+            );
         }
-    );
+
+        // ========================================
+        // RANDOM DISTANCE TO NEXT OBSTACLE
+        // ========================================
+
+        x +=
+            190 +
+            Math.floor(
+                Math.random() * 260
+            );
+    }
 }
 
 // ============================================
@@ -138,6 +260,8 @@ function resetRace() {
         2
     ];
 
+    generateObstacles();
+
     moveGoose(
         "goose1",
         positions[0],
@@ -159,10 +283,11 @@ function resetRace() {
     setCamera(0);
 
     const status =
-        document.getElementById("status");
+        document.getElementById(
+            "status"
+        );
 
     if (status) {
-
         status.textContent =
             "Press START RACE!";
     }
@@ -173,7 +298,6 @@ function resetRace() {
         );
 
     if (button) {
-
         button.disabled = false;
     }
 }
@@ -188,11 +312,6 @@ function startRace() {
         return;
     }
 
-    // Make absolutely sure the HTML
-    // obstacles are loaded.
-
-    loadObstacles();
-
     resetRace();
 
     raceRunning = true;
@@ -205,7 +324,6 @@ function startRace() {
         );
 
     if (button) {
-
         button.disabled = true;
     }
 
@@ -215,7 +333,6 @@ function startRace() {
         );
 
     if (status) {
-
         status.textContent =
             "🏁 3... 2... 1... GOOOOOOSE!!!";
     }
@@ -266,8 +383,6 @@ function updateRace() {
     let nextPlayer =
         positions[0] +
         playerSpeed;
-
-    // Check the REAL visible obstacles.
 
     if (
         hitsObstacle(
@@ -342,15 +457,7 @@ function updateRace() {
             next;
     }
 
-    // ========================================
-    // GOOSE COLLISIONS
-    // ========================================
-
     handleGooseCollisions();
-
-    // ========================================
-    // DRAW GEESE
-    // ========================================
 
     moveGoose(
         "goose1",
@@ -370,15 +477,7 @@ function updateRace() {
         lanes[2]
     );
 
-    // ========================================
-    // CAMERA
-    // ========================================
-
     updateCamera();
-
-    // ========================================
-    // FINISH
-    // ========================================
 
     if (
         positions[0] >= FINISH ||
@@ -402,10 +501,6 @@ document.addEventListener(
             return;
         }
 
-        // ======================================
-        // SPACE = BOOST
-        // ======================================
-
         if (
             event.code === "Space"
         ) {
@@ -416,10 +511,6 @@ document.addEventListener(
 
             return;
         }
-
-        // ======================================
-        // A = LEFT
-        // ======================================
 
         if (
             event.key.toLowerCase() === "a"
@@ -441,10 +532,6 @@ document.addEventListener(
 
             return;
         }
-
-        // ======================================
-        // D = RIGHT
-        // ======================================
 
         if (
             event.key.toLowerCase() === "d"
@@ -501,7 +588,7 @@ function hitsObstacle(
 }
 
 // ============================================
-// FIND SAFE LANE
+// SAFE LANE
 // ============================================
 
 function findSafeLane(
@@ -513,9 +600,6 @@ function findSafeLane(
         currentLane - 1,
         currentLane + 1
     ];
-
-    // Randomize which side the CPU
-    // checks first.
 
     if (
         Math.random() < 0.5
@@ -582,8 +666,6 @@ function handleGooseCollisions() {
                 continue;
             }
 
-            // PLAYER GETS HIT
-
             if (i === 0) {
 
                 bumpPlayer(j);
@@ -593,8 +675,6 @@ function handleGooseCollisions() {
                 bumpPlayer(i);
 
             } else {
-
-                // CPU vs CPU
 
                 positions[i] =
                     Math.max(
@@ -934,10 +1014,5 @@ function stopRace() {
 // ============================================
 // STARTUP
 // ============================================
-
-// Load the EXACT obstacles that are
-// actually visible in the HTML.
-
-loadObstacles();
 
 resetRace();
