@@ -3844,10 +3844,9 @@ scene("fight", (data) => {
 window.gooseyScene = "fight";
     // 🎲 RANDOM MAP
     const currentMap =
-        Math.floor(Math.random() * 6);
-window.gooseyMap = currentMap;
-    
+        Math.floor(Math.random() * 6);    
     let player;
+    window.gooseyMap = currentMap;
     // ==================================================
     // P1 CREATION
     // ==================================================
