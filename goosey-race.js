@@ -334,9 +334,192 @@ document.addEventListener(
         }
     }
 );
-
 // ============================================
 // OBSTACLES
+// ============================================
+
+// The obstacles are generated here AND drawn here.
+// This means there can no longer be a collision
+// obstacle that has no visible obstacle.
+
+let obstacles = [];
+
+const OBSTACLE_TYPES = [
+    {
+        emoji: "🌳",
+        name: "tree"
+    },
+    {
+        emoji: "🪨",
+        name: "rock"
+    },
+    {
+        emoji: "🪵",
+        name: "log"
+    },
+    {
+        emoji: "🌵",
+        name: "cactus"
+    }
+];
+
+// ============================================
+// GENERATE OBSTACLE COURSE
+// ============================================
+
+function generateObstacles() {
+
+    obstacles = [];
+
+    const startX = 550;
+    const endX = FINISH - 400;
+
+    let x = startX;
+    let previousLane = -1;
+
+    while (x < endX) {
+
+        // ----------------------------------------
+        // Pick a lane.
+        // Don't constantly use the same lane.
+        // ----------------------------------------
+
+        let possibleLanes = [0, 1, 2];
+
+        possibleLanes =
+            possibleLanes.filter(function(lane) {
+
+                return lane !== previousLane;
+
+            });
+
+        const lane =
+            possibleLanes[
+                Math.floor(
+                    Math.random() *
+                    possibleLanes.length
+                )
+            ];
+
+        // ----------------------------------------
+        // Pick a random obstacle.
+        // ----------------------------------------
+
+        const type =
+            OBSTACLE_TYPES[
+                Math.floor(
+                    Math.random() *
+                    OBSTACLE_TYPES.length
+                )
+            ];
+
+        const obstacle = {
+            x: x,
+            lane: lane,
+            emoji: type.emoji,
+            name: type.name
+        };
+
+        obstacles.push(obstacle);
+
+        previousLane = lane;
+
+        // ----------------------------------------
+        // Random spacing.
+        //
+        // This prevents:
+        // tree
+        // rock
+        // rock
+        // tree
+        //
+        // from becoming a predictable pattern.
+        // ----------------------------------------
+
+        x +=
+            250 +
+            Math.floor(
+                Math.random() * 180
+            );
+    }
+
+    renderObstacles();
+}
+
+// ============================================
+// DRAW THE EXACT SAME OBSTACLES USED
+// FOR COLLISION
+// ============================================
+
+function renderObstacles() {
+
+    const track =
+        document.getElementById("track");
+
+    if (!track) {
+        return;
+    }
+
+    // Remove old dynamically-created obstacles.
+    track
+        .querySelectorAll(".race-generated-obstacle")
+        .forEach(function(element) {
+            element.remove();
+        });
+
+    obstacles.forEach(function(obstacle) {
+
+        const element =
+            document.createElement("div");
+
+        element.className =
+            "race-generated-obstacle";
+
+        element.textContent =
+            obstacle.emoji;
+
+        // ----------------------------------------
+        // Position
+        // ----------------------------------------
+
+        element.style.position = "absolute";
+
+        element.style.left =
+            obstacle.x + "px";
+
+        element.style.top =
+            (LANES[obstacle.lane] - 8) + "px";
+
+        // ----------------------------------------
+        // Make it VERY obviously visible.
+        // ----------------------------------------
+
+        element.style.width = "55px";
+        element.style.height = "55px";
+
+        element.style.display = "flex";
+        element.style.alignItems = "center";
+        element.style.justifyContent = "center";
+
+        element.style.fontSize = "42px";
+
+        element.style.lineHeight = "1";
+
+        element.style.zIndex = "20";
+
+        element.style.pointerEvents = "none";
+
+        // Prevent weird inherited styling from
+        // making an obstacle invisible.
+        element.style.opacity = "1";
+        element.style.visibility = "visible";
+
+        track.appendChild(element);
+    });
+}
+
+// ============================================
+// OBSTACLE COLLISION
 // ============================================
 
 function hitsObstacle(
@@ -368,19 +551,29 @@ function hitsObstacle(
     return false;
 }
 
+// ============================================
+// FIND SAFE LANE
+// ============================================
+
 function findSafeLane(
     position,
     currentLane
 ) {
 
-    const choices = [
-        currentLane - 1,
-        currentLane + 1
-    ];
+    // Check both directions,
+    // but randomize which one is checked first.
+
+    const directions =
+        Math.random() < 0.5
+            ? [-1, 1]
+            : [1, -1];
 
     for (
-        const lane of choices
+        const direction of directions
     ) {
+
+        const lane =
+            currentLane + direction;
 
         if (
             lane < 0 ||
@@ -402,7 +595,6 @@ function findSafeLane(
 
     return null;
 }
-
 // ============================================
 // GOOSE COLLISIONS
 // ============================================
