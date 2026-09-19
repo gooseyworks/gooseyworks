@@ -894,3 +894,88 @@ footer {
 .nav {
   width: min(var(--max), calc(100% - 40px));
 }
+/* =========================================
+   🎯 PERFECTLY CENTER THE GOOSEYWORKS HERO
+   ========================================= */
+
+.hero {
+  align-items: center;
+  text-align: center;
+}
+
+.hero-content {
+  width: min(var(--max), calc(100% - 40px));
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 70px 20px 90px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.hero-content .eyebrow {
+  width: 100%;
+  text-align: center;
+}
+
+.hero h1 {
+  width: 100%;
+  margin: 12px auto 0;
+
+  text-align: center;
+
+  font-size: clamp(3.4rem, 9vw, 7rem);
+  line-height: .95;
+  letter-spacing: -.06em;
+
+  background: linear-gradient(
+    90deg,
+    #4cc9ff 0%,
+    #7c5cff 50%,
+    #c45cff 100%
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-content p {
+  width: 100%;
+  max-width: 650px;
+
+  margin: 24px auto 32px;
+
+  text-align: center;
+}
+
+.hero-content .button {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.profile-card {
+  width: min(500px, calc(100% - 40px));
+  margin: 20px auto;
+
+  text-align: center;
+}
+
+.hero > .game-card {
+  width: min(500px, calc(100% - 40px));
+  margin: 20px auto;
+
+  text-align: center;
+}
+
+/* Keep the top navigation centered within the page */
+.nav {
+  width: min(var(--max), calc(100% - 40px));
+  margin-left: auto;
+  margin-right: auto;
+}
