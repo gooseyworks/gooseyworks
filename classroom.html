@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>GooseyWorks Classroom</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #173d5c 0%,
+                    #081522 55%,
+                    #03070b 100%
+                );
+
+            color: white;
+
+            padding: 30px 15px;
+        }
+
+        .classroom-page {
+            width: min(1150px, 96%);
+            margin: 0 auto;
+        }
+
+        /* =========================
+           HEADER
+           ========================= */
+
+        .classroom-header {
+            text-align: center;
+            padding: 30px 20px 40px;
+        }
+
+        .classroom-title {
+            margin: 0 auto;
+
+            width: 100%;
+
+            text-align: center;
+
+            font-size:
+                clamp(42px, 7vw, 72px);
+
+            font-weight: 900;
+
+            line-height: 1;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #4cc9ff,
+                    #7c5cff,
+                    #c45cff
+                );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .classroom-description {
+            width:
+                min(800px, 100%);
+
+            margin:
+                18px auto 0;
+
+            text-align: center;
+
+            color: #cbd8e3;
+
+            font-size: 20px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================
+           WELCOME
+           ========================= */
+
+        .classroom-welcome {
+            background:
+                rgba(255,255,255,.06);
+
+            border:
+                2px solid rgba(124,92,255,.35);
+
+            border-radius:
+                22px;
+
+            padding:
+                25px;
+
+            margin-bottom:
+                35px;
+
+            text-align:
+                center;
+        }
+
+        .classroom-welcome h2 {
+            margin-top:
+                0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #4cc9ff,
+                    #7c5cff,
+                    #c45cff
+                );
+
+            -webkit-background-clip:
+                text;
+
+            -webkit-text-fill-color:
+                transparent;
+
+            background-clip:
+                text;
+        }
+
+        /* =========================
+           SECTION TITLES
+           ========================= */
+
+        .classroom-section-title {
+            font-size:
+                32px;
+
+            margin:
+                45px 0 18px;
+
+            text-align:
+                left;
+
+            color:
+                #ffffff;
+        }
+
+        /* =========================
+           VIDEO GRID
+           ========================= */
+
+        .classroom-video-grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(270px, 1fr)
+                );
+
+            gap:
+                20px;
+        }
+
+        .classroom-video-card {
+            background:
+                rgba(255,255,255,.07);
+
+            border:
+                1px solid rgba(255,255,255,.13);
+
+            border-radius:
+                18px;
+
+            padding:
+                22px;
+
+            transition:
+                .2s;
+        }
+
+        .classroom-video-card:hover {
+            transform:
+                translateY(-5px);
+
+            background:
+                rgba(255,255,255,.11);
+
+            border-color:
+                rgba(124,92,255,.6);
+        }
+
+        .classroom-video-icon {
+            font-size:
+                45px;
+
+            margin-bottom:
+                10px;
+        }
+
+        .classroom-video-card h3 {
+            margin:
+                5px 0 10px;
+
+            color:
+                white;
+
+            font-size:
+                22px;
+        }
+
+        .classroom-video-card p {
+            color:
+                #c3d0db;
+
+            line-height:
+                1.5;
+
+            min-height:
+                70px;
+        }
+
+        /* =========================
+           BUTTON
+           ========================= */
+
+        .classroom-video-button {
+            display:
+                inline-block;
+
+            margin-top:
+                10px;
+
+            padding:
+                12px 17px;
+
+            border-radius:
+                10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4cc9ff,
+                    #7c5cff
+                );
+
+            color:
+                white;
+
+            text-decoration:
+                none;
+
+            font-weight:
+                900;
+
+            transition:
+                .15s;
+        }
+
+        .classroom-video-button:hover {
+            transform:
+                translateY(-2px);
+
+            filter:
+                brightness(1.1);
+        }
+
+        /* =========================
+           GOOSEY ORIGINALS
+           ========================= */
+
+        .classroom-goosey {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(76,201,255,.12),
+                    rgba(196,92,255,.10)
+                );
+
+            border:
+                2px solid rgba(124,92,255,.4);
+        }
+
+        .classroom-coming-soon {
+            color:
+                #72e5ff;
+
+            font-weight:
+                bold;
+        }
+
+        /* =========================
+           BACK BUTTON
+           ========================= */
+
+        .classroom-back {
+            display:
+                block;
+
+            width:
+                fit-content;
+
+            margin:
+                45px auto 10px;
+
+            padding:
+                15px 22px;
+
+            border-radius:
+                12px;
+
+            background:
+                #18243a;
+
+            color:
+                white;
+
+            text-decoration:
+                none;
+
+            border:
+                1px solid
+                rgba(255,255,255,.18);
+
+            font-weight:
+                bold;
+        }
+
+        .classroom-back:hover {
+            background:
+                #243653;
+        }
+
+        /* =========================
+           FOOTER
+           ========================= */
+
+        .classroom-footer {
+            text-align:
+                center;
+
+            margin-top:
+                40px;
+
+            color:
+                #8293a1;
+
+            font-size:
+                14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="classroom-page">
+
+    <!-- HEADER -->
+
+    <header class="classroom-header">
+
+        <h1 class="classroom-title">
+            🏫 GOOSEYWORKS CLASSROOM
+        </h1>
+
+        <p class="classroom-description">
+            Learn about science, history, computers,
+            space, math, and more! 🪿📚
+        </p>
+
+    </header>
+
+
+    <!-- WELCOME -->
+
+    <div class="classroom-welcome">
+
+        <h2>
+            🧠 LEARNING ZONE
+        </h2>
+
+        <p>
+            Pick a subject and start learning.
+            More lessons and GooseyWorks-made
+            videos will be added!
+        </p>
+
+    </div>
+
+
+    <!-- SCIENCE -->
+
+    <h2 class="classroom-section-title">
+        🔬 Science
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                🧬
+            </div>
+
+            <h3>
+                Biology
+            </h3>
+
+            <p>
+                Learn about cells, organisms,
+                genetics, ecosystems, evolution,
+                and more.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://www.khanacademy.org/science"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                📚 LEARN SCIENCE
+            </a>
+
+        </div>
+
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                🚀
+            </div>
+
+            <h3>
+                NASA STEM
+            </h3>
+
+            <p>
+                Explore space, Earth science,
+                engineering, mathematics,
+                technology, and NASA missions.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://science.nasa.gov/learn/lessons-and-activities/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                🚀 NASA LEARNING
+            </a>
+
+        </div>
+
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                🌎
+            </div>
+
+            <h3>
+                Earth & Space
+            </h3>
+
+            <p>
+                Discover weather, climate,
+                Earth's systems, planets,
+                and the universe.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://science.nasa.gov/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                🌎 EXPLORE
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- HISTORY -->
+
+    <h2 class="classroom-section-title">
+        📜 History
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                🌾
+            </div>
+
+            <h3>
+                The Agricultural Revolution
+            </h3>
+
+            <p>
+                Learn how agriculture changed
+                human societies and civilization.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://www.youtube.com/watch?v=Yocja_N5s1I"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                ▶️ WATCH
+            </a>
+
+        </div>
+
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                🔬
+            </div>
+
+            <h3>
+                History of Science
+            </h3>
+
+            <p>
+                Explore the development of
+                scientific ideas and technology.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://thecrashcourse.com/courses/history-of-science/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                📜 EXPLORE
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPUTER SCIENCE -->
+
+    <h2 class="classroom-section-title">
+        💻 Computer Science
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                💾
+            </div>
+
+            <h3>
+                Crash Course Computer Science
+            </h3>
+
+            <p>
+                Learn about computers, hardware,
+                software, networks, and more.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://thecrashcourse.com/topic/computerscience/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                💻 START LEARNING
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDY SKILLS -->
+
+    <h2 class="classroom-section-title">
+        🧠 Study Skills
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                📝
+            </div>
+
+            <h3>
+                Taking Better Notes
+            </h3>
+
+            <p>
+                Learn strategies for taking notes
+                and remembering what you learn.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://www.youtube.com/watch?v=E7CwqNHn_Ns"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                ▶️ WATCH
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- MATH -->
+
+    <h2 class="classroom-section-title">
+        ➗ Mathematics
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card">
+
+            <div class="classroom-video-icon">
+                📐
+            </div>
+
+            <h3>
+                Khan Academy Math
+            </h3>
+
+            <p>
+                Practice mathematics from basic
+                concepts through advanced topics.
+            </p>
+
+            <a
+                class="classroom-video-button"
+                href="https://www.khanacademy.org/math"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                ➗ LEARN MATH
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- GOOSEYWORKS ORIGINALS -->
+
+    <h2 class="classroom-section-title">
+        🪿 GooseyWorks Originals
+    </h2>
+
+    <div class="classroom-video-grid">
+
+        <div class="classroom-video-card classroom-goosey">
+
+            <div class="classroom-video-icon">
+                🪿✍️
+            </div>
+
+            <h3>
+                How to Write an Essay
+            </h3>
+
+            <p>
+                Learn about introductions,
+                thesis statements, body paragraphs,
+                evidence, conclusions, and revision.
+            </p>
+
+            <span class="classroom-coming-soon">
+                🎬 COMING SOON
+            </span>
+
+        </div>
+
+
+        <div class="classroom-video-card classroom-goosey">
+
+            <div class="classroom-video-icon">
+                🪿🎤
+            </div>
+
+            <h3>
+                How to Write a Speech
+            </h3>
+
+            <p>
+                Learn how to organize a speech,
+                create a strong opening,
+                and present your ideas clearly.
+            </p>
+
+            <span class="classroom-coming-soon">
+                🎬 COMING SOON
+            </span>
+
+        </div>
+
+
+        <div class="classroom-video-card classroom-goosey">
+
+            <div class="classroom-video-icon">
+                🪿🔬
+            </div>
+
+            <h3>
+                Goosey Science
+            </h3>
+
+            <p>
+                A GooseyWorks-made science lesson.
+            </p>
+
+            <span class="classroom-coming-soon">
+                🎬 COMING SOON
+            </span>
+
+        </div>
+
+
+        <div class="classroom-video-card classroom-goosey">
+
+            <div class="classroom-video-icon">
+                🪿🚀
+            </div>
+
+            <h3>
+                Goosey Space
+            </h3>
+
+            <p>
+                Space exploration explained by Goosey.
+            </p>
+
+            <span class="classroom-coming-soon">
+                🎬 COMING SOON
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <a
+        class="classroom-back"
+        href="index.html"
+    >
+        ← BACK TO GOOSEYWORKS
+    </a>
+
+
+    <div class="classroom-footer">
+        🪿 GooseyWorks Classroom • Learn something awesome today!
+    </div>
+
+</div>
+
+</body>
+</html>
