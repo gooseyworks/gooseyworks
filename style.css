@@ -819,3 +819,78 @@ footer {
     font-size: 2.3rem;
   }
 }
+/* =========================================
+   🪿 CENTER THE MAIN GOOSEYWORKS SCREEN
+   ========================================= */
+
+.hero-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content .eyebrow {
+  text-align: center;
+}
+
+.hero h1 {
+  width: 100%;
+  margin: 8px auto 0;
+
+  text-align: center;
+
+  font-size: clamp(3.4rem, 9vw, 7rem);
+  line-height: .95;
+  letter-spacing: -.06em;
+
+  background: linear-gradient(
+    90deg,
+    #4cc9ff 0%,
+    #7c5cff 50%,
+    #c45cff 100%
+  );
+
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  color: transparent;
+}
+
+.hero p {
+  width: 100%;
+  max-width: 650px;
+
+  margin: 24px auto 32px;
+
+  text-align: center;
+}
+
+.hero-content .button {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center the profile card in the opening screen */
+.profile-card {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Center the Classroom card in the opening screen */
+.hero > .game-card {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Keep the navigation normally aligned */
+.nav {
+  width: min(var(--max), calc(100% - 40px));
+}
