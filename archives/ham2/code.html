@@ -99,12 +99,13 @@ async function loadCode() {
 
         const code = await response.text();
         display.textContent = code;
-    } catch (error) {
-        display.textContent =
-            "Unable to load the Python code.\n\n" +
-            "Make sure turtle_life_2_Growth.py is in the same folder " +
-            "as code.html and has been uploaded to your website.";
-    }
+  } catch (error) {
+    display.textContent =
+        "Could not load the Python file.\n\n" +
+        "Error: " + error.message +
+        "\n\nCheck the file URL:\n" +
+        new URL("turtle_life_2_Growth.py", window.location.href).href;
+}
 }
 
 async function copyCode() {
