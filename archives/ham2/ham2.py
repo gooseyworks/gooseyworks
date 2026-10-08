@@ -1,5 +1,6 @@
 import turtle
 import random
+import time
 
 # ---------------- SCREEN ----------------
 screen = turtle.Screen()
@@ -7,7 +8,7 @@ screen.setup(800, 600)
 screen.bgcolor("skyblue")
 screen.tracer(0)
 
-# ---------------- NAME INPUT (TRINKET SAFE) ----------------
+# ---------------- NAME INPUT ----------------
 try:
     name = input("What should your turtle be called? ")
 except:
@@ -15,10 +16,8 @@ except:
 
 if name == "":
     name = "Ham"
+
 # ---------------- HATCH INTRO ----------------
-
-import time
-
 pet = turtle.Turtle()
 pet.penup()
 pet.speed(0)
@@ -53,7 +52,6 @@ pet.color("green")
 screen.update()
 time.sleep(1)
 
-# ---------------- END HATCH ----------------
 # ---------------- SPEECH ----------------
 speech = turtle.Turtle()
 speech.hideturtle()
@@ -81,7 +79,7 @@ def place_food(x, y):
 
 screen.onclick(place_food)
 
-# ---------------- TOY ----------------
+# ---------------- TOYS ----------------
 toy = turtle.Turtle()
 toy.shape("circle")
 toy.color("blue")
@@ -92,12 +90,26 @@ toy_exists = False
 
 def spawn_toy():
     global toy_exists
-    toy.goto(random.randint(-300, 300), random.randint(-200, 200))
+
+    toy.goto(
+        random.randint(-300, 300),
+        random.randint(-200, 200)
+    )
+
     toy.showturtle()
     toy_exists = True
 
+def pet_turtle():
+    global happiness
+
+    happiness += 10
+    happiness = min(100, happiness)
+
+    say(name + " enjoys the pets!")
+
 screen.listen()
 screen.onkey(spawn_toy, "t")
+screen.onkey(pet_turtle, "p")
 
 # ---------------- BED ----------------
 bed = turtle.Turtle()
@@ -113,11 +125,11 @@ status.penup()
 status.goto(-390, 260)
 
 # ---------------- STATS ----------------
-
 hunger = 0
 sleepiness = 0
 happiness = 100
 health = 100
+stage = "Baby"
 
 personality = random.choice([
     "lazy",
@@ -131,7 +143,6 @@ weather_timer = 0
 
 level = 1
 xp = 0
-stage = "Baby"
 
 zoomies = 0
 sleeping = False
@@ -140,7 +151,6 @@ day = True
 timer = 0
 
 # ---------------- GAME LOOP ----------------
-
 while True:
 
     timer += 1
@@ -220,46 +230,51 @@ while True:
     # LEVEL UP
     if xp >= level * 25:
 
-      xp = 0
-      level += 1
+        xp = 0
+        level += 1
 
-      say(name + " reached level " + str(level) + "!")
+        say(name + " reached level " + str(level) + "!")
 
-    if level == 10:
-        say(name + " became a Young Turtle!")
+        if level == 10:
+            say(name + " became a Young Turtle!")
 
-    elif level == 25:
-        say(name + " became an Adult Turtle!")
+        elif level == 25:
+            say(name + " became an Adult Turtle!")
 
-    elif level == 50:
-        say(name + " became a Giant Turtle!")
+        elif level == 50:
+            say(name + " became a Giant Turtle!")
 
-    elif level == 100:
-        say(name + " became a Turtle Overlord!")
+        elif level == 100:
+            say(name + " became a Turtle Overlord!")
+
+    # ---------------- GROWTH / EVOLUTION ----------------
+    # No shapesize() here because Trinket's Turtle does not support it.
+
     if level >= 100:
 
-      stage = "Overlord"
-      pet.color("purple")
+        stage = "Overlord"
+        pet.color("purple")
 
     elif level >= 50:
 
-      stage = "Giant"
-      pet.color("red")
+        stage = "Giant"
+        pet.color("red")
 
     elif level >= 25:
 
-      stage = "Adult"
-      pet.color("orange")
+        stage = "Adult"
+        pet.color("orange")
 
     elif level >= 10:
 
-      stage = "Young"
-      pet.color("gold")
+        stage = "Young"
+        pet.color("gold")
 
-    else: 
+    else:
 
-      stage = "Baby"
-      pet.color("green")
+        stage = "Baby"
+        pet.color("green")
+
     # SPEECH
     if hunger > 80:
         say(name + " is hungry...")
@@ -278,15 +293,13 @@ while True:
             zoomies = 150
             say(name + " goes WHEEEE!")
 
-    # SLEEPING
+    # ---------------- SLEEP ----------------
     if sleeping:
 
         pet.goto(bed.xcor(), bed.ycor())
-
         sleepiness -= 1
 
         if sleepiness <= 20:
-
             sleeping = False
             say(name + " woke up!")
 
@@ -296,11 +309,10 @@ while True:
         pet.forward(2)
 
         if pet.distance(bed) < 20:
-
             sleeping = True
             say(name + " is sleeping...")
 
-    # FOOD
+    # ---------------- FOOD ----------------
     elif food_exists:
 
         pet.setheading(pet.towards(food))
@@ -322,7 +334,7 @@ while True:
 
             say(name + " says: nom nom!")
 
-    # TOY
+    # ---------------- TOY ----------------
     elif toy_exists:
 
         pet.setheading(pet.towards(toy))
@@ -340,7 +352,7 @@ while True:
 
             say(name + " plays happily!")
 
-    # ZOOMIES
+    # ---------------- ZOOMIES ----------------
     elif zoomies > 0:
 
         pet.forward(8)
@@ -350,7 +362,7 @@ while True:
 
         zoomies -= 1
 
-    # WANDER
+    # ---------------- WANDER ----------------
     else:
 
         pet.forward(1)
@@ -358,7 +370,7 @@ while True:
         if random.randint(1, 50) == 1:
             pet.left(random.randint(-90, 90))
 
-    # WALLS
+    # ---------------- WALLS ----------------
     x = pet.xcor()
     y = pet.ycor()
 
@@ -368,13 +380,12 @@ while True:
     if y > 280 or y < -280:
         pet.setheading(-pet.heading())
 
-    # STATUS
+    # ---------------- STATUS ----------------
     status.clear()
 
     status.write(
         name +
-        name +
-" | {} | Lv:{} XP:{} HP:{} H:{} S:{} Happy:{} | {} | {}".format(
+        " | {} | Lv:{} XP:{} HP:{} H:{} S:{} Happy:{} | {} | {}".format(
             stage,
             level,
             xp,
@@ -389,4 +400,3 @@ while True:
     )
 
     screen.update()
-      
