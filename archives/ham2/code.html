@@ -1,0 +1,124 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ham 2 Python Code - GooseyWorks</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #08111f;
+            color: #f5f7fb;
+            font-family: system-ui, sans-serif;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        a {
+            color: #72e5ff;
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        p {
+            color: #aebbd0;
+        }
+
+        pre {
+            padding: 24px;
+            background: #101c30;
+            border: 1px solid #30405a;
+            border-radius: 14px;
+            overflow: auto;
+            white-space: pre;
+            line-height: 1.6;
+            font-size: 14px;
+            tab-size: 4;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, monospace;
+            color: #d8f3ff;
+        }
+
+        button {
+            padding: 12px 18px;
+            margin: 8px 8px 16px 0;
+            border: 0;
+            border-radius: 9px;
+            background: #245d45;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #347b5b;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <a href="index.html">← Back to Ham 2 Archive</a>
+
+    <h1>🐢 Ham 2 — Python Code</h1>
+
+    <p>
+        The original source code for
+        <strong>turtle_life_2_Growth.py</strong>.
+    </p>
+
+    <button onclick="copyCode()">📋 Copy Code</button>
+    <button onclick="window.location.href='turtle_life_2_Growth.py'">
+        📥 Download Python File
+    </button>
+
+    <pre><code id="source">Loading Ham 2 code...</code></pre>
+</main>
+
+<script>
+async function loadCode() {
+    const display = document.getElementById("source");
+
+    try {
+        const response = await fetch("turtle_life_2_Growth.py");
+
+        if (!response.ok) {
+            throw new Error("Python file not found");
+        }
+
+        const code = await response.text();
+        display.textContent = code;
+    } catch (error) {
+        display.textContent =
+            "Unable to load the Python code.\n\n" +
+            "Make sure turtle_life_2_Growth.py is in the same folder " +
+            "as code.html and has been uploaded to your website.";
+    }
+}
+
+async function copyCode() {
+    const code = document.getElementById("source").textContent;
+
+    try {
+        await navigator.clipboard.writeText(code);
+        alert("Ham 2 code copied!");
+    } catch (error) {
+        alert("Copying was blocked by the browser. You can select the code and copy it manually.");
+    }
+}
+
+loadCode();
+</script>
+</body>
+</html>
