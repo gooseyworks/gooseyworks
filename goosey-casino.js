@@ -1,544 +1,373 @@
+// ============================================================
+// GOOSEY CASINO — MAIN GAME CODE
+// GooseBucks are fictional game currency only.
+// ============================================================
 
-/* ============================================
-   GOOSEY CASINO ARCADE ENGINE
-   Nine new games; shared GooseBucks balance.
-   Multiplayer is reserved for a future update.
-   ============================================ */
+"use strict";
 
-let arcade = null;
+const BALANCE_KEY = "gooseyCasinoBalanceV3";
 
-const arcadeSymbols = ["🪿", "🪙", "⭐", "🍒", "💎", "7️⃣"];
+let balance = Number(localStorage.getItem(BALANCE_KEY));
+if (!Number.isFinite(balance) || balance < 0) balance = 7500;
 
-function openArcadeGame(name) {
-    if (name === "Goose Racing") return;
+let deck = [];
+let playerHand = [];
+let botHand = [];
+let selectedCards = new Set();
+let pokerActive = false;
+let pokerDrawn = false;
 
-    let modal = document.getElementById("arcadeModal");
+const suits = ["♠", "♥", "♦", "♣"];
+const ranks = [
+    { name: "2", value: 2 },
+    { name: "3", value: 3 },
+    { name: "4", value: 4 },
+    { name: "5", value: 5 },
+    { name: "6", value: 6 },
+    { name: "7", value: 7 },
+    { name: "8", value: 8 },
+    { name: "9", value: 9 },
+    { name: "10", value: 10 },
+    { name: "J", value: 11 },
+    { name: "Q", value: 12 },
+    { name: "K", value: 13 },
+    { name: "A", value: 14 }
+];
 
-    if (!modal) {
-        modal = document.createElement("div");
-        modal.id = "arcadeModal";
-        modal.className = "modal";
-        modal.innerHTML = `
-            <div class="panel" id="arcadePanel">
-                <button class="close" onclick="closeArcadeGame()">✕ CLOSE</button>
-                <div id="arcadeContent"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
+// ============================================================
+// BALANCE AND MENU
+// ============================================================
+
+function updateBalance() {
+    const el = document.getElementById("balance");
+    if (el) el.textContent = balance.toLocaleString() + " GB";
+
+    localStorage.setItem(BALANCE_KEY, String(balance));
+    updateRevivalUI();
+}
+
+function updateRevivalUI() {
+    const box = document.getElementById("zeroCashRevival");
+    if (box) box.style.display = balance <= 0 ? "block" : "none";
+}
+
+function claimZeroCashRevival() {
+    if (balance > 0) return;
+
+    balance = 500;
+    updateBalance();
+    alert("🪿 You received 500 free GooseBucks!");
+}
+
+function startGame() {
+    openPoker();
+}
+
+function bots() {
+    openPoker();
+}
+
+function onlineMode() {
+    alert("🌎 ONLINE\n\nOnline multiplayer is planned for a future Goosey Casino update!");
+}
+
+function privateRoom() {
+    alert("🔒 PRIVATE ROOM\n\nPrivate rooms are planned for a future Goosey Casino update!");
+}
+
+function howToPlay() {
+    alert("🎓 HOW TO PLAY\n\nChoose a game, set your fictional GooseBucks bet, and play!\n\nGooseBucks have no cash value.");
+}
+
+function rules() {
+    alert("📖 GOOSEY CASINO RULES\n\n• GooseBucks are virtual only.\n• No real-money purchases.\n• No cashing out.\n• No real-money trading.\n• No cheating or exploiting bugs.\n• Keep multiplayer chat friendly.\n\nHave fun! 🪿");
+}
+
+function leaderboard() {
+    alert("🏆 LEADERBOARD\n\nThe leaderboard is planned for a future Goosey Casino update!");
+}
+
+function comingSoon(game) {
+    alert("🪿 " + game + "\n\nThis game is coming soon!");
+}
+
+function backToWebsite() {
+    window.location.href = "index.html";
+}
+
+// ============================================================
+// 5-CARD DRAW
+// ============================================================
+
+function makeDeck() {
+    const result = [];
+
+    for (const suit of suits) {
+        for (const rank of ranks) {
+            result.push({
+                suit,
+                name: rank.name,
+                value: rank.value
+            });
+        }
     }
 
-    arcade = {
-        game: name,
-        phase: "ready",
-        bet: 100,
-        data: {},
-        message: "Choose your bet and start!"
-    };
+    return result;
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+}
+
+function drawOne() {
+    return deck.pop();
+}
+
+function cardText(card) {
+    return card.name + card.suit;
+}
+
+function renderCard(card, index, clickable) {
+    const div = document.createElement("div");
+
+    div.className = "card" +
+        ((card.suit === "♥" || card.suit === "♦") ? " red" : "");
+
+    div.textContent = cardText(card);
+
+    if (clickable) {
+        if (selectedCards.has(index)) {
+            div.classList.add("selected");
+        }
+
+        div.onclick = () => toggleCard(index);
+    }
+
+    return div;
+}
+
+function renderPokerHands(showBot) {
+    const playerEl = document.getElementById("playerHand");
+    const botEl = document.getElementById("botHand");
+
+    if (!playerEl || !botEl) return;
+
+    playerEl.innerHTML = "";
+
+    playerHand.forEach((card, i) => {
+        playerEl.appendChild(
+            renderCard(card, i, pokerActive && !pokerDrawn)
+        );
+    });
+
+    botEl.innerHTML = "";
+
+    botHand.forEach(card => {
+        const div = document.createElement("div");
+
+        div.className = "card" +
+            ((card.suit === "♥" || card.suit === "♦") ? " red" : "");
+
+        div.textContent = showBot ? cardText(card) : "🂠";
+        botEl.appendChild(div);
+    });
+}
+
+function setPokerStatus(text) {
+    const el = document.getElementById("pokerStatus");
+    if (el) el.textContent = text;
+}
+
+function openPoker() {
+    const modal = document.getElementById("pokerModal");
+    if (!modal) return;
 
     modal.classList.add("show");
-    renderArcade();
+    pokerActive = false;
+    pokerDrawn = false;
+    selectedCards.clear();
+
+    renderPokerHands(false);
+    setPokerStatus("Set your bet and deal a hand!");
+
+    const drawButton = document.getElementById("drawButton");
+    if (drawButton) drawButton.disabled = true;
 }
 
-function closeArcadeGame() {
-    const modal = document.getElementById("arcadeModal");
+function closePoker() {
+    const modal = document.getElementById("pokerModal");
     if (modal) modal.classList.remove("show");
-    arcade = null;
+
+    pokerActive = false;
 }
 
-function arcadeMoney(amount) {
-    return Math.floor(amount).toLocaleString() + " GB";
+function getBet() {
+    const input = document.getElementById("bet");
+
+    let bet = Number(input ? input.value : 100);
+
+    if (!Number.isFinite(bet)) bet = 100;
+
+    bet = Math.floor(bet / 10) * 10;
+    bet = Math.max(10, Math.min(1000, bet));
+
+    if (input) input.value = bet;
+
+    return bet;
 }
 
-function arcadeBet() {
-    const input = document.getElementById("arcadeBet");
-    let value = Number(input ? input.value : 100);
+function dealPoker() {
+    const bet = getBet();
 
-    if (!Number.isFinite(value)) value = 100;
-
-    value = Math.floor(value / 10) * 10;
-    value = Math.max(10, Math.min(1000, value));
-
-    if (value > balance) {
-        value = Math.floor(balance / 10) * 10;
-    }
-
-    if (input) input.value = value;
-    return value;
-}
-
-function arcadeStart() {
-    if (!arcade) return;
-
-    const bet = arcadeBet();
-
-    if (bet < 10 || bet > balance) {
-        arcade.message = "❌ You need at least 10 GB to play.";
-        renderArcade();
+    if (bet > balance) {
+        setPokerStatus("❌ You don't have enough GooseBucks for that bet.");
         return;
     }
 
-    arcade.bet = bet;
     balance -= bet;
     updateBalance();
 
-    arcade.phase = "playing";
-    arcade.data = {};
-    arcade.message = "Good luck!";
+    deck = shuffle(makeDeck());
 
-    const game = arcade.game;
-
-    if (game === "Texas Holdem") {
-        const deck = shuffle(makeDeck());
-        arcade.data.player = [deck.pop(), deck.pop()];
-        arcade.data.bot = [deck.pop(), deck.pop()];
-        arcade.data.community = [
-            deck.pop(), deck.pop(), deck.pop(),
-            deck.pop(), deck.pop()
-        ];
-        arcade.data.deck = deck;
-        arcade.message = "Your two cards are dealt. Reveal the community cards at showdown!";
-    }
-
-    if (game === "Goosey Slots") {
-        arcadeSpinSlots();
-        return;
-    }
-
-    if (game === "Goosey Wheel") {
-        arcadeSpinWheel();
-        return;
-    }
-
-    if (game === "Coin Flip") {
-        arcade.message = "Choose heads or tails!";
-    }
-
-    if (game === "Dice Duel") {
-        arcade.data.player = 1 + Math.floor(Math.random() * 6);
-        arcade.data.bot = 1 + Math.floor(Math.random() * 6);
-        arcadeResolveDice();
-        return;
-    }
-
-    if (game === "Chicken") {
-        arcade.data.steps = 0;
-        arcade.data.multiplier = 1;
-        arcade.data.bombed = false;
-        arcade.message = "The path is clear... for now. Advance or cash out!";
-    }
-
-    if (game === "Goosey Crash") {
-        arcade.data.multiplier = 1;
-        arcade.data.crashAt = 1.1 + Math.random() * 5.9;
-        arcade.message = "Advance the multiplier, then cash out before the crash!";
-    }
-
-    if (game === "Bomb Goose") {
-        arcade.data.bomb = Math.floor(Math.random() * 9);
-        arcade.data.revealed = [];
-        arcade.data.multiplier = 1;
-        arcade.message = "Pick safe tiles and avoid the hidden bomb!";
-    }
-
-    if (game === "Goosey Pool") {
-        arcade.data.playerScore = 0;
-        arcade.data.botScore = 0;
-        arcade.data.shots = 0;
-        arcade.message = "Aim your shot and choose its power!";
-    }
-
-    renderArcade();
-}
-
-function arcadeSettle(payout, message) {
-    if (!arcade) return;
-
-    payout = Math.max(0, Math.floor(payout));
-    balance += payout;
-    updateBalance();
-
-    arcade.phase = "done";
-    arcade.message = message + " Payout: " + arcadeMoney(payout) + ".";
-    renderArcade();
-}
-
-function arcadeSpinSlots() {
-    const symbols = [
-        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)],
-        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)],
-        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)]
+    playerHand = [
+        drawOne(), drawOne(), drawOne(), drawOne(), drawOne()
     ];
 
-    arcade.data.symbols = symbols;
-
-    let multiplier = 0;
-
-    if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
-        multiplier = symbols[0] === "7️⃣" ? 10 : 5;
-    } else if (
-        symbols[0] === symbols[1] ||
-        symbols[1] === symbols[2] ||
-        symbols[0] === symbols[2]
-    ) {
-        multiplier = 2;
-    }
-
-    arcade.data.multiplier = multiplier;
-
-    if (multiplier > 0) {
-        arcadeSettle(
-            arcade.bet * multiplier,
-            "🎰 " + symbols.join(" ") + " — YOU WIN!"
-        );
-    } else {
-        arcadeSettle(0, "🎰 " + symbols.join(" ") + " — No match this time!");
-    }
-}
-
-function arcadeSpinWheel() {
-    const prizes = [
-        { label: "Nothing", multiplier: 0 },
-        { label: "Half your bet", multiplier: 0.5 },
-        { label: "Your bet back", multiplier: 1 },
-        { label: "Double!", multiplier: 2 },
-        { label: "Triple!", multiplier: 3 },
-        { label: "JACKPOT!", multiplier: 10 }
+    botHand = [
+        drawOne(), drawOne(), drawOne(), drawOne(), drawOne()
     ];
 
-    const prize = prizes[Math.floor(Math.random() * prizes.length)];
-    arcade.data.prize = prize;
+    selectedCards.clear();
+    pokerActive = true;
+    pokerDrawn = false;
 
-    arcadeSettle(
-        arcade.bet * prize.multiplier,
-        "🎡 " + prize.label
+    const drawButton = document.getElementById("drawButton");
+    if (drawButton) drawButton.disabled = false;
+
+    renderPokerHands(false);
+
+    setPokerStatus(
+        "Select up to 3 cards to discard, then press DRAW SELECTED. Your bet is in play."
     );
 }
 
-function arcadeResolveDice() {
-    const p = arcade.data.player;
-    const b = arcade.data.bot;
+function toggleCard(index) {
+    if (!pokerActive || pokerDrawn) return;
 
-    if (p > b) {
-        arcadeSettle(arcade.bet * 2, "🎲 You rolled " + p + "; Goosey Bot rolled " + b + ". You win!");
-    } else if (p === b) {
-        arcadeSettle(arcade.bet, "🎲 Both rolled " + p + ". It's a tie!");
+    if (selectedCards.has(index)) {
+        selectedCards.delete(index);
+    } else if (selectedCards.size < 3) {
+        selectedCards.add(index);
     } else {
-        arcadeSettle(0, "🎲 You rolled " + p + "; Goosey Bot rolled " + b + ". Bot wins!");
+        setPokerStatus("You can discard at most 3 cards.");
     }
+
+    renderPokerHands(false);
 }
 
-function arcadeAction(action, value) {
-    if (!arcade || arcade.phase !== "playing") return;
+function chooseBotDiscards(hand) {
+    const counts = {};
 
-    const game = arcade.game;
+    hand.forEach(card => {
+        counts[card.value] = (counts[card.value] || 0) + 1;
+    });
 
-    if (game === "Coin Flip") {
-        const result = Math.random() < 0.5 ? "Heads" : "Tails";
+    const keepValues = new Set(
+        Object.keys(counts)
+            .filter(value => counts[value] >= 2)
+            .map(Number)
+    );
 
-        if (value === result) {
-            arcadeSettle(arcade.bet * 2, "🪙 It landed " + result + "! Correct guess!");
-        } else {
-            arcadeSettle(0, "🪙 It landed " + result + ". Better luck next time!");
-        }
-        return;
-    }
+    const scored = hand.map((card, i) => ({
+        i,
+        keep: keepValues.has(card.value),
+        value: card.value
+    }));
 
-    if (game === "Texas Holdem" && action === "showdown") {
-        const player = arcadeBestPokerHand(
-            arcade.data.player.concat(arcade.data.community)
-        );
-        const bot = arcadeBestPokerHand(
-            arcade.data.bot.concat(arcade.data.community)
-        );
-
-        const playerScore = player.score;
-        const botScore = bot.score;
-
-        const community = arcade.data.community
-            .map(c => c.name + c.suit)
-            .join(" ");
-
-        const handText =
-            "Community: " + community +
-            " | You: " + player.name +
-            " | Bot: " + bot.name + ". ";
-
-        if (playerScore > botScore) {
-            arcadeSettle(arcade.bet * 2, handText + "🏆 You win!");
-        } else if (playerScore === botScore) {
-            arcadeSettle(arcade.bet, handText + "🤝 Tie!");
-        } else {
-            arcadeSettle(0, handText + "🪿 Bot wins!");
-        }
-        return;
-    }
-
-    if (game === "Chicken") {
-        if (action === "cashout") {
-            arcadeSettle(
-                arcade.bet * arcade.data.multiplier,
-                "🐔 You cashed out at " + arcade.data.multiplier.toFixed(2) + "x!"
-            );
-            return;
-        }
-
-        if (action === "advance") {
-            if (Math.random() < Math.min(0.18 + arcade.data.steps * 0.07, 0.75)) {
-                arcade.data.bombed = true;
-                arcadeSettle(0, "💥 BOOM! The chicken got caught!");
-                return;
-            }
-
-            arcade.data.steps++;
-            arcade.data.multiplier = 1 + arcade.data.steps * 0.5;
-            arcade.message = "🐔 Safe! Current multiplier: " +
-                arcade.data.multiplier.toFixed(2) + "x. Keep going or cash out!";
-            renderArcade();
-            return;
-        }
-    }
-
-    if (game === "Goosey Crash") {
-        if (action === "cashout") {
-            arcadeSettle(
-                arcade.bet * arcade.data.multiplier,
-                "📈 Cashed out at " + arcade.data.multiplier.toFixed(2) + "x!"
-            );
-            return;
-        }
-
-        if (action === "advance") {
-            arcade.data.multiplier += 0.2 + Math.random() * 0.5;
-
-            if (arcade.data.multiplier >= arcade.data.crashAt) {
-                arcadeSettle(0, "💥 CRASH! The multiplier exploded before you cashed out!");
-                return;
-            }
-
-            arcade.message = "📈 Multiplier: " +
-                arcade.data.multiplier.toFixed(2) + "x. Cash out or advance!";
-            renderArcade();
-            return;
-        }
-    }
-
-    if (game === "Bomb Goose") {
-        if (action === "cashout") {
-            arcadeSettle(
-                arcade.bet * arcade.data.multiplier,
-                "🪿 You escaped with " + arcade.data.multiplier.toFixed(2) + "x!"
-            );
-            return;
-        }
-
-        if (action === "tile") {
-            const index = Number(value);
-
-            if (arcade.data.revealed.includes(index)) return;
-
-            if (index === arcade.data.bomb) {
-                arcade.data.revealed.push(index);
-                arcadeSettle(0, "💣 BOOM! You found the bomb!");
-                return;
-            }
-
-            arcade.data.revealed.push(index);
-            arcade.data.multiplier += 0.25;
-            arcade.message = "✨ Safe tile! Multiplier: " +
-                arcade.data.multiplier.toFixed(2) + "x. Keep going or cash out!";
-            renderArcade();
-            return;
-        }
-    }
-
-    if (game === "Goosey Pool" && action === "shoot") {
-        const angle = Number(document.getElementById("poolAngle").value);
-        const power = Number(document.getElementById("poolPower").value);
-
-        const accuracy = Math.max(
-            0,
-            100 - Math.abs(angle - 45) * 1.2 - Math.abs(power - 60) * 0.6
-                + (Math.random() * 25 - 12)
-        );
-
-        const points = accuracy > 75 ? 2 : accuracy > 45 ? 1 : 0;
-
-        arcade.data.playerScore += points;
-        arcade.data.botScore += Math.random() < 0.55 ? 1 : 0;
-        arcade.data.shots++;
-
-        if (arcade.data.shots >= 3) {
-            if (arcade.data.playerScore > arcade.data.botScore) {
-                arcadeSettle(
-                    arcade.bet * 2,
-                    "🎱 You won " + arcade.data.playerScore +
-                    " to " + arcade.data.botScore + "!"
-                );
-            } else if (arcade.data.playerScore === arcade.data.botScore) {
-                arcadeSettle(
-                    arcade.bet,
-                    "🎱 The match is tied " + arcade.data.playerScore +
-                    " to " + arcade.data.botScore + "!"
-                );
-            } else {
-                arcadeSettle(
-                    0,
-                    "🎱 Goosey Bot wins " + arcade.data.botScore +
-                    " to " + arcade.data.playerScore + "!"
-                );
-            }
-            return;
-        }
-
-        arcade.message = "🎱 Your score: " + arcade.data.playerScore +
-            " | Bot: " + arcade.data.botScore +
-            " | Shot " + arcade.data.shots + " of 3.";
-        renderArcade();
-    }
+    return scored
+        .filter(card => !card.keep)
+        .sort((a, b) => a.value - b.value)
+        .slice(0, 3)
+        .map(card => card.i);
 }
 
-/* Best five-card hand from seven cards.
-   First version compares hand categories. */
+function replaceSelected(hand, indexes) {
+    indexes.forEach(i => {
+        hand[i] = drawOne();
+    });
+}
 
-function arcadeBestPokerHand(cards) {
-    let bestRank = -1;
-    let bestName = "High Card";
+function drawCards() {
+    if (!pokerActive || pokerDrawn) return;
 
-    for (let a = 0; a < cards.length - 4; a++) {
-        for (let b = a + 1; b < cards.length - 3; b++) {
-            for (let c = b + 1; c < cards.length - 2; c++) {
-                for (let d = c + 1; d < cards.length - 1; d++) {
-                    for (let e = d + 1; e < cards.length; e++) {
-                        const result = evaluateHand([
-                            cards[a], cards[b], cards[c], cards[d], cards[e]
-                        ]);
+    const playerDiscards = [...selectedCards];
+    const botDiscards = chooseBotDiscards(botHand);
 
-                        if (result.rank > bestRank) {
-                            bestRank = result.rank;
-                            bestName = result.name;
-                        }
-                    }
-                }
-            }
+    replaceSelected(playerHand, playerDiscards);
+    replaceSelected(botHand, botDiscards);
+
+    pokerDrawn = true;
+    pokerActive = false;
+
+    const drawButton = document.getElementById("drawButton");
+    if (drawButton) drawButton.disabled = true;
+
+    renderPokerHands(true);
+    resolvePoker(getBet());
+}
+
+function evaluateHand(hand) {
+    const values = hand
+        .map(card => card.value)
+        .sort((a, b) => b - a);
+
+    const counts = {};
+
+    values.forEach(value => {
+        counts[value] = (counts[value] || 0) + 1;
+    });
+
+    const groups = Object.entries(counts)
+        .map(([value, count]) => ({
+            value: Number(value),
+            count
+        }))
+        .sort((a, b) => b.count - a.count || b.value - a.value);
+
+    const unique = [...new Set(values)].sort((a, b) => b - a);
+
+    let straightHigh = null;
+
+    if (unique.includes(14)) unique.push(1);
+
+    for (let i = 0; i <= unique.length - 5; i++) {
+        if (unique[i] - unique[i + 4] === 4) {
+            straightHigh = unique[i];
+            break;
         }
     }
 
-    return { score: bestRank, name: bestName };
-}
+    const flush = hand.every(card => card.suit === hand[0].suit);
 
-function renderArcade() {
-    if (!arcade) return;
-
-    const content = document.getElementById("arcadeContent");
-    if (!content) return;
-
-    const game = arcade.game;
-    const d = arcade.data;
-
-    let html = `
-        <h2>🪿 ${game}</h2>
-        <p class="small">Your balance: ${arcadeMoney(balance)}</p>
-    `;
-
-    if (arcade.phase === "ready") {
-        html += `
-            <p>Choose your wager to begin.</p>
-            <div class="bet-row">
-                <label>
-                    Bet:
-                    <input id="arcadeBet" type="number"
-                        min="10" max="1000" step="10" value="100">
-                </label>
-            </div>
-            <div class="game-controls">
-                <button class="play" onclick="arcadeStart()">▶ START GAME</button>
-            </div>
-        `;
-    } else if (game === "Coin Flip" && arcade.phase === "playing") {
-        html += `
-            <h3>🪙 Heads or Tails?</h3>
-            <div class="game-controls">
-                <button class="normal" onclick="arcadeAction('flip','Heads')">🙂 HEADS</button>
-                <button class="normal" onclick="arcadeAction('flip','Tails')">🪙 TAILS</button>
-            </div>
-        `;
-    } else if (game === "Texas Holdem" && arcade.phase === "playing") {
-        html += `
-            <h3>Your hole cards</h3>
-            <div class="table">
-                ${d.player.map(c => `<div class="card">${c.name}${c.suit}</div>`).join("")}
-            </div>
-            <p>Goosey Bot has two hidden cards.</p>
-            <h3>Community cards</h3>
-            <p>Reveal all five cards to see who wins.</p>
-            <div class="game-controls">
-                <button class="play" onclick="arcadeAction('showdown')">🃏 REVEAL & SHOWDOWN</button>
-            </div>
-        `;
-    } else if (game === "Chicken" && arcade.phase === "playing") {
-        html += `
-            <h3>🐔 Path multiplier: ${d.multiplier.toFixed(2)}x</h3>
-            <p>Safe steps: ${d.steps}</p>
-            <div class="game-controls">
-                <button class="normal" onclick="arcadeAction('advance')">➡️ ADVANCE</button>
-                <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
-            </div>
-        `;
-    } else if (game === "Goosey Crash" && arcade.phase === "playing") {
-        html += `
-            <h3 style="font-size:38px">📈 ${d.multiplier.toFixed(2)}x</h3>
-            <div class="game-controls">
-                <button class="normal" onclick="arcadeAction('advance')">📈 ADVANCE</button>
-                <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
-            </div>
-        `;
-    } else if (game === "Bomb Goose" && arcade.phase === "playing") {
-        html += `
-            <h3>💣 Pick a tile!</h3>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin:20px auto">
-                ${Array.from({length:9}, (_,i) => {
-                    const revealed = d.revealed.includes(i);
-                    const isBomb = revealed && i === d.bomb;
-                    return `<button class="normal"
-                        ${revealed ? "disabled" : ""}
-                        onclick="arcadeAction('tile',${i})">
-                        ${revealed ? (isBomb ? "💣" : "🪿") : "❔"}
-                    </button>`;
-                }).join("")}
-            </div>
-            <p>Multiplier: ${d.multiplier.toFixed(2)}x</p>
-            <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
-        `;
-    } else if (game === "Goosey Pool" && arcade.phase === "playing") {
-        html += `
-            <h3>🎱 Shot ${d.shots + 1} of 3</h3>
-            <p>Player ${d.playerScore} — Bot ${d.botScore}</p>
-            <label>Angle: <input id="poolAngle" type="range" min="0" max="90" value="45"></label>
-            <br>
-            <label>Power: <input id="poolPower" type="range" min="10" max="100" value="60"></label>
-            <div class="game-controls">
-                <button class="play" onclick="arcadeAction('shoot')">🎱 SHOOT</button>
-            </div>
-        `;
-    } else if (arcade.phase === "playing") {
-        html += `<p>Game in progress!</p>`;
+    if (flush && straightHigh) {
+        return { rank: 8, name: "Straight Flush", values: [straightHigh] };
     }
 
-    html += `<div class="status" style="margin-top:15px">${arcade.message}</div>`;
-
-    if (arcade.phase === "done") {
-        html += `
-            <div class="game-controls">
-                <button class="play" onclick="openArcadeGame('${game}')">🔁 PLAY AGAIN</button>
-                <button class="bot-back" onclick="closeArcadeGame()">← BACK TO CASINO</button>
-            </div>
-        `;
-    } else if (arcade.phase === "playing" && ![
-        "Coin Flip", "Texas Holdem", "Chicken",
-        "Goosey Crash", "Bomb Goose", "Goosey Pool"
-    ].includes(game)) {
-        html += `<button class="bot-back" onclick="closeArcadeGame()">CLOSE</button>`;
+    if (groups[0].count === 4) {
+        return {
+            rank: 7,
+            name: "Four of a Kind",
+            values: [groups[0].value, groups[1].value]
+        };
     }
 
-    content.innerHTML = html;
-}
+    if (groups[0].count === 3 && groups[1] && groups[1].count === 2) {
+        return {
+            rank: 6,
+            name: "Full House",
+            values
