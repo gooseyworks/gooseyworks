@@ -1,1808 +1,544 @@
-// ============================================
-// GOOSEY CASINO
-// ============================================
-const STARTING_BALANCE = 7500;
-const BALANCE_KEY = "gooseyCasinoBalanceV3";
 
-function loadBalance() {
-    try {
-        const saved = localStorage.getItem(BALANCE_KEY);
+/* ============================================
+   GOOSEY CASINO ARCADE ENGINE
+   Nine new games; shared GooseBucks balance.
+   Multiplayer is reserved for a future update.
+   ============================================ */
 
-        if (saved !== null) {
-            const value = Number(saved);
+let arcade = null;
 
-            if (Number.isFinite(value) && value >= 0) {
-                return value;
-            }
-        }
+const arcadeSymbols = ["🪿", "🪙", "⭐", "🍒", "💎", "7️⃣"];
 
-        localStorage.setItem(
-            BALANCE_KEY,
-            String(STARTING_BALANCE)
-        );
+function openArcadeGame(name) {
+    if (name === "Goose Racing") return;
 
-        return STARTING_BALANCE;
-
-    } catch (error) {
-        return STARTING_BALANCE;
-    }
-}
-
-let balance = loadBalance();
-
-function saveBalance() {
-    try {
-        localStorage.setItem(
-            BALANCE_KEY,
-            String(balance)
-        );
-    } catch (error) {
-        console.error("Could not save GooseBucks.");
-    }
-}
-
-function updateBalance() {
-    const element = document.getElementById("balance");
-
-    if (element) {
-        element.textContent =
-            balance.toLocaleString() + " GB";
-    }
-
-    saveBalance();
-}
-let deck = [];
-let playerHand = [];
-let botHand = [];
-let selectedCards = new Set();
-
-let pokerActive = false;
-let pokerDrawn = false;
-
-const suits = ["♠", "♥", "♦", "♣"];
-
-const ranks = [
-    { name: "2", value: 2 },
-    { name: "3", value: 3 },
-    { name: "4", value: 4 },
-    { name: "5", value: 5 },
-    { name: "6", value: 6 },
-    { name: "7", value: 7 },
-    { name: "8", value: 8 },
-    { name: "9", value: 9 },
-    { name: "10", value: 10 },
-    { name: "J", value: 11 },
-    { name: "Q", value: 12 },
-    { name: "K", value: 13 },
-    { name: "A", value: 14 }
-];
-// ============================================
-// MENU BUTTONS
-// ============================================
-
-function startGame() {
-    openPoker();
-}
-
-function bots() {
-    openPoker();
-}
-
-function onlineMode() {
-
-    alert(
-        "🌎 ONLINE\n\n" +
-        "Online multiplayer is coming soon!"
-    );
-
-}
-
-function privateRoom() {
-
-    alert(
-        "🔒 PRIVATE ROOM\n\n" +
-        "Private rooms are coming soon!"
-    );
-
-}
-
-function howToPlay() {
-
-    alert(
-        "🎓 HOW TO PLAY\n\n" +
-        "5-Card Draw:\n" +
-        "1. Choose your bet.\n" +
-        "2. Deal five cards.\n" +
-        "3. Click cards to discard.\n" +
-        "4. Draw replacements.\n" +
-        "5. Beat Goosey Bot!"
-    );
-
-}
-
-function rules() {
-
-    alert(
-        "📖 GOOSEY CASINO RULES\n\n" +
-        "• GooseBucks are fictional only.\n" +
-        "• No real-money purchases.\n" +
-        "• No cashing out.\n" +
-        "• No real-money trading.\n" +
-        "• Don't cheat.\n\n" +
-        "Have fun! 🪿"
-    );
-
-}
-
-function leaderboard() {
-
-    alert(
-        "🏆 LEADERBOARD\n\n" +
-        "Coming soon!"
-    );
-
-}
-
-function comingSoon(game) {
-
-    alert(
-        "🪿 " + game + "\n\n" +
-        "Coming soon!"
-    );
-
-}
-
-function backToWebsite() {
-
-    window.location.href = "index.html";
-
-}
-
-// ============================================
-// DECK
-// ============================================
-
-function makeDeck() {
-
-    const newDeck = [];
-
-    for (const suit of suits) {
-
-        for (const rank of ranks) {
-
-            newDeck.push({
-                suit: suit,
-                name: rank.name,
-                value: rank.value
-            });
-
-        }
-
-    }
-
-    return newDeck;
-
-}
-
-function shuffle(array) {
-
-    for (
-        let i = array.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [array[i], array[j]] =
-        [array[j], array[i]];
-
-    }
-
-    return array;
-
-}
-
-function drawOne() {
-
-    return deck.pop();
-
-}
-
-// ============================================
-// 5-CARD DRAW
-// ============================================
-
-function openPoker() {
-
-    const modal =
-        document.getElementById("pokerModal");
+    let modal = document.getElementById("arcadeModal");
 
     if (!modal) {
-
-        console.error(
-            "pokerModal not found!"
-        );
-
-        return;
-
+        modal = document.createElement("div");
+        modal.id = "arcadeModal";
+        modal.className = "modal";
+        modal.innerHTML = `
+            <div class="panel" id="arcadePanel">
+                <button class="close" onclick="closeArcadeGame()">✕ CLOSE</button>
+                <div id="arcadeContent"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
 
-    modal.classList.add("show");
-
-    pokerActive = false;
-    pokerDrawn = false;
-
-    selectedCards.clear();
-
-    renderPokerHands(false);
-
-    setPokerStatus(
-        "Set your bet and deal a hand!"
-    );
-
-    const drawButton =
-        document.getElementById(
-            "drawButton"
-        );
-
-    if (drawButton) {
-        drawButton.disabled = true;
-    }
-
-}
-
-function closePoker() {
-
-    const modal =
-        document.getElementById(
-            "pokerModal"
-        );
-
-    if (modal) {
-        modal.classList.remove("show");
-    }
-
-    pokerActive = false;
-
-}
-
-function getBet() {
-
-    const input =
-        document.getElementById("bet");
-
-    let bet =
-        Number(
-            input
-                ? input.value
-                : 100
-        );
-
-    if (!Number.isFinite(bet)) {
-        bet = 100;
-    }
-
-    bet =
-        Math.floor(bet / 10) * 10;
-
-    bet =
-        Math.max(
-            10,
-            Math.min(1000, bet)
-        );
-
-    if (input) {
-        input.value = bet;
-    }
-
-    return bet;
-
-}
-
-function dealPoker() {
-
-    const bet = getBet();
-
-    if (bet > balance) {
-
-        setPokerStatus(
-            "❌ You don't have enough GooseBucks!"
-        );
-
-        return;
-
-    }
-
-    balance -= bet;
-
-    updateBalance();
-
-    deck =
-        shuffle(makeDeck());
-
-    playerHand = [
-        drawOne(),
-        drawOne(),
-        drawOne(),
-        drawOne(),
-        drawOne()
-    ];
-
-    botHand = [
-        drawOne(),
-        drawOne(),
-        drawOne(),
-        drawOne(),
-        drawOne()
-    ];
-
-    selectedCards.clear();
-
-    pokerActive = true;
-    pokerDrawn = false;
-
-    const drawButton =
-        document.getElementById(
-            "drawButton"
-        );
-
-    if (drawButton) {
-        drawButton.disabled = false;
-    }
-
-    renderPokerHands(false);
-
-    setPokerStatus(
-        "Pick up to 3 cards to discard, then press DRAW SELECTED!"
-    );
-
-}
-
-function renderPokerHands(showBot) {
-
-    const playerElement =
-        document.getElementById(
-            "playerHand"
-        );
-
-    const botElement =
-        document.getElementById(
-            "botHand"
-        );
-
-    if (
-        !playerElement ||
-        !botElement
-    ) {
-        return;
-    }
-
-    playerElement.innerHTML = "";
-
-    playerHand.forEach(
-        function(card, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "card" +
-                (
-                    card.suit === "♥" ||
-                    card.suit === "♦"
-                        ? " red"
-                        : ""
-                );
-
-            div.textContent =
-                card.name + card.suit;
-
-            if (
-                pokerActive &&
-                !pokerDrawn
-            ) {
-
-                if (
-                    selectedCards.has(
-                        index
-                    )
-                ) {
-
-                    div.classList.add(
-                        "selected"
-                    );
-
-                }
-
-                div.onclick =
-                    function() {
-                        toggleCard(index);
-                    };
-
-            }
-
-            playerElement.appendChild(
-                div
-            );
-
-        }
-    );
-
-    botElement.innerHTML = "";
-
-    botHand.forEach(
-        function(card) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className = "card";
-
-            if (showBot) {
-
-                div.textContent =
-                    card.name + card.suit;
-
-                if (
-                    card.suit === "♥" ||
-                    card.suit === "♦"
-                ) {
-
-                    div.classList.add(
-                        "red"
-                    );
-
-                }
-
-            } else {
-
-                div.textContent = "🂠";
-
-            }
-
-            botElement.appendChild(
-                div
-            );
-
-        }
-    );
-
-}
-
-function setPokerStatus(text) {
-
-    const element =
-        document.getElementById(
-            "pokerStatus"
-        );
-
-    if (element) {
-        element.textContent = text;
-    }
-
-}
-
-function toggleCard(index) {
-
-    if (
-        !pokerActive ||
-        pokerDrawn
-    ) {
-        return;
-    }
-
-    if (
-        selectedCards.has(index)
-    ) {
-
-        selectedCards.delete(index);
-
-    } else {
-
-        if (
-            selectedCards.size < 3
-        ) {
-
-            selectedCards.add(index);
-
-        } else {
-
-            setPokerStatus(
-                "You can discard at most 3 cards!"
-            );
-
-        }
-
-    }
-
-    renderPokerHands(false);
-
-}
-
-function chooseBotDiscards(hand) {
-
-    const counts = {};
-
-    hand.forEach(
-        function(card) {
-
-            counts[card.value] =
-                (
-                    counts[card.value] ||
-                    0
-                ) + 1;
-
-        }
-    );
-
-    const keep = new Set();
-
-    hand.forEach(
-        function(card) {
-
-            if (
-                counts[card.value] >= 2
-            ) {
-
-                keep.add(
-                    card.value
-                );
-
-            }
-
-        }
-    );
-
-    const candidates =
-        hand
-            .map(
-                function(card, index) {
-
-                    return {
-                        index: index,
-                        value: card.value,
-                        keep:
-                            keep.has(
-                                card.value
-                            )
-                    };
-
-                }
-            )
-            .filter(
-                function(card) {
-                    return !card.keep;
-                }
-            )
-            .sort(
-                function(a, b) {
-                    return a.value - b.value;
-                }
-            );
-
-    return candidates
-        .slice(0, 3)
-        .map(
-            function(card) {
-                return card.index;
-            }
-        );
-
-}
-
-function drawCards() {
-
-    if (
-        !pokerActive ||
-        pokerDrawn
-    ) {
-        return;
-    }
-
-    const playerDiscards =
-        Array.from(selectedCards);
-
-    const botDiscards =
-        chooseBotDiscards(
-            botHand
-        );
-
-    playerDiscards.forEach(
-        function(index) {
-
-            playerHand[index] =
-                drawOne();
-
-        }
-    );
-
-    botDiscards.forEach(
-        function(index) {
-
-            botHand[index] =
-                drawOne();
-
-        }
-    );
-
-    pokerDrawn = true;
-    pokerActive = false;
-
-    const drawButton =
-        document.getElementById(
-            "drawButton"
-        );
-
-    if (drawButton) {
-        drawButton.disabled = true;
-    }
-
-    renderPokerHands(true);
-
-    finishPoker();
-
-}
-
-// ============================================
-// POKER HAND EVALUATION
-// ============================================
-
-function evaluateHand(hand) {
-
-    const values =
-        hand
-            .map(
-                function(card) {
-                    return card.value;
-                }
-            )
-            .sort(
-                function(a, b) {
-                    return b - a;
-                }
-            );
-
-    const counts = {};
-
-    values.forEach(
-        function(value) {
-
-            counts[value] =
-                (
-                    counts[value] ||
-                    0
-                ) + 1;
-
-        }
-    );
-
-    const groups =
-        Object.values(counts)
-            .sort(
-                function(a, b) {
-                    return b - a;
-                }
-            );
-
-    const flush =
-        hand.every(
-            function(card) {
-                return (
-                    card.suit ===
-                    hand[0].suit
-                );
-            }
-        );
-
-    let straight = false;
-
-    const unique =
-        [...new Set(values)];
-
-    if (unique.length === 5) {
-
-        if (
-            unique[0] -
-            unique[4] === 4
-        ) {
-
-            straight = true;
-
-        }
-
-        if (
-            unique.join(",") ===
-            "14,5,4,3,2"
-        ) {
-
-            straight = true;
-
-        }
-
-    }
-
-    if (
-        straight &&
-        flush
-    ) {
-
-        return {
-            rank: 8,
-            name: "Straight Flush"
-        };
-
-    }
-
-    if (groups[0] === 4) {
-
-        return {
-            rank: 7,
-            name: "Four of a Kind"
-        };
-
-    }
-
-    if (
-        groups[0] === 3 &&
-        groups[1] === 2
-    ) {
-
-        return {
-            rank: 6,
-            name: "Full House"
-        };
-
-    }
-
-    if (flush) {
-
-        return {
-            rank: 5,
-            name: "Flush"
-        };
-
-    }
-
-    if (straight) {
-
-        return {
-            rank: 4,
-            name: "Straight"
-        };
-
-    }
-
-    if (groups[0] === 3) {
-
-        return {
-            rank: 3,
-            name: "Three of a Kind"
-        };
-
-    }
-
-    if (
-        groups[0] === 2 &&
-        groups[1] === 2
-    ) {
-
-        return {
-            rank: 2,
-            name: "Two Pair"
-        };
-
-    }
-
-    if (groups[0] === 2) {
-
-        return {
-            rank: 1,
-            name: "One Pair"
-        };
-
-    }
-
-    return {
-        rank: 0,
-        name: "High Card"
+    arcade = {
+        game: name,
+        phase: "ready",
+        bet: 100,
+        data: {},
+        message: "Choose your bet and start!"
     };
 
-}
-
-function finishPoker() {
-
-    const player =
-        evaluateHand(
-            playerHand
-        );
-
-    const bot =
-        evaluateHand(
-            botHand
-        );
-
-    const bet = getBet();
-
-    let message =
-        "You: " +
-        player.name +
-        " | Goosey Bot: " +
-        bot.name +
-        ". ";
-
-    if (
-        player.rank >
-        bot.rank
-    ) {
-
-        balance += bet * 2;
-
-        message +=
-            "🏆 YOU WIN!";
-
-    } else if (
-        player.rank ===
-        bot.rank
-    ) {
-
-        balance += bet;
-
-        message +=
-            "🤝 TIE! Your bet is returned.";
-
-    } else {
-
-        message +=
-            "🪿 GOOSEY BOT WINS!";
-
-    }
-
-    updateBalance();
-
-    setPokerStatus(message);
-
-}
-// ============================================
-// BLACKJACK
-// ============================================
-
-let blackjackDeck = [];
-let blackjackPlayerHand = [];
-let blackjackDealerHand = [];
-let blackjackActive = false;
-
-function openBlackjack() {
-
-    const modal =
-        document.getElementById("blackjackModal");
-
-    if (!modal) {
-        console.error("blackjackModal not found!");
-        return;
-    }
-
     modal.classList.add("show");
-
-    blackjackActive = false;
-    blackjackPlayerHand = [];
-    blackjackDealerHand = [];
-
-    renderBlackjack();
-
-    setBlackjackStatus(
-        "Set your bet and deal!"
-    );
-
-    const hitButton =
-        document.getElementById(
-            "blackjackHitButton"
-        );
-
-    const standButton =
-        document.getElementById(
-            "blackjackStandButton"
-        );
-
-    if (hitButton) {
-        hitButton.disabled = true;
-    }
-
-    if (standButton) {
-        standButton.disabled = true;
-    }
-
+    renderArcade();
 }
 
-function closeBlackjack() {
+function closeArcadeGame() {
+    const modal = document.getElementById("arcadeModal");
+    if (modal) modal.classList.remove("show");
+    arcade = null;
+}
 
-    const modal =
-        document.getElementById(
-            "blackjackModal"
-        );
+function arcadeMoney(amount) {
+    return Math.floor(amount).toLocaleString() + " GB";
+}
 
-    if (modal) {
-        modal.classList.remove("show");
+function arcadeBet() {
+    const input = document.getElementById("arcadeBet");
+    let value = Number(input ? input.value : 100);
+
+    if (!Number.isFinite(value)) value = 100;
+
+    value = Math.floor(value / 10) * 10;
+    value = Math.max(10, Math.min(1000, value));
+
+    if (value > balance) {
+        value = Math.floor(balance / 10) * 10;
     }
 
-    blackjackActive = false;
-
+    if (input) input.value = value;
+    return value;
 }
 
-function getBlackjackBet() {
+function arcadeStart() {
+    if (!arcade) return;
 
-    const input =
-        document.getElementById(
-            "blackjackBet"
-        );
+    const bet = arcadeBet();
 
-    let bet =
-        Number(
-            input
-                ? input.value
-                : 100
-        );
-
-    if (!Number.isFinite(bet)) {
-        bet = 100;
-    }
-
-    bet =
-        Math.floor(bet / 10) * 10;
-
-    bet =
-        Math.max(
-            10,
-            Math.min(
-                1000,
-                bet
-            )
-        );
-
-    if (input) {
-        input.value = bet;
-    }
-
-    return bet;
-
-}
-
-function makeBlackjackDeck() {
-
-    return shuffle(makeDeck());
-
-}
-
-function blackjackDrawOne() {
-
-    return blackjackDeck.pop();
-
-}
-
-function blackjackCardValue(card) {
-
-    if (card.value >= 10) {
-        return 10;
-    }
-
-    if (card.value === 14) {
-        return 11;
-    }
-
-    return card.value;
-
-}
-
-function getBlackjackTotal(hand) {
-
-    let total = 0;
-    let aces = 0;
-
-    hand.forEach(function(card) {
-
-        total += blackjackCardValue(card);
-
-        if (card.value === 14) {
-            aces++;
-        }
-
-    });
-
-    while (
-        total > 21 &&
-        aces > 0
-    ) {
-
-        total -= 10;
-        aces--;
-
-    }
-
-    return total;
-
-}
-
-function isBlackjack(hand) {
-
-    return (
-        hand.length === 2 &&
-        getBlackjackTotal(hand) === 21
-    );
-
-}
-
-function renderBlackjack(showDealerCards) {
-
-    const playerElement =
-        document.getElementById(
-            "playerBlackjackHand"
-        );
-
-    const dealerElement =
-        document.getElementById(
-            "dealerBlackjackHand"
-        );
-
-    const playerTotalElement =
-        document.getElementById(
-            "playerBlackjackTotal"
-        );
-
-    const dealerTotalElement =
-        document.getElementById(
-            "dealerBlackjackTotal"
-        );
-
-    if (
-        !playerElement ||
-        !dealerElement
-    ) {
+    if (bet < 10 || bet > balance) {
+        arcade.message = "❌ You need at least 10 GB to play.";
+        renderArcade();
         return;
     }
 
-    playerElement.innerHTML = "";
-
-    blackjackPlayerHand.forEach(
-        function(card) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "card" +
-                (
-                    card.suit === "♥" ||
-                    card.suit === "♦"
-                        ? " red"
-                        : ""
-                );
-
-            div.textContent =
-                card.name + card.suit;
-
-            playerElement.appendChild(
-                div
-            );
-
-        }
-    );
-
-    dealerElement.innerHTML = "";
-
-    blackjackDealerHand.forEach(
-        function(card, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className = "card";
-
-            if (
-                !showDealerCards &&
-                index === 1
-            ) {
-
-                div.textContent = "🂠";
-
-            } else {
-
-                div.textContent =
-                    card.name + card.suit;
-
-                if (
-                    card.suit === "♥" ||
-                    card.suit === "♦"
-                ) {
-
-                    div.classList.add(
-                        "red"
-                    );
-
-                }
-
-            }
-
-            dealerElement.appendChild(
-                div
-            );
-
-        }
-    );
-
-    if (playerTotalElement) {
-
-        if (blackjackPlayerHand.length > 0) {
-
-            playerTotalElement.textContent =
-                "Total: " +
-                getBlackjackTotal(
-                    blackjackPlayerHand
-                );
-
-        } else {
-
-            playerTotalElement.textContent = "";
-
-        }
-
-    }
-
-    if (dealerTotalElement) {
-
-        if (blackjackDealerHand.length === 0) {
-
-            dealerTotalElement.textContent = "";
-
-        } else if (showDealerCards) {
-
-            dealerTotalElement.textContent =
-                "Total: " +
-                getBlackjackTotal(
-                    blackjackDealerHand
-                );
-
-        } else {
-
-            dealerTotalElement.textContent =
-                "One card hidden";
-
-        }
-
-    }
-
-}
-
-function setBlackjackStatus(text) {
-
-    const element =
-        document.getElementById(
-            "blackjackStatus"
-        );
-
-    if (element) {
-        element.textContent = text;
-    }
-
-}
-
-function dealBlackjack() {
-
-    const bet = getBlackjackBet();
-
-    if (bet > balance) {
-
-        setBlackjackStatus(
-            "❌ You don't have enough GooseBucks!"
-        );
-
-        return;
-
-    }
-
+    arcade.bet = bet;
     balance -= bet;
     updateBalance();
 
-    blackjackDeck =
-        makeBlackjackDeck();
+    arcade.phase = "playing";
+    arcade.data = {};
+    arcade.message = "Good luck!";
 
-    blackjackPlayerHand = [
-        blackjackDrawOne(),
-        blackjackDrawOne()
-    ];
+    const game = arcade.game;
 
-    blackjackDealerHand = [
-        blackjackDrawOne(),
-        blackjackDrawOne()
-    ];
-
-    blackjackActive = true;
-
-    const hitButton =
-        document.getElementById(
-            "blackjackHitButton"
-        );
-
-    const standButton =
-        document.getElementById(
-            "blackjackStandButton"
-        );
-
-    if (hitButton) {
-        hitButton.disabled = false;
+    if (game === "Texas Holdem") {
+        const deck = shuffle(makeDeck());
+        arcade.data.player = [deck.pop(), deck.pop()];
+        arcade.data.bot = [deck.pop(), deck.pop()];
+        arcade.data.community = [
+            deck.pop(), deck.pop(), deck.pop(),
+            deck.pop(), deck.pop()
+        ];
+        arcade.data.deck = deck;
+        arcade.message = "Your two cards are dealt. Reveal the community cards at showdown!";
     }
 
-    if (standButton) {
-        standButton.disabled = false;
+    if (game === "Goosey Slots") {
+        arcadeSpinSlots();
+        return;
     }
 
-    renderBlackjack(false);
+    if (game === "Goosey Wheel") {
+        arcadeSpinWheel();
+        return;
+    }
 
-    const playerBlackjack =
-        isBlackjack(
-            blackjackPlayerHand
-        );
+    if (game === "Coin Flip") {
+        arcade.message = "Choose heads or tails!";
+    }
 
-    const dealerBlackjack =
-        isBlackjack(
-            blackjackDealerHand
-        );
+    if (game === "Dice Duel") {
+        arcade.data.player = 1 + Math.floor(Math.random() * 6);
+        arcade.data.bot = 1 + Math.floor(Math.random() * 6);
+        arcadeResolveDice();
+        return;
+    }
 
-    if (
-        playerBlackjack ||
-        dealerBlackjack
+    if (game === "Chicken") {
+        arcade.data.steps = 0;
+        arcade.data.multiplier = 1;
+        arcade.data.bombed = false;
+        arcade.message = "The path is clear... for now. Advance or cash out!";
+    }
+
+    if (game === "Goosey Crash") {
+        arcade.data.multiplier = 1;
+        arcade.data.crashAt = 1.1 + Math.random() * 5.9;
+        arcade.message = "Advance the multiplier, then cash out before the crash!";
+    }
+
+    if (game === "Bomb Goose") {
+        arcade.data.bomb = Math.floor(Math.random() * 9);
+        arcade.data.revealed = [];
+        arcade.data.multiplier = 1;
+        arcade.message = "Pick safe tiles and avoid the hidden bomb!";
+    }
+
+    if (game === "Goosey Pool") {
+        arcade.data.playerScore = 0;
+        arcade.data.botScore = 0;
+        arcade.data.shots = 0;
+        arcade.message = "Aim your shot and choose its power!";
+    }
+
+    renderArcade();
+}
+
+function arcadeSettle(payout, message) {
+    if (!arcade) return;
+
+    payout = Math.max(0, Math.floor(payout));
+    balance += payout;
+    updateBalance();
+
+    arcade.phase = "done";
+    arcade.message = message + " Payout: " + arcadeMoney(payout) + ".";
+    renderArcade();
+}
+
+function arcadeSpinSlots() {
+    const symbols = [
+        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)],
+        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)],
+        arcadeSymbols[Math.floor(Math.random() * arcadeSymbols.length)]
+    ];
+
+    arcade.data.symbols = symbols;
+
+    let multiplier = 0;
+
+    if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
+        multiplier = symbols[0] === "7️⃣" ? 10 : 5;
+    } else if (
+        symbols[0] === symbols[1] ||
+        symbols[1] === symbols[2] ||
+        symbols[0] === symbols[2]
     ) {
+        multiplier = 2;
+    }
 
-        blackjackActive = false;
+    arcade.data.multiplier = multiplier;
 
-        if (hitButton) {
-            hitButton.disabled = true;
-        }
+    if (multiplier > 0) {
+        arcadeSettle(
+            arcade.bet * multiplier,
+            "🎰 " + symbols.join(" ") + " — YOU WIN!"
+        );
+    } else {
+        arcadeSettle(0, "🎰 " + symbols.join(" ") + " — No match this time!");
+    }
+}
 
-        if (standButton) {
-            standButton.disabled = true;
-        }
+function arcadeSpinWheel() {
+    const prizes = [
+        { label: "Nothing", multiplier: 0 },
+        { label: "Half your bet", multiplier: 0.5 },
+        { label: "Your bet back", multiplier: 1 },
+        { label: "Double!", multiplier: 2 },
+        { label: "Triple!", multiplier: 3 },
+        { label: "JACKPOT!", multiplier: 10 }
+    ];
 
-        renderBlackjack(true);
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    arcade.data.prize = prize;
 
-        if (
-            playerBlackjack &&
-            dealerBlackjack
-        ) {
+    arcadeSettle(
+        arcade.bet * prize.multiplier,
+        "🎡 " + prize.label
+    );
+}
 
-            balance += bet;
+function arcadeResolveDice() {
+    const p = arcade.data.player;
+    const b = arcade.data.bot;
 
-            updateBalance();
+    if (p > b) {
+        arcadeSettle(arcade.bet * 2, "🎲 You rolled " + p + "; Goosey Bot rolled " + b + ". You win!");
+    } else if (p === b) {
+        arcadeSettle(arcade.bet, "🎲 Both rolled " + p + ". It's a tie!");
+    } else {
+        arcadeSettle(0, "🎲 You rolled " + p + "; Goosey Bot rolled " + b + ". Bot wins!");
+    }
+}
 
-            setBlackjackStatus(
-                "🤝 BOTH HAVE BLACKJACK! PUSH!"
-            );
+function arcadeAction(action, value) {
+    if (!arcade || arcade.phase !== "playing") return;
 
-        } else if (playerBlackjack) {
+    const game = arcade.game;
 
-            balance += bet * 2.5;
+    if (game === "Coin Flip") {
+        const result = Math.random() < 0.5 ? "Heads" : "Tails";
 
-            updateBalance();
-
-            setBlackjackStatus(
-                "🎉 BLACKJACK! YOU WIN 3:2!"
-            );
-
+        if (value === result) {
+            arcadeSettle(arcade.bet * 2, "🪙 It landed " + result + "! Correct guess!");
         } else {
+            arcadeSettle(0, "🪙 It landed " + result + ". Better luck next time!");
+        }
+        return;
+    }
 
-            setBlackjackStatus(
-                "🪿 DEALER HAS BLACKJACK!"
+    if (game === "Texas Holdem" && action === "showdown") {
+        const player = arcadeBestPokerHand(
+            arcade.data.player.concat(arcade.data.community)
+        );
+        const bot = arcadeBestPokerHand(
+            arcade.data.bot.concat(arcade.data.community)
+        );
+
+        const playerScore = player.score;
+        const botScore = bot.score;
+
+        const community = arcade.data.community
+            .map(c => c.name + c.suit)
+            .join(" ");
+
+        const handText =
+            "Community: " + community +
+            " | You: " + player.name +
+            " | Bot: " + bot.name + ". ";
+
+        if (playerScore > botScore) {
+            arcadeSettle(arcade.bet * 2, handText + "🏆 You win!");
+        } else if (playerScore === botScore) {
+            arcadeSettle(arcade.bet, handText + "🤝 Tie!");
+        } else {
+            arcadeSettle(0, handText + "🪿 Bot wins!");
+        }
+        return;
+    }
+
+    if (game === "Chicken") {
+        if (action === "cashout") {
+            arcadeSettle(
+                arcade.bet * arcade.data.multiplier,
+                "🐔 You cashed out at " + arcade.data.multiplier.toFixed(2) + "x!"
             );
-
+            return;
         }
 
-        return;
-    }
-
-    setBlackjackStatus(
-        "👀 Your move! HIT or STAND?"
-    );
-
-}
-
-function hitBlackjack() {
-
-    if (!blackjackActive) {
-        return;
-    }
-
-    blackjackPlayerHand.push(
-        blackjackDrawOne()
-    );
-
-    const total =
-        getBlackjackTotal(
-            blackjackPlayerHand
-        );
-
-    renderBlackjack(false);
-
-    if (total > 21) {
-
-        blackjackActive = false;
-
-        const hitButton =
-            document.getElementById(
-                "blackjackHitButton"
-            );
-
-        const standButton =
-            document.getElementById(
-                "blackjackStandButton"
-            );
-
-        if (hitButton) {
-            hitButton.disabled = true;
-        }
-
-        if (standButton) {
-            standButton.disabled = true;
-        }
-
-        setBlackjackStatus(
-            "💥 BUST! You went over 21!"
-        );
-
-        return;
-
-    }
-
-    if (total === 21) {
-
-        setBlackjackStatus(
-            "21! ✋ STAND!"
-        );
-
-        return;
-
-    }
-
-    setBlackjackStatus(
-        "You have " +
-        total +
-        ". HIT or STAND?"
-    );
-
-}
-
-function standBlackjack() {
-
-    if (!blackjackActive) {
-        return;
-    }
-
-    const hitButton =
-        document.getElementById(
-            "blackjackHitButton"
-        );
-
-    const standButton =
-        document.getElementById(
-            "blackjackStandButton"
-        );
-
-    if (hitButton) {
-        hitButton.disabled = true;
-    }
-
-    if (standButton) {
-        standButton.disabled = true;
-    }
-
-    while (
-        getBlackjackTotal(
-            blackjackDealerHand
-        ) < 17
-    ) {
-
-        blackjackDealerHand.push(
-            blackjackDrawOne()
-        );
-
-    }
-
-    blackjackActive = false;
-
-    renderBlackjack(true);
-
-    finishBlackjack();
-
-}
-
-function finishBlackjack() {
-
-    const bet =
-        getBlackjackBet();
-
-    const playerTotal =
-        getBlackjackTotal(
-            blackjackPlayerHand
-        );
-
-    const dealerTotal =
-        getBlackjackTotal(
-            blackjackDealerHand
-        );
-
-    let message = "";
-
-    if (dealerTotal > 21) {
-
-        balance += bet * 2;
-
-        message =
-            "💥 Dealer busts! YOU WIN!";
-
-    } else if (
-        playerTotal >
-        dealerTotal
-    ) {
-
-        balance += bet * 2;
-
-        message =
-            "🏆 YOU WIN! " +
-            playerTotal +
-            " beats " +
-            dealerTotal +
-            ".";
-
-    } else if (
-        playerTotal ===
-        dealerTotal
-    ) {
-
-        balance += bet;
-
-        message =
-            "🤝 PUSH! Both have " +
-            playerTotal +
-            ".";
-
-    } else {
-
-        message =
-            "🪿 DEALER WINS! " +
-            dealerTotal +
-            " beats " +
-            playerTotal +
-            ".";
-
-    }
-
-    updateBalance();
-
-    setBlackjackStatus(
-        message
-    );
-
-}
-// ============================================
-// GOOSE RACING
-// ============================================
-
-let gooseRaceRunning = false;
-let gooseRaceTimer = null;
-
-function openGooseRace() {
-
-    const modal =
-        document.getElementById("gooseRaceModal");
-
-    if (!modal) {
-        console.error("gooseRaceModal not found!");
-        return;
-    }
-
-    modal.classList.add("show");
-
-    resetGooseRace();
-
-    if (balance > 0) {
-        setGooseRaceStatus(
-            "🏁 Goose Racing is available for everyone!"
-        );
-    } else {
-        setGooseRaceStatus(
-            "💸 You're broke! Win GooseBucks by racing!"
-        );
-    }
-
-}
-
-function closeGooseRace() {
-
-    const modal =
-        document.getElementById("gooseRaceModal");
-
-    if (modal) {
-        modal.classList.remove("show");
-    }
-
-    stopGooseRace();
-
-}
-
-function setGooseRaceStatus(text) {
-
-    const element =
-        document.getElementById(
-            "gooseRaceStatus"
-        );
-
-    if (element) {
-        element.textContent = text;
-    }
-
-}
-
-function resetGooseRace() {
-
-    stopGooseRace();
-
-    const positions = [
-        ["goose1", 10],
-        ["goose2", 10],
-        ["goose3", 10]
-    ];
-
-    positions.forEach(function(item) {
-
-        const element =
-            document.getElementById(item[0]);
-
-        if (element) {
-            element.style.left =
-                item[1] + "px";
-        }
-
-    });
-
-    const button =
-        document.getElementById(
-            "startRaceButton"
-        );
-
-    if (button) {
-        button.disabled = false;
-    }
-
-}
-
-function stopGooseRace() {
-
-    gooseRaceRunning = false;
-
-    if (gooseRaceTimer) {
-        clearInterval(gooseRaceTimer);
-        gooseRaceTimer = null;
-    }
-
-}
-
-function startGooseRace() {
-
-    if (gooseRaceRunning) {
-        return;
-    }
-
-    gooseRaceRunning = true;
-
-    const button =
-        document.getElementById(
-            "startRaceButton"
-        );
-
-    if (button) {
-        button.disabled = true;
-    }
-
-    resetGooseRacePositions();
-
-    setGooseRaceStatus(
-        "🏁 AND THEY'RE OFF!!!"
-    );
-
-    let positions = [10, 10, 10];
-
-    gooseRaceTimer =
-        setInterval(function() {
-
-            for (
-                let i = 0;
-                i < positions.length;
-                i++
-            ) {
-
-                const boost =
-                    Math.random() * 7 + 2;
-
-                positions[i] += boost;
-
+        if (action === "advance") {
+            if (Math.random() < Math.min(0.18 + arcade.data.steps * 0.07, 0.75)) {
+                arcade.data.bombed = true;
+                arcadeSettle(0, "💥 BOOM! The chicken got caught!");
+                return;
             }
 
-            moveGoose(
-                "goose1",
-                positions[0]
-            );
+            arcade.data.steps++;
+            arcade.data.multiplier = 1 + arcade.data.steps * 0.5;
+            arcade.message = "🐔 Safe! Current multiplier: " +
+                arcade.data.multiplier.toFixed(2) + "x. Keep going or cash out!";
+            renderArcade();
+            return;
+        }
+    }
 
-            moveGoose(
-                "goose2",
-                positions[1]
+    if (game === "Goosey Crash") {
+        if (action === "cashout") {
+            arcadeSettle(
+                arcade.bet * arcade.data.multiplier,
+                "📈 Cashed out at " + arcade.data.multiplier.toFixed(2) + "x!"
             );
+            return;
+        }
 
-            moveGoose(
-                "goose3",
-                positions[2]
+        if (action === "advance") {
+            arcade.data.multiplier += 0.2 + Math.random() * 0.5;
+
+            if (arcade.data.multiplier >= arcade.data.crashAt) {
+                arcadeSettle(0, "💥 CRASH! The multiplier exploded before you cashed out!");
+                return;
+            }
+
+            arcade.message = "📈 Multiplier: " +
+                arcade.data.multiplier.toFixed(2) + "x. Cash out or advance!";
+            renderArcade();
+            return;
+        }
+    }
+
+    if (game === "Bomb Goose") {
+        if (action === "cashout") {
+            arcadeSettle(
+                arcade.bet * arcade.data.multiplier,
+                "🪿 You escaped with " + arcade.data.multiplier.toFixed(2) + "x!"
             );
+            return;
+        }
 
-            const winner =
-                positions.findIndex(
-                    function(position) {
-                        return position >= 85;
+        if (action === "tile") {
+            const index = Number(value);
+
+            if (arcade.data.revealed.includes(index)) return;
+
+            if (index === arcade.data.bomb) {
+                arcade.data.revealed.push(index);
+                arcadeSettle(0, "💣 BOOM! You found the bomb!");
+                return;
+            }
+
+            arcade.data.revealed.push(index);
+            arcade.data.multiplier += 0.25;
+            arcade.message = "✨ Safe tile! Multiplier: " +
+                arcade.data.multiplier.toFixed(2) + "x. Keep going or cash out!";
+            renderArcade();
+            return;
+        }
+    }
+
+    if (game === "Goosey Pool" && action === "shoot") {
+        const angle = Number(document.getElementById("poolAngle").value);
+        const power = Number(document.getElementById("poolPower").value);
+
+        const accuracy = Math.max(
+            0,
+            100 - Math.abs(angle - 45) * 1.2 - Math.abs(power - 60) * 0.6
+                + (Math.random() * 25 - 12)
+        );
+
+        const points = accuracy > 75 ? 2 : accuracy > 45 ? 1 : 0;
+
+        arcade.data.playerScore += points;
+        arcade.data.botScore += Math.random() < 0.55 ? 1 : 0;
+        arcade.data.shots++;
+
+        if (arcade.data.shots >= 3) {
+            if (arcade.data.playerScore > arcade.data.botScore) {
+                arcadeSettle(
+                    arcade.bet * 2,
+                    "🎱 You won " + arcade.data.playerScore +
+                    " to " + arcade.data.botScore + "!"
+                );
+            } else if (arcade.data.playerScore === arcade.data.botScore) {
+                arcadeSettle(
+                    arcade.bet,
+                    "🎱 The match is tied " + arcade.data.playerScore +
+                    " to " + arcade.data.botScore + "!"
+                );
+            } else {
+                arcadeSettle(
+                    0,
+                    "🎱 Goosey Bot wins " + arcade.data.botScore +
+                    " to " + arcade.data.playerScore + "!"
+                );
+            }
+            return;
+        }
+
+        arcade.message = "🎱 Your score: " + arcade.data.playerScore +
+            " | Bot: " + arcade.data.botScore +
+            " | Shot " + arcade.data.shots + " of 3.";
+        renderArcade();
+    }
+}
+
+/* Best five-card hand from seven cards.
+   First version compares hand categories. */
+
+function arcadeBestPokerHand(cards) {
+    let bestRank = -1;
+    let bestName = "High Card";
+
+    for (let a = 0; a < cards.length - 4; a++) {
+        for (let b = a + 1; b < cards.length - 3; b++) {
+            for (let c = b + 1; c < cards.length - 2; c++) {
+                for (let d = c + 1; d < cards.length - 1; d++) {
+                    for (let e = d + 1; e < cards.length; e++) {
+                        const result = evaluateHand([
+                            cards[a], cards[b], cards[c], cards[d], cards[e]
+                        ]);
+
+                        if (result.rank > bestRank) {
+                            bestRank = result.rank;
+                            bestName = result.name;
+                        }
                     }
-                );
-
-            if (winner !== -1) {
-
-                finishGooseRace(
-                    winner,
-                    positions
-                );
-
+                }
             }
-
-        }, 120);
-
-}
-
-function resetGooseRacePositions() {
-
-    ["goose1", "goose2", "goose3"]
-        .forEach(function(id) {
-
-            const element =
-                document.getElementById(id);
-
-            if (element) {
-                element.style.left = "10px";
-            }
-
-        });
-
-}
-
-function moveGoose(id, progress) {
-
-    const track =
-        document.getElementById(
-            "raceTrack"
-        );
-
-    const goose =
-        document.getElementById(id);
-
-    if (!track || !goose) {
-        return;
+        }
     }
 
-    const maxWidth =
-        track.clientWidth -
-        goose.offsetWidth -
-        20;
-
-    const left =
-        Math.min(
-            maxWidth,
-            10 + (progress / 85) * (maxWidth - 10)
-        );
-
-    goose.style.left =
-        left + "px";
-
+    return { score: bestRank, name: bestName };
 }
 
-function finishGooseRace(
-    winner,
-    positions
-) {
+function renderArcade() {
+    if (!arcade) return;
 
-    stopGooseRace();
+    const content = document.getElementById("arcadeContent");
+    if (!content) return;
 
-    const ranking =
-        positions
-            .map(function(position, index) {
-                return {
-                    index: index,
-                    position: position
-                };
-            })
-            .sort(function(a, b) {
-                return b.position - a.position;
-            });
+    const game = arcade.game;
+    const d = arcade.data;
 
-    const first =
-        ranking[0].index;
+    let html = `
+        <h2>🪿 ${game}</h2>
+        <p class="small">Your balance: ${arcadeMoney(balance)}</p>
+    `;
 
-    const second =
-        ranking[1].index;
-
-    const third =
-        ranking[2].index;
-
-    let reward = 50;
-    let placeText = "🐌 4th-ish";
-
-    if (first === winner) {
-        reward = 500;
-        placeText = "🥇 1ST PLACE";
-    } else if (second === winner) {
-        reward = 300;
-        placeText = "🥈 2ND PLACE";
-    } else if (third === winner) {
-        reward = 150;
-        placeText = "🥉 3RD PLACE";
+    if (arcade.phase === "ready") {
+        html += `
+            <p>Choose your wager to begin.</p>
+            <div class="bet-row">
+                <label>
+                    Bet:
+                    <input id="arcadeBet" type="number"
+                        min="10" max="1000" step="10" value="100">
+                </label>
+            </div>
+            <div class="game-controls">
+                <button class="play" onclick="arcadeStart()">▶ START GAME</button>
+            </div>
+        `;
+    } else if (game === "Coin Flip" && arcade.phase === "playing") {
+        html += `
+            <h3>🪙 Heads or Tails?</h3>
+            <div class="game-controls">
+                <button class="normal" onclick="arcadeAction('flip','Heads')">🙂 HEADS</button>
+                <button class="normal" onclick="arcadeAction('flip','Tails')">🪙 TAILS</button>
+            </div>
+        `;
+    } else if (game === "Texas Holdem" && arcade.phase === "playing") {
+        html += `
+            <h3>Your hole cards</h3>
+            <div class="table">
+                ${d.player.map(c => `<div class="card">${c.name}${c.suit}</div>`).join("")}
+            </div>
+            <p>Goosey Bot has two hidden cards.</p>
+            <h3>Community cards</h3>
+            <p>Reveal all five cards to see who wins.</p>
+            <div class="game-controls">
+                <button class="play" onclick="arcadeAction('showdown')">🃏 REVEAL & SHOWDOWN</button>
+            </div>
+        `;
+    } else if (game === "Chicken" && arcade.phase === "playing") {
+        html += `
+            <h3>🐔 Path multiplier: ${d.multiplier.toFixed(2)}x</h3>
+            <p>Safe steps: ${d.steps}</p>
+            <div class="game-controls">
+                <button class="normal" onclick="arcadeAction('advance')">➡️ ADVANCE</button>
+                <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
+            </div>
+        `;
+    } else if (game === "Goosey Crash" && arcade.phase === "playing") {
+        html += `
+            <h3 style="font-size:38px">📈 ${d.multiplier.toFixed(2)}x</h3>
+            <div class="game-controls">
+                <button class="normal" onclick="arcadeAction('advance')">📈 ADVANCE</button>
+                <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
+            </div>
+        `;
+    } else if (game === "Bomb Goose" && arcade.phase === "playing") {
+        html += `
+            <h3>💣 Pick a tile!</h3>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin:20px auto">
+                ${Array.from({length:9}, (_,i) => {
+                    const revealed = d.revealed.includes(i);
+                    const isBomb = revealed && i === d.bomb;
+                    return `<button class="normal"
+                        ${revealed ? "disabled" : ""}
+                        onclick="arcadeAction('tile',${i})">
+                        ${revealed ? (isBomb ? "💣" : "🪿") : "❔"}
+                    </button>`;
+                }).join("")}
+            </div>
+            <p>Multiplier: ${d.multiplier.toFixed(2)}x</p>
+            <button class="play" onclick="arcadeAction('cashout')">💰 CASH OUT</button>
+        `;
+    } else if (game === "Goosey Pool" && arcade.phase === "playing") {
+        html += `
+            <h3>🎱 Shot ${d.shots + 1} of 3</h3>
+            <p>Player ${d.playerScore} — Bot ${d.botScore}</p>
+            <label>Angle: <input id="poolAngle" type="range" min="0" max="90" value="45"></label>
+            <br>
+            <label>Power: <input id="poolPower" type="range" min="10" max="100" value="60"></label>
+            <div class="game-controls">
+                <button class="play" onclick="arcadeAction('shoot')">🎱 SHOOT</button>
+            </div>
+        `;
+    } else if (arcade.phase === "playing") {
+        html += `<p>Game in progress!</p>`;
     }
 
-    balance += reward;
+    html += `<div class="status" style="margin-top:15px">${arcade.message}</div>`;
 
-    updateBalance();
-
-    setGooseRaceStatus(
-        placeText +
-        "!\n" +
-        "🪿 You earned " +
-        reward +
-        " GB!"
-    );
-
-    const button =
-        document.getElementById(
-            "startRaceButton"
-        );
-
-    if (button) {
-        button.disabled = false;
+    if (arcade.phase === "done") {
+        html += `
+            <div class="game-controls">
+                <button class="play" onclick="openArcadeGame('${game}')">🔁 PLAY AGAIN</button>
+                <button class="bot-back" onclick="closeArcadeGame()">← BACK TO CASINO</button>
+            </div>
+        `;
+    } else if (arcade.phase === "playing" && ![
+        "Coin Flip", "Texas Holdem", "Chicken",
+        "Goosey Crash", "Bomb Goose", "Goosey Pool"
+    ].includes(game)) {
+        html += `<button class="bot-back" onclick="closeArcadeGame()">CLOSE</button>`;
     }
 
+    content.innerHTML = html;
 }
-
-// ============================================
-// START
-// ============================================
-
-updateBalance();
-
-function updateRevivalUI() {
-    const revival = document.getElementById("zeroCashRevival");
-
-    if (!revival) return;
-
-    revival.style.display = balance <= 0 ? "block" : "none";
-}
-
-function claimZeroCashRevival() {
-    if (balance > 0) return;
-
-    balance += 500;
-    updateBalance();
-
-    alert("🪿 You received 500 emergency GooseBucks!");
-}
-
-updateRevivalUI();
