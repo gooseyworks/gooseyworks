@@ -1,810 +1,195 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goosey Casino</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goosey Casino</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            background: radial-gradient(circle at top, #193d2b 0%, #07140d 55%, #030805 100%);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .casino {
-            width: min(1000px, 94%);
-            min-height: 700px;
-            padding: 35px;
-            border: 3px solid #d4af37;
-            border-radius: 25px;
-            background: rgba(5, 20, 12, .94);
-            box-shadow: 0 0 30px rgba(212, 175, 55, .25),
-                        inset 0 0 30px rgba(0, 0, 0, .5);
-            text-align: center;
-        }
-
-        .goose {
-            font-size: 70px;
-            margin-bottom: -10px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 52px;
-            color: #d4af37;
-            text-shadow: 0 0 15px rgba(212, 175, 55, .45);
-        }
-
-        .subtitle {
-            margin-top: 8px;
-            color: #b8c8bd;
-            font-size: 18px;
-        }
-
-        .balance {
-            margin: 30px auto;
-            padding: 20px;
-            max-width: 500px;
-            border-radius: 18px;
-            background: linear-gradient(145deg, #132c1d, #09170e);
-            border: 2px solid #d4af37;
-        }
-
-        .balance-title {
-            color: #b8c8bd;
-            font-size: 16px;
-        }
-
-        .balance-number {
-            font-size: 42px;
-            font-weight: bold;
-            color: #f3d36a;
-            margin: 5px 0;
-        }
-
-        .balance-note {
-            font-size: 13px;
-            color: #899b90;
-        }
-
-        /* ZERO-CASH REVIVAL */
-
-        .revival {
-            display: none;
-            margin: 16px auto 30px;
-            padding: 20px;
-            max-width: 500px;
-            background: #243524;
-            border: 2px solid #d4af37;
-            border-radius: 14px;
-            color: white;
-        }
-
-        .revival h2 {
-            color: #f3d36a;
-            margin-top: 0;
-        }
-
-        .revival p {
-            line-height: 1.6;
-        }
-
-        .main-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            max-width: 700px;
-            margin: 25px auto;
-        }
-
-        button {
-            border: none;
-            border-radius: 14px;
-            padding: 18px;
-            font-size: 19px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .15s;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.15);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        .play {
-            grid-column: 1 / -1;
-            background: #d4af37;
-            color: #111;
-            font-size: 25px;
-        }
-
-        .normal {
-            background: #183b27;
-            color: white;
-            border: 1px solid #356f4b;
-        }
-
-        .info {
-            background: #182a3b;
-            color: #b9dcff;
-            border: 1px solid #345878;
-        }
-
-        .section {
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(212, 175, 55, .3);
-        }
-
-        .section h2 {
-            color: #d4af37;
-            margin-bottom: 15px;
-        }
-
-        .games {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .game {
-            background: #102319;
-            border: 1px solid #284f37;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .game:hover {
-            border-color: #d4af37;
-        }
-
-        .rules {
-            margin-top: 25px;
-            padding: 18px;
-            background: rgba(255, 255, 255, .03);
-            border-radius: 12px;
-            color: #aebbb2;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .back {
-            margin-top: 30px;
-            background: #222;
-            color: white;
-            border: 1px solid #555;
-        }
-
-        /* GAME MODALS */
-
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .78);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            z-index: 10;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .panel {
-            width: min(900px, 96vw);
-            max-height: 92vh;
-            overflow: auto;
-            background: #07140d;
-            border: 3px solid #d4af37;
-            border-radius: 22px;
-            padding: 25px;
-            box-shadow: 0 0 35px rgba(212, 175, 55, .35);
-        }
-
-        .panel h2 {
-            color: #f3d36a;
-            margin-top: 0;
-        }
-
-        .close {
-            float: right;
-            background: #222;
-            color: white;
-            border: 1px solid #555;
-            padding: 9px 13px;
-        }
-
-        .table {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 18px 0;
-        }
-
-        .card {
-            width: 82px;
-            height: 116px;
-            background: #fff;
-            color: #111;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 25px;
-            font-weight: bold;
-            border: 3px solid #ddd;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card.selected {
-            transform: translateY(-12px);
-            border-color: #d4af37;
-            box-shadow: 0 0 12px rgba(212, 175, 55, .7);
-        }
-
-        .card.red {
-            color: #c62828;
-        }
-
-        .game-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 15px 0;
-        }
-
-        .game-controls button {
-            padding: 13px 18px;
-        }
-
-        .bet-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 12px;
-        }
-
-        .bet-row input {
-            width: 130px;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #456;
-            background: #102319;
-            color: white;
-            font-size: 17px;
-        }
-
-        .status {
-            min-height: 45px;
-            padding: 12px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, .05);
-            color: #dce9df;
-        }
-
-        .small {
-            font-size: 13px;
-            color: #9eaea4;
-        }
-
-        .bot-back {
-            background: #222;
-            color: white;
-            border: 1px solid #555;
-        }
-
-        @media (max-width: 700px) {
-            .casino {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 38px;
-            }
-
-            .main-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .play {
-                grid-column: auto;
-            }
-
-            .games {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .card {
-                width: 62px;
-                height: 90px;
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 450px) {
-            .games {
-                grid-template-columns: 1fr;
-            }
-
-            .balance-number {
-                font-size: 32px;
-            }
-        }
-    </style>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#193d2b 0%,#07140d 55%,#030805 100%);color:white;display:flex;justify-content:center;align-items:center;padding:20px}
+.casino{width:min(1000px,94%);min-height:700px;padding:35px;border:3px solid #d4af37;border-radius:25px;background:rgba(5,20,12,.94);box-shadow:0 0 30px rgba(212,175,55,.25),inset 0 0 30px rgba(0,0,0,.5);text-align:center}
+.goose{font-size:70px;margin-bottom:-10px}
+h1{margin:0;font-size:52px;color:#d4af37;text-shadow:0 0 15px rgba(212,175,55,.45)}
+.subtitle{margin-top:8px;color:#b8c8bd;font-size:18px}
+.balance{margin:30px auto;padding:20px;max-width:500px;border-radius:18px;background:linear-gradient(145deg,#132c1d,#09170e);border:2px solid #d4af37}
+.balance-title{color:#b8c8bd;font-size:16px}
+.balance-number{font-size:42px;font-weight:bold;color:#f3d36a;margin:5px 0}
+.balance-note{font-size:13px;color:#899b90}
+.revival{display:none;margin:16px auto 30px;padding:20px;max-width:500px;background:#243524;border:2px solid #d4af37;border-radius:14px;color:white}
+.revival h2{color:#f3d36a;margin-top:0}
+.revival p{line-height:1.6}
+.main-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;max-width:700px;margin:25px auto}
+button{border:none;border-radius:14px;padding:18px;font-size:19px;font-weight:bold;cursor:pointer;transition:.15s}
+button:hover{transform:translateY(-3px);filter:brightness(1.15)}
+button:active{transform:translateY(1px)}
+.play{grid-column:1/-1;background:#d4af37;color:#111;font-size:25px}
+.normal{background:#183b27;color:white;border:1px solid #356f4b}
+.info{background:#182a3b;color:#b9dcff;border:1px solid #345878}
+.section{margin-top:30px;padding-top:25px;border-top:1px solid rgba(212,175,55,.3)}
+.section h2{color:#d4af37;margin-bottom:15px}
+.games{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.game{background:#102319;border:1px solid #284f37;color:white;padding:15px;border-radius:12px}
+.game:hover{border-color:#d4af37}
+.rules{margin-top:25px;padding:18px;background:rgba(255,255,255,.03);border-radius:12px;color:#aebbb2;font-size:14px;line-height:1.6}
+.back{margin-top:30px;background:#222;color:white;border:1px solid #555}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:10}
+.modal.show{display:flex}
+.panel{width:min(900px,96vw);max-height:92vh;overflow:auto;background:#07140d;border:3px solid #d4af37;border-radius:22px;padding:25px;box-shadow:0 0 35px rgba(212,175,55,.35)}
+.panel h2{color:#f3d36a;margin-top:0}
+.close{float:right;background:#222;color:white;border:1px solid #555;padding:9px 13px}
+.table{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0}
+.card{width:82px;height:116px;background:#fff;color:#111;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:bold;border:3px solid #ddd;cursor:pointer;position:relative}
+.card.selected{transform:translateY(-12px);border-color:#d4af37;box-shadow:0 0 12px rgba(212,175,55,.7)}
+.card.red{color:#c62828}
+.game-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px 0}
+.game-controls button{padding:13px 18px}
+.bet-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:12px}
+.bet-row input{width:130px;padding:12px;border-radius:10px;border:1px solid #456;background:#102319;color:white;font-size:17px}
+.status{min-height:45px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);color:#dce9df}
+.small{font-size:13px;color:#9eaea4}
+.bot-back{background:#222;color:white;border:1px solid #555}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+@media(max-width:700px){.casino{padding:20px}h1{font-size:38px}.main-buttons{grid-template-columns:1fr}.play{grid-column:auto}.games{grid-template-columns:1fr 1fr}.card{width:62px;height:90px;font-size:20px}}
+@media(max-width:450px){.games{grid-template-columns:1fr}.balance-number{font-size:32px}}
+</style>
 </head>
 
 <body>
-
 <div class="casino">
-
     <div class="goose">🪿</div>
-
     <h1>GOOSEY CASINO</h1>
-
-    <div class="subtitle">
-        Welcome to the most questionable casino on the internet.
-    </div>
-
-    <!-- GOOSEBUCKS BALANCE -->
+    <div class="subtitle">Welcome to the most questionable casino on the internet.</div>
 
     <div class="balance">
         <div class="balance-title">YOUR GOOSEBUCKS</div>
-
-        <div class="balance-number" id="balance">
-            7,500 GB
-        </div>
-
+        <div class="balance-number" id="balance">7,500 GB</div>
         <div class="balance-note">
             Fictional reference: 7,500 GB ≈ $1,500<br>
             GooseBucks have NO cash value.
         </div>
     </div>
 
-    <!-- ZERO-CASH REVIVAL -->
-    <!-- Hidden until the balance reaches zero. -->
-
     <div class="revival" id="zeroCashRevival">
         <h2>🪿 Out of GooseBucks!</h2>
-
-        <p>
-            Your balance has reached zero.
-            Claim your free emergency reward!
-        </p>
-
+        <p>Your balance has reached zero. Claim your free emergency reward!</p>
         <h3>🎁 +500 GB</h3>
-
-        <button
-            class="play"
-            onclick="claimZeroCashRevival()"
-        >
-            CLAIM 500 GB
-        </button>
+        <button class="play" onclick="claimZeroCashRevival()">CLAIM 500 GB</button>
     </div>
-
-    <!-- MAIN MENU -->
 
     <div class="main-buttons">
-
-        <button class="play" onclick="startGame()">
-            🎮 PLAY
-        </button>
-
-        <button class="normal" onclick="onlineMode()">
-            🌎 ONLINE
-        </button>
-
-        <button class="normal" onclick="privateRoom()">
-            🔒 PRIVATE ROOM
-        </button>
-
-        <button class="normal" onclick="bots()">
-            🤖 PLAY BOTS
-        </button>
-
-        <button class="info" onclick="howToPlay()">
-            🎓 HOW TO PLAY
-        </button>
-
-        <button class="info" onclick="rules()">
-            📖 RULES
-        </button>
-
-        <button class="info" onclick="leaderboard()">
-            🏆 LEADERBOARD
-        </button>
-
+        <button class="play" onclick="startGame()">🎮 PLAY</button>
+        <button class="normal" onclick="onlineMode()">🌎 ONLINE</button>
+        <button class="normal" onclick="privateRoom()">🔒 PRIVATE ROOM</button>
+        <button class="normal" onclick="bots()">🤖 PLAY BOTS</button>
+        <button class="info" onclick="howToPlay()">🎓 HOW TO PLAY</button>
+        <button class="info" onclick="rules()">📖 RULES</button>
+        <button class="info" onclick="leaderboard()">🏆 LEADERBOARD</button>
     </div>
-
-    <!-- GAMES -->
 
     <div class="section">
-
         <h2>🎰 GAMES</h2>
-
         <div class="games">
-
-            <button class="game" onclick="openPoker()">
-                🃏 5-Card Draw
-            </button>
-
-            <button class="game" onclick="openBlackjack()">
-                🂡 Blackjack
-            </button>
-
-            <button class="game" onclick="comingSoon('Texas Hold’em')">
-                ♠️ Texas Hold’em
-            </button>
-
-            <button class="game" onclick="comingSoon('Goosey Slots')">
-                🎰 Goosey Slots
-            </button>
-
-            <button class="game" onclick="comingSoon('Goosey Wheel')">
-                🎡 Goosey Wheel
-            </button>
-
-            <button class="game" onclick="comingSoon('Coin Flip')">
-                🪙 Coin Flip
-            </button>
-
-            <button class="game" onclick="comingSoon('Dice Duel')">
-                🎲 Dice Duel
-            </button>
-
-            <button class="game" onclick="comingSoon('Chicken')">
-                🐔 Chicken
-            </button>
-
-            <button class="game" onclick="comingSoon('Goosey Crash')">
-                📈 Goosey Crash
-            </button>
-
-            <button class="game" onclick="comingSoon('Bomb Goose')">
-                💣 Bomb Goose
-            </button>
-
-            <button class="game" onclick="openGooseRace()">
-                🏁 Goose Racing
-            </button>
-
-            <button class="game" onclick="comingSoon('Goosey Pool')">
-                🎱 Goosey Pool
-            </button>
-
+            <button class="game" onclick="openPoker()">🃏 5-Card Draw</button>
+            <button class="game" onclick="openBlackjack()">🂡 Blackjack</button>
+            <button class="game" onclick="openArcadeGame('Texas Holdem')">♠️ Texas Hold’em</button>
+            <button class="game" onclick="openArcadeGame('Goosey Slots')">🎰 Goosey Slots</button>
+            <button class="game" onclick="openArcadeGame('Goosey Wheel')">🎡 Goosey Wheel</button>
+            <button class="game" onclick="openArcadeGame('Coin Flip')">🪙 Coin Flip</button>
+            <button class="game" onclick="openArcadeGame('Dice Duel')">🎲 Dice Duel</button>
+            <button class="game" onclick="openArcadeGame('Chicken')">🐔 Chicken</button>
+            <button class="game" onclick="openArcadeGame('Goosey Crash')">📈 Goosey Crash</button>
+            <button class="game" onclick="openArcadeGame('Bomb Goose')">💣 Bomb Goose</button>
+            <button class="game" onclick="openGooseRace()">🏁 Goose Racing</button>
+            <button class="game" onclick="openArcadeGame('Goosey Pool')">🎱 Goosey Pool</button>
         </div>
     </div>
-
-    <!-- CASINO RULES -->
 
     <div class="rules">
         <strong>🚨 GOOSEY CASINO</strong><br>
-
         GooseBucks are fictional game currency only.<br>
-
-        They cannot be bought, sold, or redeemed for real money
-        or anything of monetary value.
+        They cannot be bought, sold, or redeemed for real money or anything of monetary value.
     </div>
 
-    <button class="back" onclick="backToWebsite()">
-        ← BACK TO GOOSEYWORKS
-    </button>
-
+    <button class="back" onclick="backToWebsite()">← BACK TO GOOSEYWORKS</button>
 </div>
 
-<!-- ===================================== -->
 <!-- 5-CARD DRAW -->
-<!-- ===================================== -->
-
 <div class="modal" id="pokerModal">
-
     <div class="panel">
-
-        <button class="close" onclick="closePoker()">
-            ✕ CLOSE
-        </button>
-
+        <button class="close" onclick="closePoker()">✕ CLOSE</button>
         <h2>🃏 GOOSEY 5-CARD DRAW</h2>
-
-        <p class="small">
-            Choose cards to discard, then draw replacements.
-            This is a single-player game against Goosey Bot.
-        </p>
-
+        <p class="small">Choose cards to discard, then draw replacements. Play against Goosey Bot.</p>
         <div class="bet-row">
-
-            <label>
-                Bet:
-                <input
-                    id="bet"
-                    type="number"
-                    min="10"
-                    max="1000"
-                    step="10"
-                    value="100"
-                >
-            </label>
-
-            <button class="normal" onclick="dealPoker()">
-                DEAL NEW HAND
-            </button>
-
+            <label>Bet: <input id="bet" type="number" min="10" max="1000" step="10" value="100"></label>
+            <button class="normal" onclick="dealPoker()">DEAL NEW HAND</button>
         </div>
-
         <h3>Your Hand</h3>
         <div class="table" id="playerHand"></div>
-
         <div class="game-controls">
-            <button
-                class="play"
-                id="drawButton"
-                onclick="drawCards()"
-                disabled
-            >
-                🔄 DRAW SELECTED
-            </button>
+            <button class="play" id="drawButton" onclick="drawCards()" disabled>🔄 DRAW SELECTED</button>
         </div>
-
         <h3>Goosey Bot</h3>
         <div class="table" id="botHand"></div>
-
-        <div class="status" id="pokerStatus">
-            Set your bet and deal a hand!
-        </div>
-
+        <div class="status" id="pokerStatus">Set your bet and deal a hand!</div>
         <div class="game-controls">
-
-            <button class="normal" onclick="dealPoker()">
-                🔁 PLAY AGAIN
-            </button>
-
-            <button class="bot-back" onclick="closePoker()">
-                ← BACK TO CASINO
-            </button>
-
+            <button class="normal" onclick="dealPoker()">🔁 PLAY AGAIN</button>
+            <button class="bot-back" onclick="closePoker()">← BACK TO CASINO</button>
         </div>
-
     </div>
 </div>
 
-<!-- ===================================== -->
 <!-- BLACKJACK -->
-<!-- ===================================== -->
-
 <div class="modal" id="blackjackModal">
-
     <div class="panel">
-
-        <button class="close" onclick="closeBlackjack()">
-            ✕ CLOSE
-        </button>
-
+        <button class="close" onclick="closeBlackjack()">✕ CLOSE</button>
         <h2>🂡 GOOSEY BLACKJACK</h2>
-
-        <p class="small">
-            Get as close to 21 as possible without going over.
-            Beat the Goosey Dealer!
-        </p>
-
+        <p class="small">Get as close to 21 as possible without going over. Beat the Goosey Dealer!</p>
         <div class="bet-row">
-
-            <label>
-                Bet:
-                <input
-                    id="blackjackBet"
-                    type="number"
-                    min="10"
-                    max="1000"
-                    step="10"
-                    value="100"
-                >
-            </label>
-
-            <button
-                class="normal"
-                id="blackjackDealButton"
-                onclick="dealBlackjack()"
-            >
-                🃏 DEAL
-            </button>
-
+            <label>Bet: <input id="blackjackBet" type="number" min="10" max="1000" step="10" value="100"></label>
+            <button class="normal" id="blackjackDealButton" onclick="dealBlackjack()">🃏 DEAL</button>
         </div>
-
         <h3>Goosey Dealer</h3>
-
         <div class="table" id="dealerBlackjackHand"></div>
-
         <div class="small" id="dealerBlackjackTotal"></div>
-
         <h3>Your Hand</h3>
-
         <div class="table" id="playerBlackjackHand"></div>
-
         <div class="small" id="playerBlackjackTotal"></div>
-
         <div class="game-controls">
-
-            <button
-                class="play"
-                id="blackjackHitButton"
-                onclick="hitBlackjack()"
-                disabled
-            >
-                👊 HIT
-            </button>
-
-            <button
-                class="normal"
-                id="blackjackStandButton"
-                onclick="standBlackjack()"
-                disabled
-            >
-                ✋ STAND
-            </button>
-
+            <button class="play" id="blackjackHitButton" onclick="hitBlackjack()" disabled>👊 HIT</button>
+            <button class="normal" id="blackjackStandButton" onclick="standBlackjack()" disabled>✋ STAND</button>
         </div>
-
-        <div class="status" id="blackjackStatus">
-            Set your bet and deal!
-        </div>
-
+        <div class="status" id="blackjackStatus">Set your bet and deal!</div>
         <div class="game-controls">
-
-            <button class="normal" onclick="dealBlackjack()">
-                🔁 PLAY AGAIN
-            </button>
-
-            <button class="bot-back" onclick="closeBlackjack()">
-                ← BACK TO CASINO
-            </button>
-
+            <button class="normal" onclick="dealBlackjack()">🔁 PLAY AGAIN</button>
+            <button class="bot-back" onclick="closeBlackjack()">← BACK TO CASINO</button>
         </div>
-
     </div>
 </div>
 
-<!-- ===================================== -->
 <!-- GOOSE RACING -->
-<!-- ===================================== -->
-
 <div class="modal" id="gooseRaceModal">
-
     <div class="panel">
-
-        <button class="close" onclick="closeGooseRace()">
-            ✕ CLOSE
-        </button>
-
+        <button class="close" onclick="closeGooseRace()">✕ CLOSE</button>
         <h2>🏁 GOOSE RACING</h2>
-
-        <p class="small">
-            You are broke! Race to earn GooseBucks.
-        </p>
-
-        <div
-            id="raceTrack"
-            style="
-                position: relative;
-                height: 260px;
-                margin: 20px 0;
-                overflow: hidden;
-                border-radius: 15px;
-                background: linear-gradient(#67b7ff, #dff5ff);
-                border: 3px solid #d4af37;
-            "
-        >
-
-            <div
-                style="
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    height: 80px;
-                    background: #4b8f38;
-                "
-            ></div>
-
-            <div
-                id="goose1"
-                style="
-                    position: absolute;
-                    left: 10px;
-                    top: 35px;
-                    font-size: 42px;
-                    transition: left .15s linear;
-                "
-            >🪿</div>
-
-            <div
-                id="goose2"
-                style="
-                    position: absolute;
-                    left: 10px;
-                    top: 100px;
-                    font-size: 42px;
-                    transition: left .15s linear;
-                "
-            >🪿</div>
-
-            <div
-                id="goose3"
-                style="
-                    position: absolute;
-                    left: 10px;
-                    top: 165px;
-                    font-size: 42px;
-                    transition: left .15s linear;
-                "
-            >🪿</div>
-
-            <div
-                style="
-                    position: absolute;
-                    right: 10px;
-                    top: 0;
-                    bottom: 0;
-                    width: 8px;
-                    background: white;
-                "
-            ></div>
-
+        <p class="small">Race to earn fictional GooseBucks!</p>
+        <div id="raceTrack" style="position:relative;height:260px;margin:20px 0;overflow:hidden;border-radius:15px;background:linear-gradient(#67b7ff,#dff5ff);border:3px solid #d4af37">
+            <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#4b8f38"></div>
+            <div id="goose1" style="position:absolute;left:10px;top:35px;font-size:42px;transition:left .15s linear">🪿</div>
+            <div id="goose2" style="position:absolute;left:10px;top:100px;font-size:42px;transition:left .15s linear">🪿</div>
+            <div id="goose3" style="position:absolute;left:10px;top:165px;font-size:42px;transition:left .15s linear">🪿</div>
+            <div style="position:absolute;right:10px;top:0;bottom:0;width:8px;background:white"></div>
         </div>
-
         <div class="game-controls">
-
-            <button
-                class="play"
-                id="startRaceButton"
-                onclick="startGooseRace()"
-            >
-                🏁 START RACE
-            </button>
-
+            <button class="play" id="startRaceButton" onclick="startGooseRace()">🏁 START RACE</button>
         </div>
-
-        <div class="status" id="gooseRaceStatus">
-            Ready to race!
-        </div>
-
+        <div class="status" id="gooseRaceStatus">Ready to race!</div>
         <div class="game-controls">
-
-            <button class="normal" onclick="closeGooseRace()">
-                ← BACK TO CASINO
-            </button>
-
+            <button class="normal" onclick="closeGooseRace()">← BACK TO CASINO</button>
         </div>
-
     </div>
 </div>
 
-<!-- CASINO JAVASCRIPT -->
-
-<script src="goosey-casino.js?v=4"></script>
-
+<script src="goosey-casino.js?v=6"></script>
 </body>
 </html>
