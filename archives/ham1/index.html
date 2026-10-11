@@ -1,12 +1,14 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Ham 1 - GooseyWorks Archives</title>
 
     <link rel="icon" type="image/png" href="../../logo.png">
+    <link rel="stylesheet" href="style.css">
 
     <style>
         :root {
@@ -81,7 +83,7 @@
 
         .archive-button {
             display: inline-block;
-            margin-top: 20px;
+            margin: 20px 10px 0 0;
             padding: 14px 22px;
             border-radius: 12px;
             border: 2px solid rgba(255,255,255,.15);
@@ -103,6 +105,35 @@
             transform: translateY(3px);
             box-shadow: 0 2px 0 #080d16;
         }
+
+        .download-button {
+            background: #245d45;
+        }
+
+        .download-button:hover {
+            background: #347b5b;
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: .95rem;
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 35px 0;
+            }
+
+            .panel {
+                padding: 22px;
+            }
+
+            .archive-button {
+                display: block;
+                text-align: center;
+                margin-right: 0;
+            }
+        }
     </style>
 </head>
 
@@ -110,7 +141,9 @@
 
 <div class="page">
 
-    <a class="back" href="../../#archives">← Back to GooseyWorks Archives</a>
+    <a class="back" href="../../#archives">
+        ← Back to GooseyWorks Archives
+    </a>
 
     <div class="eyebrow">GOOSEYWORKS ARCHIVES</div>
 
@@ -132,27 +165,50 @@
         </p>
 
         <p>
-            This version is preserved as part of the GooseyWorks archives.
+            This original version is preserved as part of the
+            GooseyWorks archives.
         </p>
 
-        <a class="archive-button" href="#ham-screen">
-            🐢 Open Original Ham 1
+        <a class="archive-button download-button"
+           href="Turtle_Life_1.py"
+           download>
+            📥 Download Turtle Life 1
+        </a>
+
+        <a class="archive-button"
+           href="code.html">
+            👀 View Python Code
+        </a>
+    </div>
+
+    <div class="panel" id="ham-screen">
+        <h2>🐢 Run Ham 1</h2>
+
+        <p>
+            The original Ham 1 was written in Python using Turtle.
+            The old browser embed used Trinket, so this archive now
+            provides the original Python file instead.
+        </p>
+
+        <p>
+            Download the file and run it using Python on your computer.
+            Python's Turtle graphics opens its own window.
+        </p>
+
+        <p class="note">
+            The archive preserves the original program rather than
+            replacing it with a JavaScript remake.
+        </p>
+
+        <a class="archive-button download-button"
+           href="Turtle_Life_1.py"
+           download>
+            🐢 Get Ham 1
         </a>
     </div>
 
 </div>
-    <div class="panel" id="ham-screen">
 
-    <h2>Play Ham 1</h2>
-<iframe
-    src="https://trinket.io/embed/python/efe85e1015fb?outputOnly=true&start=result"
-    width="100%" 
-    height="356"
-    frameborder="0"
-    marginwidth="0"
-    marginheight="0" 
-    allowfullscreen>
-    </iframe>
-    </div>
 </body>
 </html>
+```
