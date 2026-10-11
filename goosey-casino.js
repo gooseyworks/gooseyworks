@@ -1781,8 +1781,28 @@ function finishGooseRace(
     }
 
 }
+
 // ============================================
 // START
 // ============================================
 
 updateBalance();
+
+function updateRevivalUI() {
+    const revival = document.getElementById("zeroCashRevival");
+
+    if (!revival) return;
+
+    revival.style.display = balance <= 0 ? "block" : "none";
+}
+
+function claimZeroCashRevival() {
+    if (balance > 0) return;
+
+    balance += 500;
+    updateBalance();
+
+    alert("🪿 You received 500 emergency GooseBucks!");
+}
+
+updateRevivalUI();
