@@ -1336,22 +1336,36 @@ function startCrash() {
     }, 100);
 }
 
+
 function cashOutCrash() {
+    // You can only cash out during an active round.
     if (!crashActive) {
-        setArcadeStatus("There is no active round to cash out.");
+        setArcadeStatus("No active round! Start a new round first.");
         return;
     }
 
+    // End the round BEFORE awarding money, preventing repeat payouts.
     crashActive = false;
     stopCrashTimer();
 
-    const winnings = Math.floor(crashBet * crashMultiplier);
+    const finalMultiplier = crashMultiplier;
+    const winnings = Math.floor(crashBet * finalMultiplier);
+
+    // Prevent this round from being paid out again.
+    crashBet = 0;
+    crashMultiplier = 1;
+
+    const display = document.getElementById("crashMultiplier");
+    if (display) {
+        display.textContent = finalMultiplier.toFixed(2) + "x";
+    }
 
     award(winnings);
 
     setArcadeStatus(
-        "Cashed out at " + crashMultiplier.toFixed(2) +
-        "x! You received " + money(winnings) + "."
+        "Cashed out at " + finalMultiplier.toFixed(2) +
+        "x! You received " + money(winnings) +
+        ". Start a new round to play again."
     );
 }
 
