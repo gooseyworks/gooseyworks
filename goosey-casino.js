@@ -14,7 +14,7 @@ const OLD_BALANCE_KEYS = [
 ];
 const STARTING_BALANCE = 7500;
 const REVIVAL_AMOUNT = 500;
-
+3
 let balance = loadBalance();
 
 function loadBalance() {
