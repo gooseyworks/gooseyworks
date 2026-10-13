@@ -877,7 +877,7 @@ function openArcadeGame(game) {
     if (game === "Coin Flip") return playCoinFlip();
     if (game === "Dice Duel") return playDiceDuel();
     if (game === "Chicken") return openChicken();
-    if (game === "Goosey Crash") return openCrash();
+    if (game === "Goosey Crash") return openStockMarket();
     if (game === "Bomb Goose") return openBombGoose();
     if (game === "Goosey Pool") return openGooseyPool();
 
@@ -1836,3 +1836,452 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Update immediately too, in case this script loads after the page.
 updateBalance();
+
+/* =========================================================
+   GOOSEYWORKS UNIVERSAL STOCK MARKET — CLEAN VERSION
+   Simulated prices, persistent portfolio, market statistics.
+   ========================================================= */
+
+const STOCK_DB_KEY = "gooseyStockMarketCleanV2";
+
+const STOCKS = {
+    GWORKS:  { name: "GooseyWorks",          initial: 100,  sector: "GooseyWorks" },
+    ANGY:    { name: "AnGyCat-Animation",    initial: 65,   sector: "GooseyWorks" },
+    ACA:     { name: "ACAngyCap",            initial: 40,   sector: "GooseyWorks" },
+    SP500:   { name: "S&P 500 Tracker",      initial: 550,  sector: "Index tracker" },
+    NASDAQ:  { name: "Nasdaq-100 Tracker",   initial: 480,  sector: "Index tracker" },
+    AAPL:    { name: "Apple",               initial: 230,  sector: "Company tracker" },
+    MSFT:    { name: "Microsoft",           initial: 500,  sector: "Company tracker" }
+};
+
+let marketData = {};
+let portfolio = {};
+let selectedTicker = "GWORKS";
+let marketTimer = null;
+let marketLastMessage = "Welcome to the GooseyWorks stock market!";
+let marketLastTick = Date.now();
+
+function initializeMarket() {
+    let saved = null;
+
+    try {
+        saved = JSON.parse(localStorage.getItem(STOCK_DB_KEY));
+    } catch {
+        saved = null;
+    }
+
+    for (const [ticker, stock] of Object.entries(STOCKS)) {
+        const previous = saved?.market?.[ticker];
+
+        marketData[ticker] = previous &&
+            Number.isFinite(previous.price) &&
+            previous.price > 0
+            ? {
+                price: previous.price,
+                open: previous.open || previous.price,
+                high: previous.high || previous.price,
+                low: previous.low || previous.price,
+                previousClose: previous.previousClose || previous.price,
+                volume: previous.volume || 0,
+                change: previous.change || 0,
+                changePercent: previous.changePercent || 0
+            }
+            : {
+                price: stock.initial,
+                open: stock.initial,
+                high: stock.initial,
+                low: stock.initial,
+                previousClose: stock.initial,
+                volume: 0,
+                change: 0,
+                changePercent: 0
+            };
+
+        const savedShares = Number(saved?.portfolio?.[ticker] || 0);
+
+        portfolio[ticker] = {
+            shares: Number.isSafeInteger(savedShares) && savedShares >= 0
+                ? savedShares : 0,
+            costBasis: Math.max(0, Number(saved?.portfolio?.[ticker + "_cost"]) || 0)
+        };
+    }
+}
+
+function saveMarket() {
+    const data = {
+        market: marketData,
+        portfolio: {}
+    };
+
+    for (const ticker of Object.keys(STOCKS)) {
+        data.portfolio[ticker] = portfolio[ticker].shares;
+        data.portfolio[ticker + "_cost"] = portfolio[ticker].costBasis;
+    }
+
+    try {
+        localStorage.setItem(STOCK_DB_KEY, JSON.stringify(data));
+    } catch (error) {
+        console.warn("Could not save stock market.", error);
+    }
+}
+
+function gb(amount) {
+    return Math.floor(amount).toLocaleString() + " GB";
+}
+
+function stockPrice(amount) {
+    return amount.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + " GB";
+}
+
+function signedNumber(amount, decimals = 2) {
+    return (amount > 0 ? "+" : "") +
+        amount.toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        });
+}
+
+function marketChangeColor(amount) {
+    return amount > 0 ? "#65f59b" : amount < 0 ? "#ff7777" : "#ffffff";
+}
+
+function openStockMarket() {
+    stopStockMarketTimer();
+
+    showArcade(
+        "📈 GOOSEYWORKS UNIVERSAL STOCK MARKET",
+        `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0;">
+            <div style="background:#26344e;padding:12px;border-radius:10px;">
+                <small>AVAILABLE CASH</small>
+                <h3 id="marketCash">0 GB</h3>
+            </div>
+            <div style="background:#26344e;padding:12px;border-radius:10px;">
+                <small>PORTFOLIO VALUE</small>
+                <h3 id="marketPortfolioValue">0 GB</h3>
+            </div>
+            <div style="background:#26344e;padding:12px;border-radius:10px;">
+                <small>TOTAL WEALTH</small>
+                <h3 id="marketTotalWealth">0 GB</h3>
+            </div>
+        </div>
+
+        <p style="font-size:12px;opacity:.8;">
+            Simulated game market · Prices update every 5 seconds
+        </p>
+
+        <label for="marketTicker">Choose a market:</label>
+        <select id="marketTicker" onchange="selectMarketTicker(this.value)"
+            style="width:100%;padding:10px;margin:8px 0 15px;">
+            ${Object.entries(STOCKS).map(([ticker, stock]) => `
+                <option value="${ticker}" ${ticker === selectedTicker ? "selected" : ""}>
+                    ${stock.name} (${ticker})
+                </option>
+            `).join("")}
+        </select>
+
+        <div style="background:#26344e;border-radius:12px;padding:16px;text-align:left;margin-bottom:14px;">
+            <h2 id="marketStockName" style="margin-top:0;">GooseyWorks</h2>
+            <div style="font-size:34px;font-weight:bold;" id="marketCurrentPrice">100.00 GB</div>
+            <div id="marketChange" style="font-size:18px;margin:6px 0;">+0.00 GB (+0.00%)</div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px;">
+                <div><small>OPEN</small><div id="marketOpen">100 GB</div></div>
+                <div><small>PREVIOUS CLOSE</small><div id="marketPreviousClose">100 GB</div></div>
+                <div><small>DAY HIGH</small><div id="marketHigh">100 GB</div></div>
+                <div><small>DAY LOW</small><div id="marketLow">100 GB</div></div>
+                <div><small>VOLUME</small><div id="marketVolume">0 shares</div></div>
+                <div><small>YOUR SHARES</small><div id="marketOwned">0</div></div>
+            </div>
+        </div>
+
+        <div style="background:#26344e;border-radius:12px;padding:16px;margin-bottom:14px;text-align:left;">
+            <h3 style="margin-top:0;">Your Position</h3>
+            <p>Current value: <strong id="marketPositionValue">0 GB</strong></p>
+            <p>Invested cost: <strong id="marketCostBasis">0 GB</strong></p>
+            <p>Unrealized profit/loss: <strong id="marketProfitLoss">0 GB</strong></p>
+
+            <label for="marketShareCount">Shares to trade:</label>
+            <input id="marketShareCount" type="number" min="1" step="1" value="1"
+                oninput="renderStockMarket()"
+                style="display:block;width:100%;padding:10px;margin:8px 0;">
+
+            <p>Estimated purchase cost: <strong id="marketOrderCost">0 GB</strong></p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <button onclick="buyMarketShares()">BUY SHARES</button>
+                <button onclick="sellMarketShares()">SELL SHARES</button>
+                <button onclick="sellAllMarketShares()">SELL ALL</button>
+            </div>
+        </div>
+
+        <h3>📊 Current Market Watch</h3>
+        <div id="marketWatch" style="text-align:left;"></div>
+
+        <p style="font-size:12px;opacity:.8;">
+            This is a fictional game market. Real-world tickers are simulated
+            trackers, not live quotes or actual investments.
+        </p>
+        `,
+        marketLastMessage
+    );
+
+    renderStockMarket();
+
+    marketTimer = setInterval(() => {
+        if (document.getElementById("arcadeGameModal")?.style.display !== "none") {
+            tickStockMarket();
+        }
+    }, 5000);
+}
+
+function stopStockMarketTimer() {
+    if (marketTimer !== null) {
+        clearInterval(marketTimer);
+        marketTimer = null;
+    }
+}
+
+function selectMarketTicker(ticker) {
+    if (!STOCKS[ticker]) return;
+
+    selectedTicker = ticker;
+    renderStockMarket();
+}
+
+function calculatePortfolioValue() {
+    return Object.keys(STOCKS).reduce((total, ticker) => {
+        return total + marketData[ticker].price * portfolio[ticker].shares;
+    }, 0);
+}
+
+function renderStockMarket() {
+    const data = marketData[selectedTicker];
+    const stock = STOCKS[selectedTicker];
+    const holding = portfolio[selectedTicker];
+    if (!data || !stock || !holding) return;
+
+    const portfolioValue = calculatePortfolioValue();
+    const positionValue = data.price * holding.shares;
+    const profitLoss = positionValue - holding.costBasis;
+
+    const put = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+
+    put("marketCash", gb(balance));
+    put("marketPortfolioValue", gb(portfolioValue));
+    put("marketTotalWealth", gb(balance + portfolioValue));
+    put("marketStockName", stock.name + " (" + selectedTicker + ")");
+    put("marketCurrentPrice", stockPrice(data.price));
+    put("marketOpen", stockPrice(data.open));
+    put("marketPreviousClose", stockPrice(data.previousClose));
+    put("marketHigh", stockPrice(data.high));
+    put("marketLow", stockPrice(data.low));
+    put("marketVolume", data.volume.toLocaleString() + " shares");
+    put("marketOwned", holding.shares.toLocaleString());
+    put("marketPositionValue", gb(positionValue));
+    put("marketCostBasis", gb(holding.costBasis));
+    put("marketProfitLoss", (profitLoss >= 0 ? "+" : "") + gb(profitLoss));
+
+    const changeElement = document.getElementById("marketChange");
+    if (changeElement) {
+        changeElement.textContent =
+            signedNumber(data.change) + " GB (" +
+            signedNumber(data.changePercent) + "%)";
+        changeElement.style.color = marketChangeColor(data.change);
+    }
+
+    const profitElement = document.getElementById("marketProfitLoss");
+    if (profitElement) profitElement.style.color = marketChangeColor(profitLoss);
+
+    const input = document.getElementById("marketShareCount");
+    const shares = input ? Math.floor(Number(input.value)) : 1;
+    const validShares = Number.isSafeInteger(shares) && shares > 0 ? shares : 0;
+
+    put("marketOrderCost", gb(Math.ceil(data.price * validShares)));
+
+    const watch = document.getElementById("marketWatch");
+    if (watch) {
+        watch.innerHTML = Object.entries(STOCKS).map(([ticker, item]) => {
+            const row = marketData[ticker];
+            const owned = portfolio[ticker].shares;
+
+            return `
+                <button onclick="selectMarketTicker('${ticker}')"
+                    style="
+                        display:flex;justify-content:space-between;align-items:center;
+                        gap:10px;width:100%;padding:11px;margin:5px 0;
+                        border-radius:8px;cursor:pointer;text-align:left;
+                        background:${ticker === selectedTicker ? "#36517a" : "#26344e"};
+                        color:white;border:1px solid #536785;">
+                    <span>
+                        <strong>${item.name}</strong><br>
+                        <small>${ticker} · ${owned.toLocaleString()} shares owned</small>
+                    </span>
+                    <span style="text-align:right;">
+                        <strong>${stockPrice(row.price)}</strong><br>
+                        <small style="color:${marketChangeColor(row.change)}">
+                            ${signedNumber(row.changePercent)}%
+                        </small>
+                    </span>
+                </button>
+            `;
+        }).join("");
+    }
+}
+
+function tickStockMarket() {
+    for (const ticker of Object.keys(STOCKS)) {
+        const data = marketData[ticker];
+
+        // Random simulated price movement, generally small.
+        const percentMove = (Math.random() - 0.49) * 0.025;
+        const newPrice = Math.max(
+            0.01,
+            Math.round(data.price * (1 + percentMove) * 100) / 100
+        );
+
+        data.price = newPrice;
+        data.high = Math.max(data.high, newPrice);
+        data.low = Math.min(data.low, newPrice);
+        data.change = Math.round((newPrice - data.previousClose) * 100) / 100;
+        data.changePercent = data.previousClose
+            ? (data.change / data.previousClose) * 100
+            : 0;
+
+        data.volume += getRandom(10, 500);
+    }
+
+    marketLastTick = Date.now();
+    saveMarket();
+    renderStockMarket();
+}
+
+function getMarketTradeShares() {
+    const input = document.getElementById("marketShareCount");
+    const shares = input ? Number(input.value) : 1;
+
+    if (!Number.isSafeInteger(shares) || shares < 1) {
+        marketLastMessage = "Enter a positive whole number of shares.";
+        setArcadeStatus(marketLastMessage);
+        return null;
+    }
+
+    return shares;
+}
+
+function buyMarketShares() {
+    const shares = getMarketTradeShares();
+    if (shares === null) return;
+
+    const ticker = selectedTicker;
+    const cost = Math.ceil(marketData[ticker].price * shares);
+    const holding = portfolio[ticker];
+
+    if (!Number.isSafeInteger(cost) || cost < 1 || cost > balance) {
+        marketLastMessage = "Not enough GooseBucks for that purchase.";
+        setArcadeStatus(marketLastMessage);
+        return;
+    }
+
+    const newShareCount = holding.shares + shares;
+
+    if (!Number.isSafeInteger(newShareCount)) {
+        marketLastMessage = "That order is too large.";
+        setArcadeStatus(marketLastMessage);
+        return;
+    }
+
+    // Charge cash and record the shares in one transaction.
+    balance -= cost;
+    holding.shares = newShareCount;
+    holding.costBasis += cost;
+
+    saveMarket();
+    updateBalance();
+
+    marketLastMessage =
+        "Bought " + shares + " " + ticker + " share(s) for " + gb(cost) + ".";
+
+    setArcadeStatus(marketLastMessage);
+    renderStockMarket();
+}
+
+function sellMarketShares() {
+    const shares = getMarketTradeShares();
+    if (shares === null) return;
+
+    const ticker = selectedTicker;
+    const holding = portfolio[ticker];
+
+    if (shares > holding.shares) {
+        marketLastMessage =
+            "You only own " + holding.shares + " share(s) of " + ticker + ".";
+        setArcadeStatus(marketLastMessage);
+        return;
+    }
+
+    const proceeds = Math.floor(marketData[ticker].price * shares);
+    const costRemoved = holding.shares > 0
+        ? holding.costBasis * (shares / holding.shares)
+        : 0;
+
+    // Remove shares before paying out the sale.
+    holding.shares -= shares;
+    holding.costBasis = Math.max(0, holding.costBasis - costRemoved);
+    balance += proceeds;
+
+    saveMarket();
+    updateBalance();
+
+    marketLastMessage =
+        "Sold " + shares + " " + ticker + " share(s) for " + gb(proceeds) + ".";
+
+    setArcadeStatus(marketLastMessage);
+    renderStockMarket();
+}
+
+function sellAllMarketShares() {
+    const ticker = selectedTicker;
+    const holding = portfolio[ticker];
+
+    if (holding.shares < 1) {
+        marketLastMessage = "You don't own any shares of " + ticker + ".";
+        setArcadeStatus(marketLastMessage);
+        return;
+    }
+
+    const shares = holding.shares;
+    const proceeds = Math.floor(marketData[ticker].price * shares);
+
+    // Sell the entire position exactly once.
+    holding.shares = 0;
+    holding.costBasis = 0;
+    balance += proceeds;
+
+    saveMarket();
+    updateBalance();
+
+    marketLastMessage =
+        "Sold all " + shares + " " + ticker + " share(s) for " + gb(proceeds) + ".";
+
+    setArcadeStatus(marketLastMessage);
+    renderStockMarket();
+}
+
+// Initialize saved prices and holdings once.
+initializeMarket();
+
+// Stop timers when the dynamic arcade window closes.
+function closeArcadeGame() {
+    const modal = document.getElementById("arcadeGameModal");
+    if (modal) modal.style.display = "none";
+
+    stopCrashTimer();
+    stopStockMarketTimer();
+}
