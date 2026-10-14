@@ -14,7 +14,9 @@ const OLD_BALANCE_KEYS = [
 ];
 const STARTING_BALANCE = 7500;
 const REVIVAL_AMOUNT = 500;
-3
+// TEMPORARY GOOSEBUCKS RESET
+localStorage.setItem("gooseyCasinoBalanceV3", "7500");
+localStorage.setItem("gooseyCasinoBalance", "7500");
 let balance = loadBalance();
 
 function loadBalance() {
