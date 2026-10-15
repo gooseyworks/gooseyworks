@@ -1740,62 +1740,737 @@ function setRaceStatus(message) {
         setArcadeStatus(message);
     }
 }
-
 /* =========================================================
-   GOOSEY POOL — SIMPLE SHOT CHALLENGE
+   GOOSEY POOL — PHYSICS-BASED 8-BALL POOL
+   Local two-player mode; multiplayer networking comes later.
    ========================================================= */
 
+const POOL_W = 900;
+const POOL_H = 450;
+const POOL_RADIUS = 10;
+const POOL_POCKET_RADIUS = 23;
+
+let poolCanvas = null;
+let poolCtx = null;
+let poolBalls = [];
+let poolAnimation = null;
+let poolRunning = false;
+let poolAiming = false;
+let poolAimPoint = null;
+let poolShotInProgress = false;
+let poolBallInHand = false;
+let poolCurrentPlayer = 1;
+let poolGroups = { 1: null, 2: null };
+let poolPocketedThisShot = [];
+let poolFoulThisShot = false;
+let poolWinner = null;
+let poolMessage = "";
+let poolLastTime = 0;
+
+const POOL_POCKETS = [
+    { x: 20, y: 20 },
+    { x: POOL_W / 2, y: 18 },
+    { x: POOL_W - 20, y: 20 },
+    { x: 20, y: POOL_H - 20 },
+    { x: POOL_W / 2, y: POOL_H - 18 },
+    { x: POOL_W - 20, y: POOL_H - 20 }
+];
+
 function openGooseyPool() {
+    stopPoolGame();
+
+    poolRunning = true;
+    poolAiming = false;
+    poolShotInProgress = false;
+    poolBallInHand = false;
+    poolCurrentPlayer = 1;
+    poolGroups = { 1: null, 2: null };
+    poolPocketedThisShot = [];
+    poolFoulThisShot = false;
+    poolWinner = null;
+    poolMessage = "Player 1 breaks! Drag from the cue ball toward your shot, then release.";
+    poolLastTime = 0;
+
     showArcade(
-        "🎱 GOOSEY POOL",
+        "🎱 GOOSEY POOL — 8-BALL",
         `
-        <p>Try to sink the ball into a pocket.</p>
-        <label>Bet (GB):
-            <input id="poolBet" type="number" min="1" max="${balance}"
-                value="${Math.min(100, balance)}">
-        </label>
-        <p>Choose your shot strength.</p>
-        <input id="poolStrength" type="range" min="1" max="10" value="5"
-            oninput="document.getElementById('poolStrengthValue').textContent=this.value">
-        <span id="poolStrengthValue">5</span>
+        <p style="margin:4px 0 10px;">
+            A real pool-style game with aiming, ball collisions, cushions,
+            six pockets, solids, stripes and the 8-ball.
+        </p>
+
         <div style="
-            background:#167447;padding:20px;border:6px solid #754321;
-            border-radius:15px;margin:15px auto;max-width:420px;">
-            <div style="display:flex;justify-content:space-between;">
-                <span>⚪</span><span>🕳️</span>
+            background:#102d20;
+            border:2px solid #d4af37;
+            border-radius:10px;
+            padding:8px;
+            margin-bottom:10px;
+            text-align:left;">
+            <strong id="poolTurn">Player 1's turn</strong>
+            <div id="poolGroups" style="margin-top:5px;font-size:13px;">
+                Player 1: unassigned · Player 2: unassigned
             </div>
-            <p>GOOSEY POOL TABLE</p>
         </div>
-        <button onclick="takePoolShot()">TAKE SHOT</button>
+
+        <canvas id="gooseyPoolCanvas"
+            width="900" height="450"
+            style="
+                display:block;
+                width:100%;
+                height:auto;
+                border:4px solid #754321;
+                border-radius:8px;
+                background:#146b43;
+                touch-action:none;
+                cursor:crosshair;">
+        </canvas>
+
+        <p id="poolInstructions" style="
+            white-space:pre-line;
+            min-height:45px;
+            background:#102d20;
+            border-radius:8px;
+            padding:10px;
+            font-size:13px;">
+        </p>
+
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <button onclick="resetGooseyPool()">🔄 NEW GAME</button>
+            <button onclick="closeArcadeGame()">← BACK TO CASINO</button>
+        </div>
+
+        <p style="font-size:12px;opacity:.75;">
+            Local two-player mode. Both players take turns on this device.
+            Online play will be added when the multiplayer backend is ready.
+        </p>
         `,
-        "A good shot can pay 2x or 4x."
+        poolMessage
     );
+
+    poolCanvas = document.getElementById("gooseyPoolCanvas");
+    poolCtx = poolCanvas.getContext("2d");
+
+    createPoolBalls();
+    attachPoolControls();
+    renderPoolInfo();
+    drawPoolTable();
+
+    poolAnimation = requestAnimationFrame(poolFrame);
 }
 
-function takePoolShot() {
-    const amount = getInputBet("poolBet", 100);
+function stopPoolGame() {
+    poolRunning = false;
+    poolAiming = false;
 
-    if (amount === null || !placeBet(amount)) return;
-
-    const strengthInput = document.getElementById("poolStrength");
-    const strength = strengthInput ? Number(strengthInput.value) : 5;
-
-    const distance = Math.abs(strength - 6);
-    const chance = Math.max(0.12, 0.7 - distance * 0.08);
-    const roll = Math.random();
-
-    if (roll < chance * 0.25) {
-        award(amount * 4);
-        setArcadeStatus("AMAZING SHOT! You sank it cleanly and won " +
-            money(amount * 4) + "!");
-    } else if (roll < chance) {
-        award(amount * 2);
-        setArcadeStatus("Nice shot! You won " + money(amount * 2) + ".");
-    } else {
-        setArcadeStatus("Scratch! You missed the pocket.");
+    if (poolAnimation !== null) {
+        cancelAnimationFrame(poolAnimation);
+        poolAnimation = null;
     }
 }
 
+function resetGooseyPool() {
+    stopPoolGame();
+    openGooseyPool();
+}
+
+function createPoolBalls() {
+    poolBalls = [];
+
+    // Cue ball.
+    poolBalls.push({
+        id: 0,
+        x: 235,
+        y: POOL_H / 2,
+        vx: 0,
+        vy: 0,
+        radius: POOL_RADIUS,
+        type: "cue",
+        pocketed: false
+    });
+
+    // Standard 8-ball rack.
+    const rack = [
+        [1, "solid"], [9, "stripe"], [2, "solid"],
+        [10, "stripe"], [8, "eight"], [3, "solid"],
+        [11, "stripe"], [4, "solid"], [12, "stripe"],
+        [5, "solid"], [13, "stripe"], [6, "solid"],
+        [14, "stripe"], [7, "solid"], [15, "stripe"]
+    ];
+
+    const startX = 640;
+    const startY = POOL_H / 2;
+    const spacing = POOL_RADIUS * 2 + 1;
+
+    let index = 0;
+
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col <= row; col++) {
+            const [id, type] = rack[index++];
+
+            poolBalls.push({
+                id,
+                x: startX + row * spacing * 0.88,
+                y: startY + (col - row / 2) * spacing,
+                vx: 0,
+                vy: 0,
+                radius: POOL_RADIUS,
+                type,
+                pocketed: false
+            });
+        }
+    }
+}
+
+function attachPoolControls() {
+    if (!poolCanvas) return;
+
+    poolCanvas.onpointerdown = event => {
+        if (!poolRunning || poolWinner || poolShotInProgress) return;
+
+        const point = getPoolPointer(event);
+
+        if (poolBallInHand) {
+            const cue = poolBalls.find(ball => ball.type === "cue");
+
+            if (!cue || !isInsidePool(point.x, point.y, cue.radius)) return;
+            if (poolBalls.some(ball =>
+                !ball.pocketed &&
+                ball !== cue &&
+                Math.hypot(ball.x - point.x, ball.y - point.y) <
+                    ball.radius + cue.radius + 2
+            )) return;
+
+            cue.x = point.x;
+            cue.y = point.y;
+            cue.vx = 0;
+            cue.vy = 0;
+            cue.pocketed = false;
+
+            poolBallInHand = false;
+            poolMessage = "Cue ball placed. Aim your shot!";
+            drawPoolTable();
+            renderPoolInfo();
+            return;
+        }
+
+        const cue = poolBalls.find(ball =>
+            ball.type === "cue" && !ball.pocketed
+        );
+
+        if (!cue) return;
+
+        poolAiming = true;
+        poolAimPoint = point;
+
+        poolCanvas.setPointerCapture(event.pointerId);
+        drawPoolTable();
+    };
+
+    poolCanvas.onpointermove = event => {
+        if (!poolAiming || !poolRunning) return;
+
+        poolAimPoint = getPoolPointer(event);
+        drawPoolTable();
+    };
+
+    poolCanvas.onpointerup = event => {
+        if (!poolAiming || !poolRunning) return;
+
+        poolAimPoint = getPoolPointer(event);
+        poolAiming = false;
+
+        shootPoolCue();
+    };
+
+    poolCanvas.onpointercancel = () => {
+        poolAiming = false;
+        poolAimPoint = null;
+        drawPoolTable();
+    };
+}
+
+function getPoolPointer(event) {
+    const rect = poolCanvas.getBoundingClientRect();
+
+    return {
+        x: (event.clientX - rect.left) * POOL_W / rect.width,
+        y: (event.clientY - rect.top) * POOL_H / rect.height
+    };
+}
+
+function isInsidePool(x, y, radius = 0) {
+    return x >= radius + 12 &&
+        x <= POOL_W - radius - 12 &&
+        y >= radius + 12 &&
+        y <= POOL_H - radius - 12;
+}
+
+function shootPoolCue() {
+    const cue = poolBalls.find(ball =>
+        ball.type === "cue" && !ball.pocketed
+    );
+
+    if (!cue || !poolAimPoint || poolWinner || poolBallInHand) return;
+
+    const dx = poolAimPoint.x - cue.x;
+    const dy = poolAimPoint.y - cue.y;
+    const distance = Math.hypot(dx, dy);
+
+    poolAimPoint = null;
+
+    if (distance < 12) {
+        drawPoolTable();
+        return;
+    }
+
+    // Pull farther from the cue ball for a stronger shot.
+    const power = Math.min(950, distance * 8);
+
+    cue.vx = dx / distance * power;
+    cue.vy = dy / distance * power;
+
+    poolShotInProgress = true;
+    poolPocketedThisShot = [];
+    poolFoulThisShot = false;
+    poolMessage = "Player " + poolCurrentPlayer + " takes the shot!";
+    renderPoolInfo();
+    drawPoolTable();
+}
+
+function poolFrame(time) {
+    if (!poolRunning) return;
+
+    if (poolCanvas &&
+        document.getElementById("arcadeGameModal")?.style.display === "none") {
+        stopPoolGame();
+        return;
+    }
+
+    const delta = poolLastTime ? Math.min((time - poolLastTime) / 16.67, 2) : 1;
+    poolLastTime = time;
+
+    if (poolShotInProgress) {
+        for (let step = 0; step < Math.ceil(delta); step++) {
+            updatePoolPhysics();
+        }
+
+        if (poolBallsAreStopped()) {
+            finishPoolShot();
+        }
+    }
+
+    drawPoolTable();
+    poolAnimation = requestAnimationFrame(poolFrame);
+}
+
+function updatePoolPhysics() {
+    for (const ball of poolBalls) {
+        if (ball.pocketed) continue;
+
+        ball.x += ball.vx / 60;
+        ball.y += ball.vy / 60;
+
+        // Rolling friction.
+        ball.vx *= 0.988;
+        ball.vy *= 0.988;
+
+        if (Math.abs(ball.vx) < 0.08) ball.vx = 0;
+        if (Math.abs(ball.vy) < 0.08) ball.vy = 0;
+
+        // Cushion collisions.
+        const left = 13 + ball.radius;
+        const right = POOL_W - 13 - ball.radius;
+        const top = 13 + ball.radius;
+        const bottom = POOL_H - 13 - ball.radius;
+
+        if (ball.x < left) {
+            ball.x = left;
+            ball.vx = Math.abs(ball.vx) * 0.82;
+        } else if (ball.x > right) {
+            ball.x = right;
+            ball.vx = -Math.abs(ball.vx) * 0.82;
+        }
+
+        if (ball.y < top) {
+            ball.y = top;
+            ball.vy = Math.abs(ball.vy) * 0.82;
+        } else if (ball.y > bottom) {
+            ball.y = bottom;
+            ball.vy = -Math.abs(ball.vy) * 0.82;
+        }
+
+        // Pocket detection.
+        for (const pocket of POOL_POCKETS) {
+            if (Math.hypot(ball.x - pocket.x, ball.y - pocket.y) <
+                POOL_POCKET_RADIUS) {
+                pocketPoolBall(ball);
+                break;
+            }
+        }
+    }
+
+    // Ball-to-ball collisions.
+    for (let i = 0; i < poolBalls.length; i++) {
+        const a = poolBalls[i];
+        if (a.pocketed) continue;
+
+        for (let j = i + 1; j < poolBalls.length; j++) {
+            const b = poolBalls[j];
+            if (b.pocketed) continue;
+
+            let dx = b.x - a.x;
+            let dy = b.y - a.y;
+            let distance = Math.hypot(dx, dy);
+            const minDistance = a.radius + b.radius;
+
+            if (distance >= minDistance) continue;
+
+            if (distance === 0) {
+                dx = 0.01;
+                distance = 0.01;
+            }
+
+            const nx = dx / distance;
+            const ny = dy / distance;
+            const overlap = minDistance - distance;
+
+            // Separate overlapping balls.
+            a.x -= nx * overlap / 2;
+            a.y -= ny * overlap / 2;
+            b.x += nx * overlap / 2;
+            b.y += ny * overlap / 2;
+
+            // Elastic collision along the line between ball centers.
+            const relativeVelocity =
+                (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+
+            if (relativeVelocity > 0) {
+                a.vx -= relativeVelocity * nx;
+                a.vy -= relativeVelocity * ny;
+                b.vx += relativeVelocity * nx;
+                b.vy += relativeVelocity * ny;
+            }
+        }
+    }
+}
+
+function pocketPoolBall(ball) {
+    if (ball.pocketed) return;
+
+    ball.pocketed = true;
+    ball.vx = 0;
+    ball.vy = 0;
+
+    if (ball.type === "cue") {
+        poolFoulThisShot = true;
+        poolMessage = "FOUL! The cue ball was pocketed.";
+        return;
+    }
+
+    poolPocketedThisShot.push(ball);
+}
+
+function poolBallsAreStopped() {
+    return poolBalls.every(ball =>
+        ball.pocketed ||
+        (Math.abs(ball.vx) < 0.35 && Math.abs(ball.vy) < 0.35)
+    );
+}
+
+function poolRemaining(group) {
+    return poolBalls.filter(ball =>
+        !ball.pocketed && ball.type === group
+    ).length;
+}
+
+function finishPoolShot() {
+    poolShotInProgress = false;
+
+    const eightBallPocketed = poolPocketedThisShot.some(ball =>
+        ball.type === "eight"
+    );
+
+    const cue = poolBalls.find(ball => ball.type === "cue");
+
+    if (eightBallPocketed) {
+        const group = poolGroups[poolCurrentPlayer];
+        const cleared = group && poolRemaining(group) === 0;
+
+        poolWinner = cleared && !poolFoulThisShot
+            ? poolCurrentPlayer
+            : 3 - poolCurrentPlayer;
+
+        poolMessage = poolWinner === poolCurrentPlayer
+            ? "🎉 PLAYER " + poolWinner + " WINS! The 8-ball was pocketed legally!"
+            : "❌ PLAYER " + poolCurrentPlayer +
+              " loses! The 8-ball was pocketed too early or on a foul.";
+
+        renderPoolInfo();
+        return;
+    }
+
+    if (poolFoulThisShot) {
+        if (cue) {
+            cue.pocketed = false;
+            cue.x = 235;
+            cue.y = POOL_H / 2;
+            cue.vx = 0;
+            cue.vy = 0;
+        }
+
+        poolCurrentPlayer = 3 - poolCurrentPlayer;
+        poolBallInHand = true;
+        poolMessage =
+            "Foul! Player " + poolCurrentPlayer +
+            " gets ball in hand. Click an empty spot on the table to place the cue ball.";
+        renderPoolInfo();
+        return;
+    }
+
+    // Assign solids or stripes when the first object ball is pocketed.
+    if (!poolGroups[1] && !poolGroups[2]) {
+        const first = poolPocketedThisShot.find(ball =>
+            ball.type === "solid" || ball.type === "stripe"
+        );
+
+        if (first) {
+            poolGroups[poolCurrentPlayer] = first.type;
+            poolGroups[3 - poolCurrentPlayer] =
+                first.type === "solid" ? "stripe" : "solid";
+        }
+    }
+
+    const group = poolGroups[poolCurrentPlayer];
+    const pocketedOwnBall = group && poolPocketedThisShot.some(ball =>
+        ball.type === group
+    );
+
+    if (pocketedOwnBall) {
+        poolMessage =
+            "Nice shot, Player " + poolCurrentPlayer +
+            "! You pocketed one of your balls. Shoot again.";
+    } else {
+        poolCurrentPlayer = 3 - poolCurrentPlayer;
+        poolMessage =
+            "Turn over. Player " + poolCurrentPlayer + ", take your shot!";
+    }
+
+    poolPocketedThisShot = [];
+    renderPoolInfo();
+}
+
+function drawPoolTable() {
+    if (!poolCtx || !poolCanvas) return;
+
+    const ctx = poolCtx;
+
+    // Table surface.
+    ctx.clearRect(0, 0, POOL_W, POOL_H);
+    ctx.fillStyle = "#754321";
+    ctx.fillRect(0, 0, POOL_W, POOL_H);
+
+    ctx.fillStyle = "#0b5836";
+    ctx.fillRect(12, 12, POOL_W - 24, POOL_H - 24);
+
+    ctx.fillStyle = "#197747";
+    ctx.fillRect(25, 25, POOL_W - 50, POOL_H - 50);
+
+    // Table diamonds.
+    ctx.fillStyle = "#f0d7a0";
+
+    for (let x = 100; x < POOL_W - 50; x += 100) {
+        ctx.beginPath();
+        ctx.moveTo(x, 5);
+        ctx.lineTo(x + 5, 12);
+        ctx.lineTo(x, 19);
+        ctx.lineTo(x - 5, 12);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(x, POOL_H - 5);
+        ctx.lineTo(x + 5, POOL_H - 12);
+        ctx.lineTo(x, POOL_H - 19);
+        ctx.lineTo(x - 5, POOL_H - 12);
+        ctx.fill();
+    }
+
+    // Six pockets.
+    for (const pocket of POOL_POCKETS) {
+        ctx.beginPath();
+        ctx.arc(pocket.x, pocket.y, POOL_POCKET_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = "#050505";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(pocket.x, pocket.y, POOL_POCKET_RADIUS - 4, 0, Math.PI * 2);
+        ctx.fillStyle = "#161616";
+        ctx.fill();
+    }
+
+    // Balls.
+    for (const ball of poolBalls) {
+        if (ball.pocketed) continue;
+        drawPoolBall(ctx, ball);
+    }
+
+    // Aim guide.
+    const cue = poolBalls.find(ball =>
+        ball.type === "cue" && !ball.pocketed
+    );
+
+    if (poolAiming && cue && poolAimPoint) {
+        const dx = poolAimPoint.x - cue.x;
+        const dy = poolAimPoint.y - cue.y;
+        const length = Math.hypot(dx, dy);
+
+        if (length > 0) {
+            const ux = dx / length;
+            const uy = dy / length;
+
+            ctx.save();
+            ctx.setLineDash([8, 7]);
+            ctx.strokeStyle = "#fff9b0";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cue.x, cue.y);
+            ctx.lineTo(
+                cue.x + ux * Math.min(length * 2, 250),
+                cue.y + uy * Math.min(length * 2, 250)
+            );
+            ctx.stroke();
+            ctx.restore();
+
+            // Cue stick.
+            ctx.strokeStyle = "#d2a36b";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(
+                cue.x - ux * (POOL_RADIUS + 10),
+                cue.y - uy * (POOL_RADIUS + 10)
+            );
+            ctx.lineTo(
+                cue.x - ux * Math.min(length * 0.65 + 45, 130),
+                cue.y - uy * Math.min(length * 0.65 + 45, 130)
+            );
+            ctx.stroke();
+        }
+    }
+
+    // Ball-in-hand instruction.
+    if (poolBallInHand) {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 19px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PLACE THE CUE BALL", POOL_W / 2, 42);
+    }
+
+    // Winner overlay.
+    if (poolWinner) {
+        ctx.fillStyle = "#000b";
+        ctx.fillRect(150, 165, POOL_W - 300, 110);
+        ctx.fillStyle = "#f3d36a";
+        ctx.font = "bold 30px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PLAYER " + poolWinner + " WINS!", POOL_W / 2, 210);
+        ctx.fillStyle = "white";
+        ctx.font = "16px Arial";
+        ctx.fillText("Press NEW GAME to play again", POOL_W / 2, 245);
+    }
+}
+
+function drawPoolBall(ctx, ball) {
+    const x = ball.x;
+    const y = ball.y;
+    const r = ball.radius;
+
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(x + 2, y + 3, r, 0, Math.PI * 2);
+    ctx.fillStyle = "#0005";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+
+    if (ball.type === "cue") {
+        ctx.fillStyle = "#fff";
+    } else if (ball.type === "eight") {
+        ctx.fillStyle = "#101010";
+    } else {
+        const colors = {
+            1: "#f5d342", 2: "#315bd8", 3: "#d83a36",
+            4: "#8148ba", 5: "#ef8c24", 6: "#29965b",
+            7: "#813d29", 9: "#f5d342", 10: "#315bd8",
+            11: "#d83a36", 12: "#8148ba", 13: "#ef8c24",
+            14: "#29965b", 15: "#813d29"
+        };
+
+        ctx.fillStyle = colors[ball.id] || "#ddd";
+    }
+
+    ctx.fill();
+
+    if (ball.type === "stripe") {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, r - 1, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x - r, y - r * 0.42, r * 2, r * 0.84);
+        ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(x - 3, y - 3, r * 0.27, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+
+    if (ball.type !== "cue") {
+        ctx.beginPath();
+        ctx.arc(x, y, r * 0.48, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.fillStyle = "#111";
+        ctx.font = "bold 9px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(ball.type === "eight" ? "8" : String(ball.id), x, y);
+    }
+
+    ctx.restore();
+}
+
+function renderPoolInfo() {
+    const turn = document.getElementById("poolTurn");
+    const groups = document.getElementById("poolGroups");
+    const instructions = document.getElementById("poolInstructions");
+
+    if (turn) {
+        turn.textContent = poolWinner
+            ? "Player " + poolWinner + " wins!"
+            : "Player " + poolCurrentPlayer + "'s turn";
+    }
+
+    if (groups) {
+        const label = group => {
+            if (!group) return "unassigned";
+            return group === "solid" ? "solids" : "stripes";
+        };
+
+        groups.textContent =
+            "Player 1: " + label(poolGroups[1]) +
+            " · Player 2: " + label(poolGroups[2]);
+    }
+
+    if (instructions) {
+        instructions.textContent = poolMessage;
+    }
+
+    setArcadeStatus(poolMessage);
+}
 /* =========================================================
    MODAL CLOSE HELPERS
    ========================================================= */
