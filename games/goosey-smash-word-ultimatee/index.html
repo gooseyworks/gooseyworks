@@ -1,8 +1,8 @@
+
 <!doctype html>
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
 
     <meta
@@ -10,10 +10,9 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Goosey Smash World Ultimate — Nathaniel Update v1.0.2</title>
+    <title>Goosey Smash World Ultimate — Version 1.1.4 Sound Update</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -39,9 +38,7 @@
         #gameBackground {
             position: fixed;
             inset: 0;
-
             z-index: 0;
-
             overflow: hidden;
             pointer-events: none;
 
@@ -53,23 +50,16 @@
                     #08111f 100%
                 );
 
-            transition:
-                background 0.8s ease;
+            transition: background 0.8s ease;
         }
-
-        /* BIG MOVING GLOW */
 
         #gameBackground::before {
             content: "";
-
             position: absolute;
-
             width: 70vw;
             height: 70vw;
-
             left: -25vw;
             top: -15vw;
-
             border-radius: 50%;
 
             background:
@@ -80,27 +70,16 @@
                 );
 
             filter: blur(25px);
-
-            animation:
-                gooseyOrb1
-                6s
-                ease-in-out
-                infinite;
+            animation: gooseyOrb1 6s ease-in-out infinite;
         }
-
-        /* SECOND MOVING GLOW */
 
         #gameBackground::after {
             content: "";
-
             position: absolute;
-
             width: 60vw;
             height: 60vw;
-
             right: -20vw;
             bottom: -20vw;
-
             border-radius: 50%;
 
             background:
@@ -111,43 +90,26 @@
                 );
 
             filter: blur(25px);
-
-            animation:
-                gooseyOrb2
-                8s
-                ease-in-out
-                infinite;
+            animation: gooseyOrb2 8s ease-in-out infinite;
         }
 
         @keyframes gooseyOrb1 {
-
-            0%,
-            100% {
-                transform:
-                    translate(0, 0)
-                    scale(1);
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
             }
 
             50% {
-                transform:
-                    translate(25vw, 18vh)
-                    scale(1.25);
+                transform: translate(25vw, 18vh) scale(1.25);
             }
         }
 
         @keyframes gooseyOrb2 {
-
-            0%,
-            100% {
-                transform:
-                    translate(0, 0)
-                    scale(1);
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
             }
 
             50% {
-                transform:
-                    translate(-20vw, -15vh)
-                    scale(1.3);
+                transform: translate(-20vw, -15vh) scale(1.3);
             }
         }
 
@@ -157,28 +119,14 @@
 
         .goosey-particle {
             position: absolute;
-
             width: 8px;
             height: 8px;
-
             border-radius: 50%;
 
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.65
-                );
+            background: rgba(255, 255, 255, 0.65);
 
             box-shadow:
-                0 0 12px
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.8
-                );
+                0 0 12px rgba(255, 255, 255, 0.8);
 
             animation:
                 gooseyParticleFloat
@@ -188,21 +136,13 @@
         }
 
         @keyframes gooseyParticleFloat {
-
-            0%,
-            100% {
-                transform:
-                    translateY(0)
-                    scale(1);
-
+            0%, 100% {
+                transform: translateY(0) scale(1);
                 opacity: 0.25;
             }
 
             50% {
-                transform:
-                    translateY(-70px)
-                    scale(1.8);
-
+                transform: translateY(-70px) scale(1.8);
                 opacity: 0.9;
             }
         }
@@ -213,33 +153,18 @@
 
         #topBar {
             position: fixed;
-
             top: 0;
             left: 0;
-
             width: 100%;
-
             padding: 10px;
-
             text-align: center;
-
             z-index: 20;
 
             background:
                 linear-gradient(
                     to bottom,
-                    rgba(
-                        8,
-                        17,
-                        31,
-                        0.95
-                    ),
-                    rgba(
-                        8,
-                        17,
-                        31,
-                        0.35
-                    )
+                    rgba(8, 17, 31, 0.95),
+                    rgba(8, 17, 31, 0.35)
                 );
 
             pointer-events: none;
@@ -249,29 +174,17 @@
             margin: 0;
 
             font-size:
-                clamp(
-                    1.2rem,
-                    3vw,
-                    2.2rem
-                );
+                clamp(1.2rem, 3vw, 2.2rem);
 
             font-weight: 900;
 
             text-shadow:
-                0 0 15px
-                rgba(
-                    114,
-                    229,
-                    255,
-                    0.65
-                );
+                0 0 15px rgba(114, 229, 255, 0.65);
         }
 
         #topBar p {
             margin: 2px 0 0;
-
             color: #b9c6da;
-
             font-size: 0.8rem;
         }
 
@@ -281,83 +194,89 @@
 
         #game {
             position: relative;
-
             width: 100%;
             height: 100%;
-
             z-index: 10;
 
             display: flex;
-
             justify-content: center;
             align-items: center;
         }
 
-        /* ==================================================
-           🎮 KAPLAY CANVAS
-           ================================================== */
-
         canvas {
             position: fixed;
-
             left: 50%;
-            top: 54%;
+            top: 52%;
 
-            transform:
-                translate(
-                    -50%,
-                    -50%
-                );
+            transform: translate(-50%, -50%);
 
             width:
                 min(
                     96vw,
-                    calc(
-                        88vh *
-                        1.7777778
-                    )
+                    calc(72vh * 1.7777778)
                 );
 
             height: auto;
-
-            aspect-ratio:
-                800 / 450;
-
+            aspect-ratio: 800 / 450;
             display: block;
-
             z-index: 10;
 
             border-radius: 14px;
 
             box-shadow:
-
-                0 0 0 2px
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.18
-                ),
-
-                0 0 35px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.6
-                ),
-
-                0 20px 60px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.45
-                );
+                0 0 0 2px rgba(255, 255, 255, 0.18),
+                0 0 35px rgba(0, 0, 0, 0.6),
+                0 20px 60px rgba(0, 0, 0, 0.45);
         }
 
-    </style>
+        /* ==================================================
+           🎵 MUSIC CREDITS
+           ================================================== */
 
+        #musicCredits {
+            position: fixed;
+            left: 0;
+            bottom: 12px;
+            width: 100%;
+            padding: 0 12px;
+
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+
+            color: rgba(220, 230, 245, 0.65);
+            font-size: clamp(9px, 1.1vw, 11px);
+            line-height: 1.5;
+
+            text-shadow:
+                0 1px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        #musicCredits strong {
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+        }
+
+        #musicCredits .creditHeading {
+            color: rgba(130, 210, 255, 0.85);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-height: 500px) {
+            #musicCredits {
+                bottom: 3px;
+                font-size: 8px;
+                line-height: 1.25;
+            }
+
+            canvas {
+                top: 50%;
+                width: min(88vw, calc(65vh * 1.7777778));
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -373,15 +292,13 @@
          ================================================== -->
 
     <div id="topBar">
-
         <h1>
             🪿 Goosey Smash World Ultimate
         </h1>
 
         <p>
-            Version 1.0.4 — Denku Update
+            Version 1.1.4 — Sound Update
         </p>
-
     </div>
 
     <!-- ==================================================
@@ -395,40 +312,74 @@
     <script src="main.js?v=2"></script>
 
     <!-- ==================================================
+         🎵 MUSIC CREDITS
+         ================================================== -->
+
+    <div id="musicCredits">
+        <div class="creditHeading">Music Credits</div>
+
+        <strong>Intro:</strong>
+        Run Until the Sun Comes Up — Otomusu
+
+        <br>
+
+        <strong>Menu:</strong>
+        Found You (Game Version) — AndyNope
+
+        <br>
+
+        <strong>Fight:</strong>
+        Rotten, Context Rage, Let Sleep, Pray — Lo-bit LAB
+
+        <br>
+
+        <strong>Victory:</strong>
+        Fanfare March of Glory — Otomusu
+    </div>
+
+    <!-- ==================================================
          🌌 DYNAMIC GAME BACKGROUND
          ================================================== -->
 
     <script>
-
         const gameBackground =
-            document.getElementById(
-                "gameBackground"
-            );
+            document.getElementById("gameBackground");
 
         function updateGooseyBackground() {
 
-            if (!gameBackground) {
-                return;
+            if (!gameBackground) return;
+
+            /* ==========================================
+               🎬 INTRO
+               No separate intro background yet.
+               ========================================== */
+
+            if (window.gooseyScene === "gooseyIntro") {
+
+                gameBackground.style.background = `
+                    radial-gradient(
+                        circle at 50% 45%,
+                        #18304d 0%,
+                        #08111f 70%
+                    )
+                `;
+
             }
 
             /* ==========================================
                🎮 CHARACTER SELECT
                ========================================== */
 
-            if (
-                window.gooseyScene ===
-                "characterSelect"
-            ) {
+            else if (window.gooseyScene === "characterSelect") {
 
-                gameBackground.style.background =
-                    `
+                gameBackground.style.background = `
                     radial-gradient(
                         circle at 50% 45%,
                         #274d72 0%,
                         #10283f 45%,
                         #08111f 100%
                     )
-                    `;
+                `;
 
             }
 
@@ -436,137 +387,114 @@
                ⚔️ FIGHT
                ========================================== */
 
-            else if (
-                window.gooseyScene ===
-                "fight"
-            ) {
+            else if (window.gooseyScene === "fight") {
 
-                const map =
-                    window.gooseyMap;
+                const map = window.gooseyMap;
 
                 if (map === 0) {
-
                     /* 🌱 GRASSLAND */
 
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #4fa84f 0%,
                             #214f30 45%,
                             #08111f 100%
                         )
-                        `;
+                    `;
 
                 } else if (map === 1) {
-
                     /* 🏃 PARKOUR */
 
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #26794c 0%,
                             #123d2d 45%,
                             #08111f 100%
                         )
-                        `;
+                    `;
 
                 } else if (map === 2) {
-
                     /* 💀 NIGHTMARE */
 
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #4c294f 0%,
                             #211329 45%,
                             #05050b 100%
                         )
-                        `;
+                    `;
 
                 } else if (map === 3) {
-
                     /* 🌀 GRAVITY CHAOS */
 
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #6b35a5 0%,
                             #29154d 45%,
                             #080512 100%
                         )
-                        `;
+                    `;
 
                 } else if (map === 4) {
-
                     /* 🌀🏃 PARKOUR GRAVITY */
 
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #2c77aa 0%,
                             #152d50 45%,
                             #08111f 100%
                         )
-                        `;
+                    `;
 
                 } else if (map === 5) {
+                    /* 🌋 VOLCANO */
 
-                    /* 🌋 FUTURE MAP / FALLBACK */
-
-                    gameBackground.style.background =
-                        `
+                    gameBackground.style.background = `
                         radial-gradient(
                             circle at 50% 45%,
                             #8a3424 0%,
                             #361414 45%,
                             #090505 100%
                         )
-                        `;
-
+                    `;
                 }
-
             }
 
             /* ==========================================
                🏆 WIN
                ========================================== */
 
-            else if (
-                window.gooseyScene ===
-                "win"
-            ) {
+            else if (window.gooseyScene === "win") {
 
-                gameBackground.style.background =
-                    `
+                gameBackground.style.background = `
                     radial-gradient(
                         circle at 50% 45%,
                         #a67c20 0%,
                         #4f3510 45%,
                         #120e05 100%
                     )
-                    `;
+                `;
 
             }
 
             /* ==========================================
-               🏠 DEFAULT / TITLE
+               🏠 DEFAULT / TITLE / MENUS
                ========================================== */
 
             else {
 
-                gameBackground.style.background =
-                    `
+                gameBackground.style.background = `
                     radial-gradient(
                         circle at 50% 45%,
                         #18304d 0%,
                         #08111f 70%
                     )
-                    `;
+                `;
             }
         }
 
@@ -576,51 +504,34 @@
 
         function createBackgroundParticles() {
 
-            for (
-                let i = 0;
-                i < 18;
-                i++
-            ) {
+            for (let i = 0; i < 18; i++) {
 
                 const particle =
-                    document.createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
-                particle.className =
-                    "goosey-particle";
+                particle.className = "goosey-particle";
 
                 particle.style.left =
-                    Math.random() * 100 +
-                    "%";
+                    Math.random() * 100 + "%";
 
                 particle.style.top =
-                    Math.random() * 100 +
-                    "%";
+                    Math.random() * 100 + "%";
 
                 particle.style.setProperty(
                     "--particle-speed",
-                    (3 + Math.random() * 5) +
-                    "s"
+                    (3 + Math.random() * 5) + "s"
                 );
 
-                gameBackground.appendChild(
-                    particle
-                );
+                gameBackground.appendChild(particle);
             }
         }
 
         createBackgroundParticles();
 
-        setInterval(
-            updateGooseyBackground,
-            100
-        );
+        setInterval(updateGooseyBackground, 100);
 
         updateGooseyBackground();
-
     </script>
 
 </body>
-
 </html>
