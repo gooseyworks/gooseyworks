@@ -2691,5 +2691,311 @@
 })();
 </script>
 
+<!-- ========================================= -->
+<!-- GOOSEYWORKS UNDER CONSTRUCTION SYSTEM     -->
+<!-- ========================================= -->
+
+<style>
+/* OVERLAY */
+.gw-construction-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(6px);
+}
+
+.gw-construction-overlay.active {
+    display: flex;
+}
+
+/* MAIN WINDOW */
+.gw-construction-box {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: #222;
+    color: white;
+    border-radius: 14px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    animation: gwConstructionAppear 0.25s ease;
+}
+
+@keyframes gwConstructionAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* CONSTRUCTION TAPE */
+.gw-construction-tape {
+    background: repeating-linear-gradient(
+        135deg,
+        #FFD600 0px,
+        #FFD600 18px,
+        #171717 18px,
+        #171717 36px
+    );
+    padding: 13px 5px;
+    color: white;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 3px black;
+}
+
+.gw-construction-content {
+    padding: 30px 25px;
+}
+
+.gw-construction-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.gw-construction-content h2 {
+    font-size: 27px;
+    margin: 5px 0 12px;
+    color: #FFD600;
+}
+
+.gw-construction-content p {
+    color: #ddd;
+    line-height: 1.6;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.gw-construction-question {
+    font-weight: bold;
+    color: white !important;
+    margin-top: 20px;
+}
+
+/* BUTTONS */
+.gw-construction-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.gw-construction-buttons button {
+    flex: 1;
+    padding: 13px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gw-construction-yes {
+    background: #FFD600;
+    color: #171717;
+}
+
+.gw-construction-yes:hover {
+    background: #ffe75e;
+    transform: translateY(-2px);
+}
+
+.gw-construction-no {
+    background: #444;
+    color: white;
+}
+
+.gw-construction-no:hover {
+    background: #555;
+    transform: translateY(-2px);
+}
+
+.gw-construction-buttons button:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+}
+
+/* BOTTOM TAPE */
+.gw-construction-bottom {
+    transform: rotate(180deg);
+}
+</style>
+
+
+<!-- WARNING WINDOW -->
+<div
+    class="gw-construction-overlay"
+    id="gwConstructionOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="gwConstructionTitle"
+    aria-describedby="gwConstructionDescription"
+>
+    <div class="gw-construction-box">
+
+        <div class="gw-construction-tape">
+            ⚠ UNDER CONSTRUCTION ⚠ CAUTION ⚠
+        </div>
+
+        <div class="gw-construction-content">
+
+            <div class="gw-construction-icon">🚧</div>
+
+            <h2 id="gwConstructionTitle">
+                HOLD ON!
+            </h2>
+
+            <p id="gwConstructionDescription">
+                This game is still under construction!
+
+                Some features may be unfinished,
+                unavailable, or not work correctly.
+            </p>
+
+            <p class="gw-construction-question">
+                Do you still want to enter?
+            </p>
+
+            <div class="gw-construction-buttons">
+
+                <button
+                    class="gw-construction-yes"
+                    id="gwConstructionYes"
+                >
+                    YES, ENTER
+                </button>
+
+                <button
+                    class="gw-construction-no"
+                    id="gwConstructionNo"
+                >
+                    NO, GO BACK
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="gw-construction-tape gw-construction-bottom">
+            ⚠ CAUTION ⚠ UNDER CONSTRUCTION ⚠
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+(function () {
+
+    const overlay = document.getElementById(
+        "gwConstructionOverlay"
+    );
+
+    const yesButton = document.getElementById(
+        "gwConstructionYes"
+    );
+
+    const noButton = document.getElementById(
+        "gwConstructionNo"
+    );
+
+    let destination = null;
+    let previousButton = null;
+
+    // OPEN WARNING
+    function openConstructionWarning(url, button) {
+
+        destination = url;
+        previousButton = button;
+
+        overlay.classList.add("active");
+
+        yesButton.focus();
+
+    }
+
+    // CLOSE WARNING
+    function closeConstructionWarning() {
+
+        overlay.classList.remove("active");
+
+        destination = null;
+
+        if (previousButton) {
+            previousButton.focus();
+        }
+
+        previousButton = null;
+
+    }
+
+    // YES: ENTER GAME
+    yesButton.addEventListener("click", function () {
+
+        if (destination) {
+            window.location.href = destination;
+        }
+
+    });
+
+    // NO: DO NOTHING
+    noButton.addEventListener("click", function () {
+
+        closeConstructionWarning();
+
+    });
+
+    // ESCAPE ALSO CLOSES THE WARNING
+    document.addEventListener("keydown", function (event) {
+
+        if (
+            event.key === "Escape" &&
+            overlay.classList.contains("active")
+        ) {
+            closeConstructionWarning();
+        }
+
+    });
+
+    // AUTOMATICALLY DETECT TAGGED BUTTONS
+    document.addEventListener("click", function (event) {
+
+        const button = event.target.closest(
+            "[data-under-construction]"
+        );
+
+        if (!button) return;
+
+        const url =
+            button.getAttribute("data-game-url") ||
+            button.getAttribute("href");
+
+        if (!url) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        openConstructionWarning(url, button);
+
+    }, true);
+
+})();
+</script>
+
+<!-- ========================================= -->
+<!-- END UNDER CONSTRUCTION SYSTEM             -->
+<!-- ========================================= -->
+
 </body>
 </html>
