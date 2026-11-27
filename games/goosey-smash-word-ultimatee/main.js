@@ -1330,6 +1330,7 @@ go("gooseyIntro");
 // ==================================================
 
 scene("title", () => {
+    window.gooseyScene = "title";
 playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
@@ -3212,6 +3213,7 @@ if (
 // ==================================================
 
 scene("playerSelect", () => {
+    window.gooseyScene = "playerSelect";
 playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
@@ -3507,6 +3509,7 @@ playGameMusic("menuMusic", true);
 // ==================================================
 
 scene("cpuSelect", () => {
+    window.gooseyScene = "cpuSelect";  
 playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
@@ -3769,6 +3772,7 @@ playGameMusic("menuMusic", true);
 // ==================================================
 
 scene("characterSelect", () => {
+    window.gooseyScene = "characterSelect";
     playGameMusic("menuMusic", true);
 // ==================================================
 // 🔓 CHARACTER UNLOCKS
@@ -4984,11 +4988,12 @@ onUpdate(() => {
 // ==================================================
 
 scene("fight", (data) => {
+    window.gooseyScene = "fight";
 startFightPlaylist();
     // 🎲 RANDOM MAP
     const currentMap =
         Math.floor(Math.random() * 6);
-
+ window.gooseyMap = currentMap;
     let player;
 
     // ==================================================
@@ -13798,6 +13803,7 @@ if (
 // ==================================================
 
 scene("win", (data) => {
+    window.gooseyScene = "win";
     playGameMusic("victoryMusic", true);
 // ==================================================
 // 🔓 HARD CPU UNLOCK PROGRESSION
