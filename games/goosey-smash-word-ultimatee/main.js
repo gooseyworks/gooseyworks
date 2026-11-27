@@ -1,9 +1,11 @@
-kaplay({
+const k = kaplay({
     width: 800,
     height: 450,
     background: [135, 206, 235],
 });
+
 setGravity(1800);
+
 // ==================================================
 // LOAD SPRITES
 // ==================================================
@@ -12,10 +14,10 @@ loadSprite("AnGy-CaT", "assets/sprites/AnGy-CaT.png");
 loadSprite("Angy-Cap", "assets/sprites/Angy-Cap.png");
 loadSprite("G", "assets/sprites/G.png");
 loadSprite("Penguy", "assets/sprites/Penguy.png");
+
 loadSprite("hero", "assets/sprites/hero.png", {
     sliceX: 6,
     sliceY: 1,
-
     anims: {
         idle: {
             from: 0,
@@ -31,7 +33,6 @@ loadSprite("Greg", "assets/sprites/Greg.png");
 loadSprite("P1", "assets/sprites/P1.png", {
     sliceX: 4,
     sliceY: 1,
-
     anims: {
         idle: {
             from: 0,
@@ -41,8 +42,10 @@ loadSprite("P1", "assets/sprites/P1.png", {
         },
     },
 });
+
 loadSprite("mark", "assets/sprites/mark.png");
 loadSprite("Chat", "assets/sprites/chat.png");
+
 loadSprite("Bach", "assets/sprites/BACH.png", {
     sliceX: 52,
     sliceY: 1,
@@ -53,7 +56,6 @@ loadSprite("Bach", "assets/sprites/BACH.png", {
             loop: true,
             speed: 12,
         },
-
         bachSpecial: {
             from: 34,
             to: 51,
@@ -62,10 +64,10 @@ loadSprite("Bach", "assets/sprites/BACH.png", {
         },
     },
 });
+
 loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
     sliceX: 20,
     sliceY: 1,
-
     anims: {
         nathaniel: {
             from: 0,
@@ -73,7 +75,6 @@ loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
             loop: true,
             speed: 12,
         },
-
         nathanielSpecial: {
             from: 7,
             to: 19,
@@ -82,8 +83,9 @@ loadSprite("Nathaniel", "assets/sprites/NATHANIEL.png", {
         },
     },
 });
+
 loadSprite("Kachen", "assets/sprites/Kachen.png");
-// DENKU SPRITE
+
 loadSprite("Denku", "assets/sprites/Denku.png", {
     sliceX: 7,
     anims: {
@@ -96,6 +98,103 @@ loadSprite("Denku", "assets/sprites/Denku.png", {
         },
     },
 });
+// ==========================
+// Songs
+// ==========================
+// Intro
+loadSound(
+    "Run Until the Sun Comes Up",
+    "assets/sounds/Run Until the Sun Comes Up.mp3"
+);
+//Title/Character Select
+loadSound("menuMusic", "assets/sounds/found_you_-_andynope.mp3");
+// Win Scene
+loadSound("victoryMusic", "assets/sounds/Fanfare March of Glory.mp3");
+//Fight Scene
+loadSound("rotten", "assets/sounds/LinWolinski - Zone-rage - 01 Rotten.ogg");
+loadSound("contextRage", "assets/sounds/LinWolinski - Zone-rage - 02 Context rage.ogg");
+loadSound("letSleep", "assets/sounds/LinWolinski - Zone-rage - 03 Let sleep.ogg");
+loadSound("pray", "assets/sounds/LinWolinski - Zone-rage - 04 Pray.ogg");
+
+// ==================================================
+// GOOSEY SMASH — MUSIC MANAGER
+// ==================================================
+
+let currentMusicHandle = null;
+let currentMusicKey = null;
+let musicGeneration = 0;
+
+const FIGHT_PLAYLIST = [
+    "rotten",
+    "contextRage",
+    "letSleep",
+    "pray",
+];
+
+let fightPlaylistIndex = 0;
+
+// Stop whatever music is currently playing
+function stopGameMusic() {
+    musicGeneration++;
+
+    if (currentMusicHandle) {
+        currentMusicHandle.stop();
+    }
+
+    currentMusicHandle = null;
+    currentMusicKey = null;
+}
+
+// Play a single track.
+// If the same track is already playing, don't restart it.
+function playGameMusic(track, shouldLoop = true) {
+    if (currentMusicKey === track && currentMusicHandle) {
+        return;
+    }
+
+    stopGameMusic();
+
+    currentMusicKey = track;
+
+    currentMusicHandle = play(track, {
+        loop: shouldLoop,
+        volume: 0.65,
+    });
+}
+
+// Start the battle playlist
+function playNextFightTrack() {
+    const track = FIGHT_PLAYLIST[fightPlaylistIndex];
+    const generation = musicGeneration;
+
+    currentMusicKey = track;
+
+    const handle = play(track, {
+        loop: false,
+        volume: 0.70,
+    });
+
+    currentMusicHandle = handle;
+
+    // When this song finishes, advance to the next one.
+    handle.onEnd(() => {
+        if (generation !== musicGeneration) return;
+        if (currentMusicHandle !== handle) return;
+
+        fightPlaylistIndex =
+            (fightPlaylistIndex + 1) % FIGHT_PLAYLIST.length;
+
+        playNextFightTrack();
+    });
+}
+
+// Start a fresh battle playlist
+function startFightPlaylist() {
+    stopGameMusic();
+    fightPlaylistIndex = 0;
+    playNextFightTrack();
+}
+
 // ==================================================
 // CONSTANTS
 // ==================================================
@@ -103,12 +202,13 @@ loadSprite("Denku", "assets/sprites/Denku.png", {
 let SPEED = 300;
 let GOOSEY_SPEED = 350;
 let PENGUY_SPEED = 300;
+
 const PENGUY_SLIDE_FRICTION = 0.97;
 const PENGUY_KNOCKBACK_FRICTION = 0.985;
 
-// 💥 NORMAL KNOCKBACK
 const KNOCKBACK_FRICTION = 0.90;
 const KNOCKBACK_STOP = 20;
+
 // RED
 let RED_SPEED = 225;
 const RED_PUNCH_DAMAGE = 15;
@@ -122,7 +222,8 @@ const BLUE_PUNCH_DAMAGE = 7;
 const BLUE_PUNCH_KNOCKBACK = 350;
 const BLUE_UPPERCUT_DAMAGE = 12;
 const BLUE_UPPERCUT_KNOCKBACK = 250;
-// ⚽ BACH
+
+// BACH
 const BACH_SPEED = 800;
 const BACH_AURA_TIME = 10;
 const JUMP_FORCE = 700;
@@ -130,35 +231,38 @@ const JUMP_FORCE = 700;
 const START_DAMAGE = 0;
 const START_STOCKS = 3;
 
-// Greg
+// GREG
 const GREG_PUNCH_KNOCKBACK = 650;
 const GREG_UPPERCUT_KNOCKBACK = 450;
 const GREG_ATTACK_COOLDOWN = 0.45;
 
-// Goosey
+// GOOSEY
 const GOOSEY_PUNCH_KNOCKBACK = 600;
 const GOOSEY_UPPERCUT_KNOCKBACK = 400;
 
-// AnGy-CaT
+// ANGY-CAT
 const CAT_MOD_TIME = 5;
 const CAT_NORMAL_SCALE = 0.5;
 const CAT_MOD_SCALE = 0.25;
 
-// Angy Cap
+// ANGY-CAP
 const ANGY_CAP_DAMAGE = 10;
 const ANGY_CAP_KNOCKBACK = 1800;
-//Denku
+
+// DENKU
 const DENKU_KNOCKBACK = 1100;
 const DENKU_SPECIAL_TIME = 10;
 const DENKU_SELF_DAMAGE = 10;
+
 // ==================================================
-// ⚽ BACH BALL SYSTEM
+// BACH BALL SYSTEM
 // ==================================================
 
 let bachBallP1 = null;
 let bachBallP2 = null;
+
 // ==================================================
-// 🗺️ MAPS
+// MAPS
 // ==================================================
 
 const MAP_GRASSLAND = 0;
@@ -167,26 +271,1066 @@ const MAP_PARKOUR_NIGHTMARE = 2;
 const MAP_GRAVITY_CHAOS = 3;
 const MAP_PARKOUR_GRAVITY = 4;
 const MAP_VOLCANO = 5;
-// 🙂 MARK DIMENSION WORLD
+
 let markWorldActive = false;
 let timeScale = 1;
 let markIceWorld = false;
-// 🧊 ICE WORLD
+
 const ICE_ACCELERATION = 900;
 const ICE_MAX_SPEED = 600;
 const ICE_FRICTION = 0.98;
+
 // ==================================================
-// 🪿 GOOSEY PERSISTENT POWERS
+// GOOSEY PERSISTENT POWERS
 // ==================================================
 
 let gooseyPowersP1 = [];
 let gooseyPowersP2 = [];
 // ==================================================
+// GOOSEY SMASH WORLD ULTIMATE — CINEMATIC INTRO
+// ==================================================
+
+function registerGooseyIntro() {
+
+    const INTRO_DURATION = 167;
+    const MUSIC_ID = "Run Until the Sun Comes Up";
+    const GROUND_Y = 305;
+
+    const CHARACTERS = {
+        PENGUY: "Penguy",
+        GREG: "Greg",
+        GHOSTY: "G",
+        MARK: "mark",
+        "ANGY-CAT": "AnGy-CaT",
+        "ANGY-CAP": "Angy-Cap",
+        CHAT: "Chat",
+        GOOSEY: "hero",
+    };
+
+    let introMusic = null;
+
+    scene("gooseyIntro", () => {
+
+        let elapsed = 0;
+        let eventIndex = 0;
+        let finished = false;
+
+        let flashAlpha = 0;
+        let flashHold = 0;
+        let flashColor = [255, 255, 255];
+        let stageObjects = [];
+        let tabVisibilityHandler = null;
+
+        let battle = null;
+        let cameraShake = 0;
+        let speedLines = [];
+
+        function addStage(components) {
+            const obj = add(components);
+            stageObjects.push(obj);
+            return obj;
+        }
+
+        function clearStage() {
+            for (const obj of stageObjects) destroy(obj);
+            stageObjects = [];
+            speedLines = [];
+            battle = null;
+        }
+
+        function backdrop(bgColor) {
+            clearStage();
+            setCamPos(400, 225);
+            setCamScale(1);
+
+            addStage([
+                rect(800, 450),
+                pos(0, 0),
+                anchor("topleft"),
+                color(...bgColor),
+                z(-100),
+            ]);
+
+            addStage([
+                rect(800, 90),
+                pos(400, 340),
+                anchor("center"),
+                color(255, 170, 70),
+                opacity(0.16),
+                z(-90),
+            ]);
+        }
+
+        function addText(message, y, size = 28, col = [255, 255, 255]) {
+            return addStage([
+                text(message, { size }),
+                pos(400, y),
+                anchor("center"),
+                color(...col),
+                z(50),
+            ]);
+        }
+
+        function finalScaleFor(name) {
+            if (name === "PENGUY") return 0.35;
+            if (name === "CHAT") return 0.09;
+            if (name === "ANGY-CAT" || name === "ANGY-CAP") return 0.55;
+            return 2.6;
+        }
+
+        function addCharacter(name, x, y, size) {
+            if (name === "RED" || name === "BLUE") {
+                const boxColor = name === "RED" ? [255, 45, 45] : [45, 110, 255];
+                return addStage([
+                    rect(58, 58),
+                    pos(x, y),
+                    anchor("center"),
+                    color(...boxColor),
+                    outline(4, rgb(255, 255, 255)),
+                    rotate(0),
+                    z(10),
+                ]);
+            }
+
+            const spriteId = CHARACTERS[name];
+            if (!spriteId) return null;
+
+            const character = addStage([
+                sprite(spriteId),
+                pos(x, y),
+                anchor("center"),
+                scale(size),
+                rotate(0),
+                z(10),
+            ]);
+
+            if (name === "GOOSEY") character.play("idle");
+            return character;
+        }
+
+        function spawnDust(x, y, tint) {
+            for (let i = 0; i < 5; i++) {
+                const puff = addStage([
+                    circle(4 + Math.random() * 5),
+                    pos(x + rand(-10, 10), y),
+                    anchor("center"),
+                    color(...tint),
+                    opacity(0.7),
+                    z(8),
+                ]);
+                const drift = rand(-70, 70);
+                tween(0, 1, 0.35, (t) => {
+                    if (!puff.exists()) return;
+                    puff.moveTo(x + drift * t, y - 28 * t);
+                    puff.opacity = 0.7 * (1 - t);
+                }, easings.linear);
+            }
+        }
+
+        function spawnBurst(x, y, tint) {
+            for (let i = 0; i < 10; i++) {
+                const angle = (Math.PI * 2 * i) / 10 + Math.random() * 0.4;
+                const dist = 40 + Math.random() * 70;
+                const spark = addStage([
+                    circle(rand(3, 7)),
+                    pos(x, y),
+                    anchor("center"),
+                    color(...tint),
+                    opacity(1),
+                    z(140),
+                ]);
+                tween(0, 1, 0.28, (t) => {
+                    if (!spark.exists()) return;
+                    spark.moveTo(x + Math.cos(angle) * dist * t, y + Math.sin(angle) * dist * t);
+                    spark.opacity = 1 - t;
+                }, easings.easeOutQuad);
+            }
+        }
+
+        function addSpeedLines(tint) {
+            for (let i = 0; i < 14; i++) {
+                const line = addStage([
+                    rect(rand(40, 120), 3),
+                    pos(rand(0, 800), rand(40, 400)),
+                    anchor("center"),
+                    color(...tint),
+                    opacity(rand(0.15, 0.45)),
+                    z(-20),
+                ]);
+                speedLines.push({ obj: line, speed: rand(280, 720) });
+            }
+        }
+
+        function slideTitle(name) {
+            const title = addText(name, 70, 42);
+            title.moveTo(900, 70);
+            tween(900, 400, 0.35, (x) => {
+                if (title.exists()) title.moveTo(x, 70);
+            }, easings.easeOutQuad);
+        }
+
+        // ---------- SPECIAL ENTRANCES ----------
+
+        function entrancePenguy(char) {
+            addStage([
+                rect(800, 450),
+                pos(0, 0),
+                anchor("topleft"),
+                color(150, 210, 255),
+                opacity(0.38),
+                z(-40),
+            ]);
+            for (let i = 0; i < 9; i++) {
+                const spike = addStage([
+                    rect(16, rand(50, 130)),
+                    pos(30 + i * 90, -20),
+                    anchor("top"),
+                    color(210, 240, 255),
+                    opacity(0.9),
+                    outline(2, rgb(120, 180, 220)),
+                    z(6),
+                ]);
+                tween(-20, rand(0, 18), 0.6, (y) => {
+                    if (spike.exists()) spike.moveTo(spike.pos.x, y);
+                }, easings.easeOutQuad);
+            }
+            tween(-180, 400, 0.85, (x) => {
+                if (!char.exists()) return;
+                char.moveTo(x, 312);
+                char.angle = -18;
+            }, easings.easeOutCubic);
+            flashColor = [190, 230, 255];
+            flashAlpha = 0.45;
+        }
+
+        function entranceRed(char) {
+            const blood = addStage([
+                rect(800, 450),
+                pos(0, 0),
+                anchor("topleft"),
+                color(120, 0, 0),
+                opacity(0),
+                z(-40),
+            ]);
+            tween(0, 0.72, 0.45, (v) => {
+                if (blood.exists()) blood.opacity = v;
+            }, easings.easeOutQuad);
+
+            tween(0, 1, 0.7, (t) => {
+                if (!char.exists()) return;
+                const x = -80 + 480 * t;
+                const jump = Math.sin(t * Math.PI) * 150;
+                char.moveTo(x, 300 - jump);
+                char.angle = t < 0.5 ? -12 : 8;
+            }, easings.easeOutQuad);
+            flashColor = [180, 0, 0];
+            flashAlpha = 0.35;
+        }
+
+        function entranceBlue(char) {
+            addStage([
+                rect(800, 70),
+                pos(400, 360),
+                anchor("center"),
+                color(30, 120, 220),
+                opacity(0.85),
+                z(2),
+            ]);
+            tween(0, 1, 0.55, (t) => {
+                if (!char.exists()) return;
+                const x = -200 + 700 * t;
+                const jump = Math.sin(Math.min(1, t * 1.3) * Math.PI) * 120;
+                char.moveTo(Math.min(400, x), 300 - jump);
+            }, easings.linear);
+            wait(0.42, () => {
+                if (!char.exists()) return;
+                spawnBurst(char.pos.x, 340, [80, 180, 255]);
+                for (let i = 0; i < 8; i++) {
+                    const drop = addStage([
+                        circle(rand(4, 9)),
+                        pos(char.pos.x, 340),
+                        anchor("center"),
+                        color(120, 200, 255),
+                        opacity(0.9),
+                        z(20),
+                    ]);
+                    const dx = rand(-140, 140);
+                    tween(0, 1, 0.45, (t) => {
+                        if (!drop.exists()) return;
+                        drop.moveTo(char.pos.x + dx * t, 340 - Math.sin(t * Math.PI) * 90);
+                        drop.opacity = 1 - t;
+                    }, easings.easeOutQuad);
+                }
+                cameraShake = 7;
+            });
+        }
+
+        function entranceGreg(char) {
+            tween(0, 1, 0.85, (t) => {
+                if (!char.exists()) return;
+                const x = -120 + 470 * Math.min(1, t / 0.62);
+                const jumping = t > 0.62;
+                const jt = jumping ? (t - 0.62) / 0.38 : 0;
+                const y = jumping ? 300 - Math.sin(jt * Math.PI) * 110 : 300 - Math.abs(Math.sin(x * 0.08)) * 14;
+                char.moveTo(x, y);
+                char.angle = jumping ? -30 + jt * 50 : 0;
+            }, easings.linear);
+            wait(0.78, () => {
+                cameraShake = 8;
+                spawnBurst(470, 230, [180, 255, 160]);
+                for (let i = 0; i < 7; i++) {
+                    const x = 80 + i * 100;
+                    const stalk = addStage([
+                        rect(12, 120),
+                        pos(x, 348),
+                        anchor("bot"),
+                        scale(1, 0.02),
+                        color(30, 150, 55),
+                        z(4),
+                    ]);
+                    tween(0.02, 1, 0.35, (v) => {
+                        if (stalk.exists()) stalk.scale = vec2(1, v);
+                    }, easings.easeOutBack);
+                }
+            });
+        }
+
+        function entranceGhosty(char) {
+            flashColor = [255, 255, 255];
+            flashAlpha = 1;
+            flashHold = 1;
+            tween(0, 1, 0.7, (t) => {
+                if (!char.exists()) return;
+                char.moveTo(-60 + 420 * t, 40 + 180 * t);
+                char.angle = Math.sin(t * 10) * 12;
+            }, easings.easeOutQuad);
+            wait(1, () => {
+                if (!char.exists()) return;
+                char.moveTo(400, 290);
+                char.angle = 0;
+                for (let i = 0; i < 6; i++) {
+                    const ghost = addStage([
+                        sprite("G"),
+                        pos(400, 290),
+                        anchor("center"),
+                        scale(0.7),
+                        opacity(0.75),
+                        z(9),
+                    ]);
+                    const tx = 140 + i * 100;
+                    const ty = 250 + (i % 2) * 40;
+                    tween(0, 1, 0.4, (t) => {
+                        if (!ghost.exists()) return;
+                        ghost.moveTo(400 + (tx - 400) * t, 290 + (ty - 290) * t);
+                    }, easings.easeOutQuad);
+                }
+            });
+        }
+
+        function entranceMark(char) {
+            tween(0, 1, 0.75, (t) => {
+                if (!char.exists()) return;
+                const x = -100 + 500 * Math.min(1, t / 0.7);
+                const jumping = t > 0.7;
+                const y = jumping ? 300 - 90 : 300 - Math.abs(Math.sin(x * 0.07)) * 16;
+                char.moveTo(x, y);
+            }, easings.linear);
+            wait(0.72, () => {
+                const beam = addStage([
+                    rect(70, 420),
+                    pos(400, 80),
+                    anchor("top"),
+                    color(170, 40, 255),
+                    opacity(0),
+                    z(40),
+                ]);
+                tween(0, 0.85, 0.2, (v) => {
+                    if (beam.exists()) beam.opacity = v;
+                }, easings.linear);
+                flashColor = [160, 40, 255];
+                flashAlpha = 0.45;
+                cameraShake = 5;
+            });
+        }
+
+        function entranceCat(char) {
+            const points = [
+                [-80, 300],
+                [760, 80],
+                [40, 40],
+                [700, 260],
+                [400, 280],
+            ];
+            let step = 0;
+            function hop() {
+                if (!char.exists() || step >= points.length - 1) return;
+                const from = points[step];
+                const to = points[step + 1];
+                tween(0, 1, 0.28, (t) => {
+                    if (!char.exists()) return;
+                    const arc = Math.sin(t * Math.PI) * 30;
+                    char.moveTo(
+                        from[0] + (to[0] - from[0]) * t,
+                        from[1] + (to[1] - from[1]) * t - arc
+                    );
+                    char.angle = (step % 2 === 0 ? 1 : -1) * 20;
+                }, easings.linear).onEnd(() => {
+                    spawnDust(char.pos.x, char.pos.y + 20, [255, 180, 220]);
+                    cameraShake = 3;
+                    step++;
+                    hop();
+                });
+            }
+            char.moveTo(points[0][0], points[0][1]);
+            hop();
+        }
+
+        function entranceCap(char) {
+            tween(0, 1, 1.05, (t) => {
+                if (!char.exists()) return;
+                const x = -100 + 500 * t;
+                const stomp = Math.sin(t * Math.PI * 5);
+                const y = 292 - Math.max(0, stomp) * 28;
+                char.moveTo(x, y);
+                char.scale = vec2(0.55, 0.55 * (stomp < 0 ? 0.82 : 1.08));
+            }, easings.linear);
+            for (let i = 0; i < 5; i++) {
+                wait(0.12 + i * 0.18, () => {
+                    if (!char.exists()) return;
+                    cameraShake = 6;
+                    spawnDust(char.pos.x, 340, [90, 90, 110]);
+                    spawnBurst(char.pos.x, 336, [180, 180, 200]);
+                });
+            }
+        }
+
+        function entranceChat(char) {
+            tween(0, 1, 0.8, (t) => {
+                if (!char.exists()) return;
+                const x = -60 + 420 * t;
+                const y = 300 - Math.sin(t * Math.PI) * 160;
+                char.moveTo(x, y);
+                char.angle = t * 720;
+            }, easings.easeOutQuad);
+            wait(0.35, () => {
+                if (!char.exists()) return;
+                const ball = addStage([
+                    text("🔴", { size: 36 }),
+                    pos(char.pos.x, char.pos.y),
+                    anchor("center"),
+                    z(30),
+                ]);
+                tween(0, 1, 0.45, (t) => {
+                    if (!ball.exists()) return;
+                    ball.moveTo(char.pos.x + 260 * t, char.pos.y - 40 + Math.sin(t * 8) * 12);
+                }, easings.easeOutQuad);
+            });
+        }
+
+        function entranceGoosey(char) {
+            tween(0, 1, 0.7, (t) => {
+                if (!char.exists()) return;
+                const x = -160 + 560 * Math.min(1, t / 0.65);
+                const hop = Math.abs(Math.sin(x * 0.05)) * 18;
+                char.moveTo(x, 292 - hop);
+                char.angle = t > 0.65 ? (t - 0.65) / 0.35 * 360 : 0;
+            }, easings.linear);
+            wait(0.72, () => {
+                if (!char.exists()) return;
+                tween(220, 305, 0.12, (y) => {
+                    if (char.exists()) char.moveTo(400, y);
+                }, easings.easeInQuad).onEnd(() => {
+                    char.angle = 0;
+                    cameraShake = 14;
+                    flashAlpha = 0.7;
+                    flashColor = [255, 220, 120];
+                    spawnBurst(400, 330, [255, 200, 80]);
+                    spawnDust(400, 340, [255, 210, 140]);
+                });
+            });
+        }
+
+        function characterIntro(name, bgColor, subtitle) {
+            backdrop(bgColor);
+            addStage([
+                rect(800, 10),
+                pos(400, 338),
+                anchor("center"),
+                color(255, 255, 255),
+                opacity(0.2),
+                z(1),
+            ]);
+
+            const char = addCharacter(name, -160, 300, finalScaleFor(name));
+            if (char) {
+                if (name === "PENGUY") entrancePenguy(char);
+                else if (name === "RED") entranceRed(char);
+                else if (name === "BLUE") entranceBlue(char);
+                else if (name === "GREG") entranceGreg(char);
+                else if (name === "GHOSTY") entranceGhosty(char);
+                else if (name === "MARK") entranceMark(char);
+                else if (name === "ANGY-CAT") entranceCat(char);
+                else if (name === "ANGY-CAP") entranceCap(char);
+                else if (name === "CHAT") entranceChat(char);
+            }
+
+            slideTitle(name);
+            addText(subtitle, 395, 20, [230, 240, 255]);
+            cameraShake = Math.max(cameraShake, 3);
+        }
+
+        function createFighter(name, x, direction) {
+            const size = name === "PENGUY" || name === "CHAT" || name === "ANGY-CAT" || name === "ANGY-CAP"
+                ? finalScaleFor(name)
+                : (name === "RED" || name === "BLUE" ? 1 : 2.2);
+
+            return {
+                name,
+                obj: addCharacter(name, x, GROUND_Y, size),
+                direction,
+                vx: 0,
+                vy: 0,
+                damage: 0,
+                moveDirection: direction,
+                moveTimer: 0,
+                attackCooldown: 0.35 + Math.random() * 0.35,
+                attackTimer: 0,
+                attackHit: false,
+                dodgeCooldown: 0,
+                invulnerable: 0,
+                grounded: true,
+                dashTimer: 0,
+                hop: Math.random() * 6,
+            };
+        }
+
+        function refreshDamageLabels() {
+            if (!battle) return;
+
+            if (battle.fighters) {
+                if (battle.damageLabels) {
+                    for (const label of battle.damageLabels) destroy(label);
+                }
+                battle.damageLabels = [];
+                battle.fighters.forEach((fighter, index) => {
+                    const row = index < 5 ? 0 : 1;
+                    const column = index % 5;
+                    battle.damageLabels.push(addStage([
+                        text(fighter.name + " " + fighter.damage + "%", { size: 12 }),
+                        pos(80 + column * 160, row === 0 ? 100 : 122),
+                        anchor("center"),
+                        color(255, 255, 255),
+                        z(80),
+                    ]));
+                });
+                return;
+            }
+
+            if (battle.leftDamageLabel) destroy(battle.leftDamageLabel);
+            if (battle.rightDamageLabel) destroy(battle.rightDamageLabel);
+
+            battle.leftDamageLabel = addStage([
+                text(battle.left.name + "  " + battle.left.damage + "%", { size: 22 }),
+                pos(190, 78),
+                anchor("center"),
+                color(255, 255, 255),
+                z(80),
+            ]);
+            battle.rightDamageLabel = addStage([
+                text(battle.right.name + "  " + battle.right.damage + "%", { size: 22 }),
+                pos(610, 78),
+                anchor("center"),
+                color(255, 255, 255),
+                z(80),
+            ]);
+        }
+
+        function createPopup(message, x, y, popupColor) {
+            if (!battle) return;
+            const popup = addStage([
+                text(message, { size: 28 }),
+                pos(x, y),
+                anchor("center"),
+                color(...popupColor),
+                z(160),
+            ]);
+            battle.popups.push({ obj: popup, timer: 0.55 });
+        }
+
+        function tryDodge(defender, attacker) {
+            if (!defender.obj || !defender.grounded || defender.dodgeCooldown > 0) return;
+            if (Math.random() > 0.5) return;
+            defender.vy = -520;
+            defender.grounded = false;
+            defender.vx = -attacker.direction * 340;
+            defender.invulnerable = 0.28;
+            defender.dodgeCooldown = 0.7;
+            spawnDust(defender.obj.pos.x, 330, [160, 220, 255]);
+            createPopup("DODGE!", defender.obj.pos.x, defender.obj.pos.y - 80, [140, 230, 255]);
+        }
+
+        function startAttack(attacker, defender) {
+            if (!attacker.obj || attacker.attackCooldown > 0 || attacker.attackTimer > 0) return;
+            attacker.attackCooldown = 0.62;
+            attacker.attackTimer = 0.18;
+            attacker.attackHit = false;
+            attacker.vx = attacker.direction * 640;
+            spawnDust(attacker.obj.pos.x, 332, [255, 210, 120]);
+            tryDodge(defender, attacker);
+        }
+
+        function landHit(attacker, defender) {
+            if (!attacker.obj || !defender.obj) return;
+            const damage = 8 + Math.floor(Math.random() * 10);
+            defender.damage += damage;
+            const knockback = Math.min(860, 320 + defender.damage * 2.6);
+            defender.vx = attacker.direction * knockback;
+            defender.vy = -340;
+            defender.grounded = false;
+            cameraShake = Math.min(18, cameraShake + 9);
+            flashAlpha = Math.min(0.85, flashAlpha + 0.35);
+            flashColor = damage > 13 ? [255, 80, 60] : [255, 230, 120];
+            const hitX = (attacker.obj.pos.x + defender.obj.pos.x) / 2;
+            const hitY = Math.min(attacker.obj.pos.y, defender.obj.pos.y);
+            spawnBurst(hitX, hitY, flashColor);
+            createPopup(damage + "%", hitX, hitY - 70, [255, 245, 160]);
+            refreshDamageLabels();
+        }
+
+        function battleIntro(leftName, rightName, bgColor, subtitle) {
+            backdrop(bgColor);
+            addSpeedLines([255, 255, 255]);
+
+            const vs = addText(leftName + "  VS  " + rightName, 52, 34);
+            vs.scale = vec2(1.4);
+            tween(1.4, 1, 0.25, (v) => {
+                if (vs.exists()) vs.scale = vec2(v);
+            }, easings.easeOutQuad);
+            addText(subtitle || "FIGHT!", 400, 18, [255, 220, 140]);
+
+            addStage([
+                rect(800, 18),
+                pos(400, 352),
+                anchor("center"),
+                color(30, 30, 40),
+                z(0),
+            ]);
+            addStage([
+                rect(760, 4),
+                pos(400, 342),
+                anchor("center"),
+                color(255, 190, 80),
+                opacity(0.7),
+                z(1),
+            ]);
+
+            battle = {
+                left: createFighter(leftName, -80, 1),
+                right: createFighter(rightName, 880, -1),
+                time: 0,
+                popups: [],
+                leftDamageLabel: null,
+                rightDamageLabel: null,
+            };
+
+            if (battle.left.obj) {
+                tween(-80, 220, 0.45, (x) => {
+                    if (battle && battle.left.obj && battle.left.obj.exists()) {
+                        battle.left.obj.moveTo(x, GROUND_Y - Math.abs(Math.sin(x * 0.08)) * 16);
+                    }
+                }, easings.easeOutQuad);
+            }
+            if (battle.right.obj) {
+                tween(880, 580, 0.45, (x) => {
+                    if (battle && battle.right.obj && battle.right.obj.exists()) {
+                        battle.right.obj.moveTo(x, GROUND_Y - Math.abs(Math.sin(x * 0.08)) * 16);
+                    }
+                }, easings.easeOutQuad);
+            }
+
+            refreshDamageLabels();
+            cameraShake = 5;
+            flashAlpha = 0.4;
+            flashColor = [255, 255, 255];
+        }
+
+        function decideMovement(fighter, opponent, distance) {
+            if (fighter.moveTimer > 0) return;
+            fighter.moveTimer = 0.22 + Math.random() * 0.28;
+            const toward = opponent.obj.pos.x > fighter.obj.pos.x ? 1 : -1;
+            if (distance > 160) {
+                fighter.moveDirection = toward;
+                if (Math.random() < 0.45) fighter.dashTimer = 0.22;
+            } else {
+                const choice = Math.random();
+                if (choice < 0.4) fighter.moveDirection = toward;
+                else if (choice < 0.7) fighter.moveDirection = -toward;
+                else fighter.moveDirection = 0;
+            }
+            if (fighter.grounded && fighter.dodgeCooldown <= 0 && Math.random() < 0.16) {
+                fighter.vy = -480;
+                fighter.grounded = false;
+                fighter.dodgeCooldown = 0.65;
+            }
+        }
+
+        function updateFighter(fighter, opponent, frameDt) {
+            if (!fighter.obj || !opponent.obj || !fighter.obj.exists()) return;
+            const distance = Math.abs(opponent.obj.pos.x - fighter.obj.pos.x);
+            fighter.direction = opponent.obj.pos.x > fighter.obj.pos.x ? 1 : -1;
+            fighter.moveTimer -= frameDt;
+            fighter.attackCooldown -= frameDt;
+            fighter.dodgeCooldown -= frameDt;
+            fighter.invulnerable -= frameDt;
+            fighter.dashTimer -= frameDt;
+            if (fighter.attackTimer <= 0) decideMovement(fighter, opponent, distance);
+
+            let desiredSpeed = fighter.moveDirection * 210;
+            if (fighter.dashTimer > 0) desiredSpeed = fighter.moveDirection * 520;
+            if (fighter.attackTimer > 0) desiredSpeed = fighter.direction * 680;
+            fighter.vx += (desiredSpeed - fighter.vx) * Math.min(1, frameDt * 9);
+            if (fighter.moveDirection === 0 && fighter.attackTimer <= 0) {
+                fighter.vx *= Math.max(0, 1 - frameDt * 7);
+            }
+            fighter.vy += 1400 * frameDt;
+            fighter.obj.moveBy(fighter.vx * frameDt, fighter.vy * frameDt);
+
+            if (fighter.obj.pos.y >= GROUND_Y) {
+                if (!fighter.grounded) spawnDust(fighter.obj.pos.x, 338, [200, 200, 210]);
+                fighter.obj.moveTo(fighter.obj.pos.x, GROUND_Y);
+                fighter.vy = 0;
+                fighter.grounded = true;
+            } else {
+                fighter.grounded = false;
+            }
+            if (fighter.grounded && Math.abs(fighter.vx) > 40) {
+                fighter.hop += frameDt * 18;
+                fighter.obj.moveTo(fighter.obj.pos.x, GROUND_Y - Math.abs(Math.sin(fighter.hop)) * 8);
+            }
+            if (fighter.obj.pos.x < 55) {
+                fighter.obj.moveTo(55, fighter.obj.pos.y);
+                fighter.vx = Math.abs(fighter.vx) * 0.4;
+            }
+            if (fighter.obj.pos.x > 745) {
+                fighter.obj.moveTo(745, fighter.obj.pos.y);
+                fighter.vx = -Math.abs(fighter.vx) * 0.4;
+            }
+            if (distance < 130 && fighter.attackCooldown <= 0 && fighter.attackTimer <= 0) {
+                startAttack(fighter, opponent);
+            }
+            if (fighter.attackTimer > 0) {
+                fighter.attackTimer -= frameDt;
+                if (fighter.attackTimer <= 0.08 && !fighter.attackHit) {
+                    fighter.attackHit = true;
+                    const newDistance = Math.abs(opponent.obj.pos.x - fighter.obj.pos.x);
+                    const verticalDistance = Math.abs(opponent.obj.pos.y - fighter.obj.pos.y);
+                    if (newDistance < 145 && verticalDistance < 100 && opponent.invulnerable <= 0) {
+                        landHit(fighter, opponent);
+                    } else {
+                        createPopup("MISS", fighter.obj.pos.x, fighter.obj.pos.y - 64, [210, 210, 210]);
+                    }
+                }
+            }
+        }
+
+        function updateBattle(frameDt) {
+            if (!battle) return;
+            battle.time += frameDt;
+
+            if (battle.fighters) {
+                if (!battle.finalPose) {
+                    for (const fighter of battle.fighters) {
+                        if (!fighter.obj) continue;
+                        let opponent = null;
+                        let nearest = Infinity;
+                        for (const candidate of battle.fighters) {
+                            if (candidate === fighter || !candidate.obj) continue;
+                            const distance = Math.abs(candidate.obj.pos.x - fighter.obj.pos.x);
+                            if (distance < nearest) {
+                                nearest = distance;
+                                opponent = candidate;
+                            }
+                        }
+                        if (!opponent) continue;
+                        if (battle.time >= 9 && battle.time < 12.2) {
+                            fighter.moveDirection = fighter.obj.pos.x < 400 ? 1 : -1;
+                            fighter.moveTimer = 0.12;
+                            fighter.dashTimer = 0.12;
+                        }
+                        updateFighter(fighter, opponent, frameDt);
+                    }
+                }
+                if (battle.time >= 12.2 && !battle.finalStrike) {
+                    battle.finalStrike = true;
+                    for (let i = 0; i < battle.fighters.length; i++) {
+                        const attacker = battle.fighters[i];
+                        const defender = battle.fighters[(i + 1) % battle.fighters.length];
+                        if (!attacker.obj || !defender.obj) continue;
+                        attacker.direction = defender.obj.pos.x >= attacker.obj.pos.x ? 1 : -1;
+                        landHit(attacker, defender);
+                    }
+                    spawnBurst(400, 280, [255, 220, 80]);
+                    cameraShake = 18;
+                    flashAlpha = 1;
+                    flashColor = [255, 240, 180];
+                }
+                if (battle.time >= 13.4 && !battle.finalPose) {
+                    battle.finalPose = true;
+                    battle.fighters.forEach((fighter, index) => {
+                        if (!fighter.obj) return;
+                        const row = index < 5 ? 0 : 1;
+                        const column = index % 5;
+                        fighter.obj.moveTo(250 + column * 75, row === 0 ? 250 : 320);
+                        fighter.vx = 0;
+                        fighter.vy = 0;
+                        fighter.grounded = true;
+                    });
+                    createPopup("FINAL CLASH", 400, 180, [255, 230, 90]);
+                }
+            } else {
+                updateFighter(battle.left, battle.right, frameDt);
+                updateFighter(battle.right, battle.left, frameDt);
+            }
+
+            for (let i = battle.popups.length - 1; i >= 0; i--) {
+                const popup = battle.popups[i];
+                popup.timer -= frameDt;
+                popup.obj.moveBy(0, -55 * frameDt);
+                popup.obj.opacity = Math.max(0, popup.timer / 0.55);
+                if (popup.timer <= 0) {
+                    destroy(popup.obj);
+                    battle.popups.splice(i, 1);
+                }
+            }
+        }
+
+        function finalClash() {
+            backdrop([8, 6, 24]);
+            addSpeedLines([255, 180, 80]);
+            addText("THE FINAL CLASH", 42, 40);
+            addText("EVERYONE. RUN.", 82, 18, [255, 210, 120]);
+            addStage([
+                rect(800, 18),
+                pos(400, 352),
+                anchor("center"),
+                color(40, 30, 55),
+                z(0),
+            ]);
+            const names = [
+                "PENGUY", "RED", "BLUE", "GREG", "GHOSTY",
+                "MARK", "ANGY-CAT", "ANGY-CAP", "CHAT", "GOOSEY",
+            ];
+            battle = {
+                fighters: names.map((name, index) => {
+                    const fromLeft = index % 2 === 0;
+                    return createFighter(name, fromLeft ? -60 - index * 20 : 860 + index * 12, fromLeft ? 1 : -1);
+                }),
+                time: 0,
+                popups: [],
+                damageLabels: [],
+                finalStrike: false,
+                finalPose: false,
+            };
+            battle.fighters.forEach((fighter, index) => {
+                if (!fighter.obj) return;
+                const targetX = 70 + index * 72;
+                tween(fighter.obj.pos.x, targetX, 0.55, (x) => {
+                    if (fighter.obj && fighter.obj.exists() && battle && !battle.finalPose) {
+                        fighter.obj.moveTo(x, GROUND_Y - Math.abs(Math.sin((x + index) * 0.07)) * 14);
+                    }
+                }, easings.easeOutQuad);
+            });
+            refreshDamageLabels();
+            flashAlpha = 0.8;
+            flashColor = [255, 200, 80];
+            cameraShake = 8;
+        }
+
+        function logoReveal() {
+            backdrop([4, 6, 18]);
+            addStage([
+                circle(150),
+                pos(400, 188),
+                anchor("center"),
+                color(255, 170, 40),
+                opacity(0.22),
+                z(-10),
+            ]);
+            addStage([
+                circle(78),
+                pos(400, 188),
+                anchor("center"),
+                color(255, 230, 120),
+                opacity(0.85),
+                z(-5),
+            ]);
+            addText("GOOSEY SMASH", 250, 52);
+            addText("WORLD ULTIMATE", 310, 28, [255, 220, 130]);
+            flashAlpha = 1;
+            flashColor = [255, 244, 200];
+            cameraShake = 3;
+        }
+
+        const timeline = [
+            {
+                at: 0,
+                action: () => {
+                    backdrop([8, 10, 28]);
+                    addSpeedLines([255, 190, 90]);
+                    addText("RUN.", 170, 64, [255, 220, 120]);
+                    addText("UNTIL THE SUN COMES UP", 250, 24);
+                    flashAlpha = 0.55;
+                    flashColor = [255, 200, 90];
+                },
+            },
+            { at: 6, action: () => characterIntro("PENGUY", [40, 90, 140], "A NEW WORLD AWAKENS") },
+            { at: 12, action: () => characterIntro("RED", [90, 10, 10], "NO TURNING BACK") },
+            { at: 18, action: () => characterIntro("BLUE", [10, 40, 90], "THE FUTURE IS CALLING") },
+            { at: 24, action: () => characterIntro("GREG", [30, 70, 36], "READY FOR THE CHALLENGE") },
+            { at: 30, action: () => characterIntro("GHOSTY", [20, 16, 40], "FROM THE SHADOWS") },
+            { at: 38, action: () => characterIntro("MARK", [70, 20, 90], "THE HEAT IS RISING") },
+            { at: 44, action: () => characterIntro("ANGY-CAT", [48, 22, 70], "A NEW CHALLENGER") },
+            { at: 50, action: () => characterIntro("ANGY-CAP", [20, 20, 30], "NO HESITATION") },
+            { at: 56, action: () => characterIntro("CHAT", [16, 20, 70], "THE MOON BASE") },
+
+            { at: 63, action: () => battleIntro("PENGUY", "MARK", [110, 32, 18], "VOLCANO ARENA") },
+            { at: 70, action: () => battleIntro("CHAT", "GREG", [16, 42, 100], "MOON BASE") },
+            { at: 77, action: () => battleIntro("ANGY-CAT", "ANGY-CAP", [42, 16, 78], "HAUNTED FOREST") },
+            { at: 84, action: () => battleIntro("RED", "BLUE", [90, 24, 48], "TORNADO PLAINS") },
+            { at: 91, action: () => battleIntro("GHOSTY", "ANGY-CAT", [32, 14, 70], "THE SHADOWS STRIKE") },
+            { at: 98, action: () => battleIntro("PENGUY", "MARK", [120, 40, 16], "ROUND TWO") },
+            { at: 106, action: () => battleIntro("CHAT", "GREG", [14, 40, 110], "NO ONE BACKS DOWN") },
+            { at: 114, action: () => battleIntro("RED", "BLUE", [16, 55, 130], "STILL RUNNING") },
+            { at: 121, action: () => battleIntro("GHOSTY", "ANGY-CAP", [48, 18, 86], "FINAL ROUND") },
+
+            {
+                at: 130,
+                action: () => {
+                    backdrop([10, 22, 52]);
+                    addSpeedLines([140, 200, 255]);
+                    addText("GOOSEYWORKS HQ", 58, 30);
+                    const g = addCharacter("GOOSEY", -160, 292, finalScaleFor("GOOSEY"));
+                    if (g) entranceGoosey(g);
+                    addText("THE FINAL CHALLENGER", 390, 22, [255, 230, 150]);
+                },
+            },
+            { at: 136, action: () => battleIntro("GOOSEY", "GHOSTY", [12, 16, 48], "CATCH THEM") },
+            { at: 145, action: () => finalClash() },
+            { at: 161, action: () => logoReveal() },
+        ];
+
+        function finishIntro() {
+            if (finished) return;
+            finished = true;
+            if (introMusic) {
+                try {
+                    introMusic.volume = 0;
+                    introMusic.stop();
+                } catch (e) {}
+                introMusic = null;
+            }
+            if (tabVisibilityHandler && typeof document !== "undefined") {
+                document.removeEventListener("visibilitychange", tabVisibilityHandler);
+                tabVisibilityHandler = null;
+            }
+            setCamPos(400, 225);
+            setCamScale(1);
+            clearStage();
+            go("title");
+        }
+
+        onSceneLeave(() => {
+            if (introMusic) {
+                try {
+                    introMusic.volume = 0;
+                    introMusic.stop();
+                } catch (e) {}
+                introMusic = null;
+            }
+        });
+
+        onKeyPress("enter", finishIntro);
+
+        try {
+            introMusic = play(MUSIC_ID, { loop: false, volume: 0.85 });
+            if (typeof document !== "undefined") {
+                tabVisibilityHandler = () => {
+                    if (!introMusic || finished) return;
+                    introMusic.paused = document.hidden;
+                };
+                document.addEventListener("visibilitychange", tabVisibilityHandler);
+            }
+        } catch (error) {
+            console.warn("Intro music could not start:", error);
+        }
+
+        const skipHint = add([
+            text("PRESS ENTER TO SKIP", { size: 13 }),
+            pos(400, 430),
+            anchor("center"),
+            color(230, 230, 230),
+            opacity(0.7),
+            z(200),
+            fixed(),
+        ]);
+
+        const flashOverlay = add([
+            rect(800, 450),
+            pos(0, 0),
+            anchor("topleft"),
+            color(255, 255, 255),
+            opacity(0),
+            z(1000),
+            fixed(),
+        ]);
+
+        onUpdate(() => {
+            if (finished) return;
+            const frameDt = dt();
+            elapsed += frameDt;
+
+            while (eventIndex < timeline.length && elapsed >= timeline[eventIndex].at) {
+                timeline[eventIndex].action();
+                eventIndex++;
+            }
+
+            for (const line of speedLines) {
+                if (!line.obj.exists()) continue;
+                line.obj.moveBy(-line.speed * frameDt, 0);
+                if (line.obj.pos.x < -80) line.obj.moveTo(860, line.obj.pos.y);
+            }
+
+            updateBattle(frameDt);
+            cameraShake = Math.max(0, cameraShake - frameDt * 12);
+
+            const shakeX = Math.sin(elapsed * 9) * (battle ? 8 : 5) + Math.sin(elapsed * 27) * cameraShake;
+            const shakeY = Math.cos(elapsed * 7) * (battle ? 4 : 3) + Math.cos(elapsed * 23) * cameraShake * 0.45;
+            setCamPos(400 + shakeX, 225 + shakeY);
+            setCamScale(1.03 + Math.sin(elapsed * (battle ? 6 : 2)) * 0.01 + cameraShake * 0.002);
+
+            if (flashHold > 0) {
+                flashHold -= frameDt;
+                flashAlpha = 1;
+            } else {
+                flashAlpha = Math.max(0, flashAlpha - frameDt * 2.2);
+            }
+            flashOverlay.color = rgb(...flashColor);
+            flashOverlay.opacity = flashAlpha;
+
+            if (elapsed > 4) skipHint.opacity = 0.35 + Math.sin(elapsed * 3) * 0.2;
+            if (elapsed >= INTRO_DURATION) finishIntro();
+        });
+    });
+}
+
+registerGooseyIntro();
+go("gooseyIntro");
+// ==================================================
 // 🎬 TITLE SCREEN
 // ==================================================
 
 scene("title", () => {
-
+playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
     // ==================================================
@@ -2068,7 +3212,7 @@ if (
 // ==================================================
 
 scene("playerSelect", () => {
-
+playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
     // ==================================================
@@ -2363,7 +3507,7 @@ scene("playerSelect", () => {
 // ==================================================
 
 scene("cpuSelect", () => {
-
+playGameMusic("menuMusic", true);
     // ==================================================
     // 🌌 BACKGROUND
     // ==================================================
@@ -2625,7 +3769,7 @@ scene("cpuSelect", () => {
 // ==================================================
 
 scene("characterSelect", () => {
-    window.gooseyScene = "characterSelect";
+    playGameMusic("menuMusic", true);
 // ==================================================
 // 🔓 CHARACTER UNLOCKS
 // ==================================================
@@ -3835,18 +4979,18 @@ onUpdate(() => {
     }
 });
 });
-
 // ==================================================
 // FIGHT
 // ==================================================
 
 scene("fight", (data) => {
-window.gooseyScene = "fight";
+startFightPlaylist();
     // 🎲 RANDOM MAP
     const currentMap =
-        Math.floor(Math.random() * 6);    
+        Math.floor(Math.random() * 6);
+
     let player;
-    window.gooseyMap = currentMap;
+
     // ==================================================
     // P1 CREATION
     // ==================================================
@@ -12654,7 +13798,7 @@ if (
 // ==================================================
 
 scene("win", (data) => {
-    window.gooseyScene = "win";
+    playGameMusic("victoryMusic", true);
 // ==================================================
 // 🔓 HARD CPU UNLOCK PROGRESSION
 // ==================================================
@@ -13062,4 +14206,4 @@ if (
 // START GAME
 // ==================================================
 
-go("title");
+go("gooseyIntro");
