@@ -14,6 +14,8 @@ const OLD_BALANCE_KEYS = [
 ];
 const STARTING_BALANCE = 7500;
 const REVIVAL_AMOUNT = 500;
+const REVIVAL_COOLDOWN_MS = 3.5 * 24 * 60 * 60 * 1000;
+const REVIVAL_TIME_KEY = "gooseyCasinoLastRevivalV1";
 let balance = loadBalance();
 
 function loadBalance() {
@@ -76,10 +78,30 @@ function claimZeroCashRevival() {
         return;
     }
 
+    let lastRevival = 0;
+    try {
+        lastRevival = Number(localStorage.getItem(REVIVAL_TIME_KEY)) || 0;
+    } catch (error) {
+        console.warn("Could not check the revival cooldown.", error);
+    }
+
+    const remaining = REVIVAL_COOLDOWN_MS - (Date.now() - lastRevival);
+    if (lastRevival > 0 && remaining > 0) {
+        const hours = Math.ceil(remaining / (60 * 60 * 1000));
+        alert("Your next 500 GB revival is available in about " + hours + " hour(s).");
+        return;
+    }
+
     balance = REVIVAL_AMOUNT;
     updateBalance();
 
-    alert("HONK! You received 500 free GooseBucks!");
+    try {
+        localStorage.setItem(REVIVAL_TIME_KEY, String(Date.now()));
+    } catch (error) {
+        console.warn("Could not save the revival cooldown.", error);
+    }
+
+    alert("HONK! You received 500 free GooseBucks! You can revive again in 3.5 days if your balance reaches zero.");
 }
 
 function placeBet(amount) {
@@ -149,11 +171,34 @@ function shuffle(array) {
    ========================================================= */
 
 function startGame() {
-    openPoker();
+    openCasinoGameMenu();
 }
 
 function bots() {
-    openPoker();
+    openCasinoGameMenu();
+}
+
+function openCasinoGameMenu() {
+    showArcade(
+        "🪿 CHOOSE A GOOSEY CASINO GAME",
+        `
+        <p>Choose a game to play. All bets use fictional GooseBucks (GB).</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;">
+            <button onclick="openBlackjack()">🂡 Blackjack</button>
+            <button onclick="openPoker()">🃏 5-Card Draw</button>
+            <button onclick="openTexasHoldem()">♣ Texas Hold'em</button>
+            <button onclick="openGooseRace()">🏁 Goosey Race</button>
+            <button onclick="playSlots()">🎰 Goosey Slots</button>
+            <button onclick="playWheel()">🎡 Goosey Wheel</button>
+            <button onclick="playCoinFlip()">🪙 Coin Flip</button>
+            <button onclick="playDiceDuel()">🎲 Dice Duel</button>
+            <button onclick="openChicken()">🐔 Chicken</button>
+            <button onclick="openBombGoose()">💣 Bomb Goose</button>
+            <button onclick="openGooseyPool()">🎱 Goosey Pool</button>
+            <button onclick="openStockMarket()">📈 Goosey Market</button>
+        </div>`,
+        "Select a game above. Your balance is saved in this browser."
+    );
 }
 
 function onlineMode() {
@@ -176,13 +221,15 @@ function privateRoom() {
 
 function howToPlay() {
     openCasinoMessage(
-        "HOW TO PLAY",
-        "1. Choose a game.\n" +
-        "2. Enter your bet in GooseBucks (GB).\n" +
-        "3. Play the round and see the result.\n" +
-        "4. Your balance updates automatically.\n\n" +
-        "GooseBucks are fictional. They cannot be purchased, traded, " +
-        "or exchanged for real money."
+        "HOW TO PLAY GOOSEY CASINO",
+        "1. Press PLAY and choose a game.\n" +
+        "2. Enter a bet in GooseBucks (GB); the bet is deducted when the round begins.\n" +
+        "3. Blackjack: get close to 21 without busting; hit or stand.\n" +
+        "4. 5-Card Draw: select up to three cards to replace.\n" +
+        "5. Texas Hold'em: use your two private cards with five community cards; bet, check, or fold through the streets. Four seats are used locally (you plus three bots).\n" +
+        "6. Goosey Race: pick a racer and bet before the race starts. Each racer has a different payout.\n" +
+        "7. Your balance saves in this browser. Online multiplayer and private rooms need a shared server and are not active yet.\n\n" +
+        "GooseBucks are fictional game points. They cannot be purchased, traded, or exchanged for real money."
     );
 }
 
@@ -482,6 +529,8 @@ function renderPokerHands() {
 
 function openPoker() {
     const modal = document.getElementById("pokerModal");
+    const arcadeModal = document.getElementById("arcadeGameModal");
+    if (arcadeModal) arcadeModal.style.display = "none";
 
     if (!modal) {
         openCasinoMessage(
@@ -737,27 +786,46 @@ function blackjackStatus(message) {
 
 function openBlackjack() {
     const modal = document.getElementById("blackjackModal");
+    const arcadeModal = document.getElementById("arcadeGameModal");
+    if (arcadeModal) arcadeModal.style.display = "none";
 
     if (!modal) {
-        openCasinoMessage("BLACKJACK", "The Blackjack modal is missing.");
-        return;
+        showArcade(
+            "🂡 BLACKJACK",
+            `
+            <p>Beat the dealer without going over 21. Blackjack pays 3:2.</p>
+            <label>Bet (GB): <input id="blackjackBet" type="number" min="1" max="${balance}" value="${Math.min(100, balance)}"></label>
+            <h3>Dealer <span id="dealerBlackjackTotal">?</span></h3>
+            <div id="dealerBlackjackHand"></div>
+            <h3>You <span id="playerBlackjackTotal">0</span></h3>
+            <div id="playerBlackjackHand"></div>
+            <p style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+              <button onclick="dealBlackjack()">DEAL</button>
+              <button id="blackjackHitButton" onclick="blackjackHit()" disabled>HIT</button>
+              <button id="blackjackStandButton" onclick="blackjackStand()" disabled>STAND</button>
+              <button id="blackjackDoubleButton" onclick="blackjackDoubleDown()" disabled>DOUBLE DOWN</button>
+            </p>`,
+            "Place a bet and deal!"
+        );
+    } else {
+        modal.classList.add("show");
+        modal.style.display = "flex";
     }
-
-    modal.classList.add("show");
-    modal.style.display = "flex";
     blackjackActive = false;
+    blackjackPlayer = [];
+    blackjackDealer = [];
+    renderBlackjack();
     blackjackStatus("Place a bet and deal!");
 }
 
 function closeBlackjack() {
     const modal = document.getElementById("blackjackModal");
-
     if (modal) {
         modal.classList.remove("show");
         modal.style.display = "none";
     }
-
     blackjackActive = false;
+    closeArcadeGame();
 }
 
 function dealBlackjack() {
@@ -789,6 +857,8 @@ function dealBlackjack() {
 
     if (hit) hit.disabled = false;
     if (stand) stand.disabled = false;
+    const doubleButton = document.getElementById("blackjackDoubleButton");
+    if (doubleButton) doubleButton.disabled = balance < blackjackBetAmount;
 
     if (blackjackTotal(blackjackPlayer) === 21) {
         finishBlackjack();
@@ -810,11 +880,30 @@ function blackjackHit() {
 
 function blackjackStand() {
     if (!blackjackActive) return;
+    playDealerBlackjack();
+}
 
+function blackjackDoubleDown() {
+    if (!blackjackActive || blackjackPlayer.length !== 2) return;
+    if (balance < blackjackBetAmount) {
+        blackjackStatus("You need enough GB to match your original bet to double down.");
+        return;
+    }
+    if (!placeBet(blackjackBetAmount)) return;
+    blackjackBetAmount *= 2;
+    blackjackPlayer.push(drawOne(blackjackDeck));
+    renderBlackjack();
+    if (blackjackTotal(blackjackPlayer) > 21) {
+        finishBlackjack();
+    } else {
+        playDealerBlackjack();
+    }
+}
+
+function playDealerBlackjack() {
     while (blackjackTotal(blackjackDealer) < 17) {
         blackjackDealer.push(drawOne(blackjackDeck));
     }
-
     finishBlackjack();
 }
 
@@ -863,24 +952,25 @@ function finishBlackjack() {
 
     if (hit) hit.disabled = true;
     if (stand) stand.disabled = true;
+    const doubleButton = document.getElementById("blackjackDoubleButton");
+    if (doubleButton) doubleButton.disabled = true;
 }
 
 function openArcadeGame(game) {
-    if (game === "Texas Holdem" || game === "Texas Hold'em") {
-        openTexasHoldem();
-        return;
-    }
-
-    if (game === "Goosey Slots") return playSlots();
-    if (game === "Goosey Wheel") return playWheel();
-    if (game === "Coin Flip") return playCoinFlip();
-    if (game === "Dice Duel") return playDiceDuel();
-    if (game === "Chicken") return openChicken();
-    if (game === "Goosey Crash") return openStockMarket();
-    if (game === "Bomb Goose") return openBombGoose();
-    if (game === "Goosey Pool") return openGooseyPool();
-
-    openCasinoMessage(game, "This game is not available.");
+    const name = String(game || "").trim().toLowerCase();
+    if (name.includes("texas") || name.includes("hold'em") || name.includes("holdem")) return openTexasHoldem();
+    if (name.includes("blackjack")) return openBlackjack();
+    if (name.includes("race") || name.includes("racing")) return openGooseRace();
+    if (name.includes("5-card") || name.includes("five card") || name.includes("poker")) return openPoker();
+    if (name.includes("slots")) return playSlots();
+    if (name.includes("wheel")) return playWheel();
+    if (name.includes("coin")) return playCoinFlip();
+    if (name.includes("dice")) return playDiceDuel();
+    if (name.includes("chicken")) return openChicken();
+    if (name.includes("crash") || name.includes("market")) return openStockMarket();
+    if (name.includes("bomb")) return openBombGoose();
+    if (name.includes("pool")) return openGooseyPool();
+    openCasinoMessage(game || "GOOSEY CASINO", "This game is not available yet.");
 }
 
 /* =========================================================
@@ -1012,38 +1102,47 @@ function playWheel() {
     showArcade(
         "🎡 GOOSEY WHEEL",
         `
-        <p>Spin the wheel and see your multiplier.</p>
-        <label>Bet (GB):
+        <p>Spin the wheel for prizes, balance boosts, or percentage losses!</p>
+        <label>Bet (GB) for multiplier outcomes:
             <input id="wheelBet" type="number" min="1" max="${balance}"
                 value="${Math.min(100, balance)}">
         </label>
-        <h1 id="wheelResult" style="font-size:55px;">🎡</h1>
+        <p style="font-size:13px;">Special outcomes can change your whole balance.</p>
+        <h1 id="wheelResult" style="font-size:42px;">🎡</h1>
         <button onclick="spinWheel()">SPIN THE WHEEL</button>
         `,
-        "Possible results: 0x, 0.5x, 1x, 2x, 3x, 5x."
+        "Outcomes include multipliers, a random balance from 0–100,000 GB, and losses of 1%, 2%, 3%, 5%, or 10% of your original balance."
     );
 }
 
 function spinWheel() {
     const amount = getInputBet("wheelBet", 100);
+    if (amount === null) return;
 
-    if (amount === null || !placeBet(amount)) return;
+    // Record the balance before the bet so percentage losses use the original amount.
+    const originalBalance = balance;
+    if (!placeBet(amount)) return;
 
     const outcomes = [
-        { label: "0x", multiplier: 0, weight: 20 },
-        { label: "0.5x", multiplier: 0.5, weight: 20 },
-        { label: "1x", multiplier: 1, weight: 25 },
-        { label: "2x", multiplier: 2, weight: 20 },
-        { label: "3x", multiplier: 3, weight: 10 },
-        { label: "5x", multiplier: 5, weight: 5 }
+        { label: "0x — bet lost", type: "multiplier", multiplier: 0, weight: 14 },
+        { label: "0.5x", type: "multiplier", multiplier: 0.5, weight: 14 },
+        { label: "1x — bet returned", type: "multiplier", multiplier: 1, weight: 18 },
+        { label: "2x", type: "multiplier", multiplier: 2, weight: 14 },
+        { label: "3x", type: "multiplier", multiplier: 3, weight: 8 },
+        { label: "5x JACKPOT", type: "multiplier", multiplier: 5, weight: 4 },
+        { label: "RANDOM BALANCE: 0–100,000 GB", type: "randomBalance", weight: 3 },
+        { label: "LOSE 1% OF ORIGINAL BALANCE", type: "percentLoss", percent: 1, weight: 5 },
+        { label: "LOSE 2% OF ORIGINAL BALANCE", type: "percentLoss", percent: 2, weight: 5 },
+        { label: "LOSE 3% OF ORIGINAL BALANCE", type: "percentLoss", percent: 3, weight: 4 },
+        { label: "LOSE 5% OF ORIGINAL BALANCE", type: "percentLoss", percent: 5, weight: 4 },
+        { label: "LOSE 10% OF ORIGINAL BALANCE", type: "percentLoss", percent: 10, weight: 4 },
+        { label: "HONK BONUS +500 GB", type: "bonus", bonus: 500, weight: 3 }
     ];
 
-    let roll = Math.random() * 100;
-    let chosen = outcomes[0];
-
+    let roll = Math.random() * outcomes.reduce((sum, item) => sum + item.weight, 0);
+    let chosen = outcomes[outcomes.length - 1];
     for (const outcome of outcomes) {
         roll -= outcome.weight;
-
         if (roll < 0) {
             chosen = outcome;
             break;
@@ -1051,19 +1150,37 @@ function spinWheel() {
     }
 
     const result = document.getElementById("wheelResult");
-
     if (result) result.textContent = "🎡 " + chosen.label;
 
-    const winnings = Math.floor(amount * chosen.multiplier);
+    if (chosen.type === "multiplier") {
+        const winnings = Math.floor(amount * chosen.multiplier);
+        if (winnings > 0) award(winnings);
+        setArcadeStatus(
+            "The wheel landed on " + chosen.label + ". " +
+            (winnings > 0 ? "You received " + money(winnings) + "." : "You lost your bet of " + money(amount) + ".")
+        );
+        return;
+    }
 
-    if (winnings > 0) award(winnings);
+    if (chosen.type === "randomBalance") {
+        balance = getRandom(0, 100000);
+        updateBalance();
+        setArcadeStatus("RANDOM BALANCE! Your balance is now " + money(balance) + ".");
+        return;
+    }
 
-    setArcadeStatus(
-        "The wheel landed on " + chosen.label + ". " +
-        (winnings > 0
-            ? "You received " + money(winnings) + "."
-            : "No payout this time.")
-    );
+    if (chosen.type === "percentLoss") {
+        const loss = Math.floor(originalBalance * chosen.percent / 100);
+        balance = Math.max(0, originalBalance - loss);
+        updateBalance();
+        setArcadeStatus("Oof! The wheel took " + money(loss) + " (" + chosen.percent + "% of your original " + money(originalBalance) + "). Your balance is now " + money(balance) + ".");
+        return;
+    }
+
+    if (chosen.type === "bonus") {
+        award(chosen.bonus);
+        setArcadeStatus("HONK BONUS! You received " + money(chosen.bonus) + ".");
+    }
 }
 
 /* =========================================================
@@ -1502,28 +1619,40 @@ function cashOutBombGoose() {
 }
 
 /* =========================================================
-   TEXAS HOLD'EM — SIMPLE BOT SHOWDOWN
+   TEXAS HOLD'EM — FOUR-PLAYER TABLE WITH BETTING ROUNDS
+   Local table: player plus three bots. Online networking is separate.
    ========================================================= */
 
 let holdemActive = false;
+let holdemDeck = [];
+let holdemPlayers = [];
+let holdemCommunity = [];
+let holdemStreet = 0;
+let holdemPot = 0;
+let holdemAnte = 0;
+let holdemUserContribution = 0;
+let holdemHandOver = false;
+const HOLDEM_STREETS = ["Pre-flop", "Flop", "Turn", "River"];
 
 function openTexasHoldem() {
+    holdemActive = false;
+    holdemHandOver = false;
     showArcade(
-        "♣ TEXAS HOLD'EM",
+        "♣ TEXAS HOLD'EM — 4 PLAYERS",
         `
-        <p>You and the Goosey Bot each get two cards.</p>
-        <p>Five community cards are dealt. Best five-card hand wins.</p>
-        <label>Bet (GB):
-            <input id="holdemBet" type="number" min="1" max="${balance}"
-                value="${Math.min(100, balance)}">
-        </label>
-        <p><button onclick="dealHoldem()">DEAL HAND</button></p>
-        <h3>Your cards</h3>
-        <div id="holdemPlayer"></div>
-        <h3>Community cards</h3>
-        <div id="holdemCommunity"></div>
-        <h3>Goosey Bot</h3>
-        <div id="holdemBot"></div>
+        <p>Four seats: you and three Goosey bots. Each player gets two private cards. The table reveals the flop (3 cards), turn, and river. Best five-card hand wins the pot.</p>
+        <label>Starting bet / ante (GB): <input id="holdemBet" type="number" min="1" max="${balance}" value="${Math.min(100, balance)}"></label>
+        <p><button onclick="dealHoldem()">DEAL TABLE</button></p>
+        <h3 id="holdemStreetLabel">Waiting for a hand</h3>
+        <p>Pot: <strong id="holdemPot">0 GB</strong></p>
+        <div id="holdemPlayers" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;text-align:center;"></div>
+        <h3>Community cards</h3><div id="holdemCommunity"></div>
+        <div id="holdemActions" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+          <button id="holdemCheckButton" onclick="holdemCheck()" disabled>CHECK / NEXT</button>
+          <button id="holdemBetButton" onclick="holdemBetRaise()" disabled>BET / RAISE</button>
+          <button id="holdemFoldButton" onclick="holdemFold()" disabled>FOLD</button>
+        </div>
+        <p id="holdemRoundInfo">Deal to start. Betting uses fictional GB.</p>
         `,
         "Deal to begin."
     );
@@ -1531,20 +1660,12 @@ function openTexasHoldem() {
 
 function combinations(items, size) {
     const result = [];
-
     function build(start, current) {
-        if (current.length === size) {
-            result.push([...current]);
-            return;
-        }
-
+        if (current.length === size) { result.push([...current]); return; }
         for (let i = start; i < items.length; i++) {
-            current.push(items[i]);
-            build(i + 1, current);
-            current.pop();
+            current.push(items[i]); build(i + 1, current); current.pop();
         }
     }
-
     build(0, []);
     return result;
 }
@@ -1552,69 +1673,175 @@ function combinations(items, size) {
 function bestFive(cards) {
     const hands = combinations(cards, 5);
     let best = evaluateHand(hands[0]);
-
     for (let i = 1; i < hands.length; i++) {
         const result = evaluateHand(hands[i]);
-
-        if (compareHands(result, best) > 0) {
-            best = result;
-        }
+        if (compareHands(result, best) > 0) best = result;
     }
-
     return best;
 }
 
 function dealHoldem() {
     if (holdemActive) {
-        setArcadeStatus("This hand is already running.");
+        setArcadeStatus("Finish the current hand before dealing again.");
         return;
     }
-
     const amount = getInputBet("holdemBet", 100);
-
     if (amount === null || !placeBet(amount)) return;
 
-    holdemActive = true;
-
-    const deck = makeDeck();
-    const player = [drawOne(deck), drawOne(deck)];
-    const bot = [drawOne(deck), drawOne(deck)];
-    const community = [
-        drawOne(deck),
-        drawOne(deck),
-        drawOne(deck),
-        drawOne(deck),
-        drawOne(deck)
+    holdemAnte = amount;
+    holdemPot = amount * 4;
+    holdemUserContribution = amount;
+    holdemDeck = makeDeck();
+    holdemCommunity = [];
+    holdemStreet = 0;
+    holdemHandOver = false;
+    holdemPlayers = [
+        { name: "You", cards: [drawOne(holdemDeck), drawOne(holdemDeck)], human: true, folded: false, contribution: amount },
+        { name: "Goosey Bot 1", cards: [drawOne(holdemDeck), drawOne(holdemDeck)], human: false, folded: false, contribution: amount },
+        { name: "Goosey Bot 2", cards: [drawOne(holdemDeck), drawOne(holdemDeck)], human: false, folded: false, contribution: amount },
+        { name: "Goosey Bot 3", cards: [drawOne(holdemDeck), drawOne(holdemDeck)], human: false, folded: false, contribution: amount }
     ];
+    holdemActive = true;
+    renderHoldemTable(false);
+    setHoldemActions(true);
+    holdemMessage("Pre-flop: check to reveal the flop, or bet/raise to put more GB into the pot.");
+}
 
-    const playerResult = bestFive([...player, ...community]);
-    const botResult = bestFive([...bot, ...community]);
-    const result = compareHands(playerResult, botResult);
-
-    const p = document.getElementById("holdemPlayer");
-    const b = document.getElementById("holdemBot");
-    const c = document.getElementById("holdemCommunity");
-
-    if (p) p.innerHTML = player.map(card => renderCard(card)).join("");
-    if (b) b.innerHTML = bot.map(card => renderCard(card)).join("");
-    if (c) c.innerHTML = community.map(card => renderCard(card)).join("");
-
-    if (result > 0) {
-        award(amount * 2);
-        setArcadeStatus(
-            "You win with " + playerResult.name +
-            "! You received " + money(amount * 2) + "."
-        );
-    } else if (result === 0) {
-        award(amount);
-        setArcadeStatus("Tie! Your bet is returned.");
-    } else {
-        setArcadeStatus(
-            "Goosey Bot wins with " + botResult.name + "."
-        );
+function setHoldemActions(enabled) {
+    for (const id of ["holdemCheckButton", "holdemBetButton", "holdemFoldButton"]) {
+        const button = document.getElementById(id);
+        if (button) button.disabled = !enabled;
     }
+}
 
+function holdemMessage(message) {
+    const node = document.getElementById("holdemRoundInfo");
+    if (node) node.textContent = message;
+    setArcadeStatus(message);
+}
+
+function renderHoldemTable(revealAll) {
+    const playersNode = document.getElementById("holdemPlayers");
+    const communityNode = document.getElementById("holdemCommunity");
+    const potNode = document.getElementById("holdemPot");
+    const streetNode = document.getElementById("holdemStreetLabel");
+    if (potNode) potNode.textContent = money(holdemPot);
+    if (streetNode) streetNode.textContent = holdemHandOver ? "Showdown" : (HOLDEM_STREETS[holdemStreet] || "Showdown");
+    if (playersNode) {
+        playersNode.innerHTML = holdemPlayers.map((player, index) => {
+            const cardsVisible = player.human || revealAll || player.folded;
+            const cards = cardsVisible
+                ? player.cards.map(card => renderCard(card)).join("")
+                : renderCard({rank:"?",suit:"?"}) + renderCard({rank:"?",suit:"?"});
+            return `<div style="background:#263b37;padding:8px;border-radius:10px;border:2px solid ${player.human ? '#f6d365' : '#557568'};">
+                <strong>${player.name}${player.folded ? " — FOLDED" : ""}</strong><div>${cards}</div>
+                <small>In pot: ${money(player.contribution)}</small>
+                ${revealAll && !player.folded && holdemCommunity.length === 5 ? `<div><small>${bestFive([...player.cards,...holdemCommunity]).name}</small></div>` : ""}
+            </div>`;
+        }).join("");
+    }
+    if (communityNode) communityNode.innerHTML = holdemCommunity.map(card => renderCard(card)).join("");
+}
+
+function holdemCheck() {
+    if (!holdemActive || holdemHandOver) return;
+    if (holdemStreet < 3) {
+        revealNextHoldemStreet();
+        return;
+    }
+    finishHoldem();
+}
+
+function holdemBetRaise() {
+    if (!holdemActive || holdemHandOver) return;
+    const cost = Math.max(1, holdemAnte);
+    if (balance < cost) {
+        holdemMessage("You don't have enough GB for this bet. Check to continue or fold.");
+        return;
+    }
+    if (!placeBet(cost)) return;
+    holdemUserContribution += cost;
+    holdemPot += cost;
+    // Each bot decides whether to call this street's bet. Bots that fold stay out.
+    let callers = 0;
+    for (let i = 1; i < holdemPlayers.length; i++) {
+        const bot = holdemPlayers[i];
+        if (bot.folded) continue;
+        const strength = evaluateHand(bot.cards).rank;
+        const calls = Math.random() < (strength >= 1 ? 0.82 : 0.62);
+        if (calls) {
+            bot.contribution += cost;
+            holdemPot += cost;
+            callers++;
+        } else {
+            bot.folded = true;
+        }
+    }
+    renderHoldemTable(false);
+    if (holdemPlayers.slice(1).every(player => player.folded)) {
+        holdemHandOver = true;
+        holdemActive = false;
+        award(holdemPot);
+        renderHoldemTable(true);
+        setHoldemActions(false);
+        holdemMessage("Everyone folded! You win the pot of " + money(holdemPot) + ".");
+        return;
+    }
+    if (holdemStreet < 3) revealNextHoldemStreet("Your bet added " + money(cost) + "; " + callers + " bot(s) called.");
+    else finishHoldem("Your river bet added " + money(cost) + "; " + callers + " bot(s) called.");
+}
+
+function holdemFold() {
+    if (!holdemActive || holdemHandOver) return;
+    holdemPlayers[0].folded = true;
+    holdemHandOver = true;
     holdemActive = false;
+    renderHoldemTable(true);
+    setHoldemActions(false);
+    holdemMessage("You folded. The pot stays with the remaining bots; your contribution is lost.");
+}
+
+function revealNextHoldemStreet(prefix = "") {
+    if (!holdemActive || holdemHandOver) return;
+    if (holdemStreet === 0) {
+        holdemCommunity.push(drawOne(holdemDeck), drawOne(holdemDeck), drawOne(holdemDeck));
+        holdemStreet = 1;
+    } else if (holdemStreet === 1) {
+        holdemCommunity.push(drawOne(holdemDeck));
+        holdemStreet = 2;
+    } else if (holdemStreet === 2) {
+        holdemCommunity.push(drawOne(holdemDeck));
+        holdemStreet = 3;
+    }
+    renderHoldemTable(false);
+    if (holdemStreet === 3) {
+        holdemMessage((prefix ? prefix + " " : "") + "River is out. Check for showdown, bet/raise, or fold.");
+    } else {
+        holdemMessage((prefix ? prefix + " " : "") + "" + HOLDEM_STREETS[holdemStreet] + " revealed. Check to continue, bet/raise, or fold.");
+    }
+}
+
+function finishHoldem(prefix = "") {
+    if (!holdemActive || holdemHandOver) return;
+    // A check on the river reaches showdown.
+    if (holdemCommunity.length < 5) {
+        while (holdemCommunity.length < 5) holdemCommunity.push(drawOne(holdemDeck));
+    }
+    const contenders = holdemPlayers.filter(player => !player.folded);
+    const results = contenders.map(player => ({player, result:bestFive([...player.cards,...holdemCommunity])}));
+    let best = results[0].result;
+    for (const entry of results.slice(1)) if (compareHands(entry.result,best) > 0) best = entry.result;
+    const winners = results.filter(entry => compareHands(entry.result,best) === 0);
+    const payout = Math.floor(holdemPot / winners.length);
+    const userWon = winners.some(entry => entry.player.human);
+    holdemHandOver = true;
+    holdemActive = false;
+    if (userWon) award(payout);
+    renderHoldemTable(true);
+    setHoldemActions(false);
+    const names = winners.map(entry => entry.player.name).join(" and ");
+    const resultName = winners[0].result.name;
+    holdemMessage((prefix ? prefix + " " : "") + names + " win with " + resultName + ". Pot: " + money(holdemPot) + "." + (userWon ? " Your payout: " + money(payout) + "." : " Your hand lost; better luck next time."));
 }
 
 /* =========================================================
@@ -1622,9 +1849,12 @@ function dealHoldem() {
    ========================================================= */
 
 let raceRunning = false;
+let raceTimer = null;
 
 function openGooseRace() {
     const modal = document.getElementById("gooseRaceModal");
+    const arcadeModal = document.getElementById("arcadeGameModal");
+    if (arcadeModal) arcadeModal.style.display = "none";
 
     if (!modal) {
         showArcade(
@@ -1638,9 +1868,9 @@ function openGooseRace() {
             <p>
                 <label>Your goose:
                     <select id="raceGoose">
-                        <option value="0">White Goose</option>
-                        <option value="1">Golden Goose</option>
-                        <option value="2">Speedy Goose</option>
+                        <option value="0">White Goose — 2× payout</option>
+                        <option value="1">Golden Goose — 3× payout</option>
+                        <option value="2">Speedy Goose — 4× payout</option>
                     </select>
                 </label>
             </p>
@@ -1649,7 +1879,7 @@ function openGooseRace() {
             </div>
             <button onclick="startDynamicRace()">START RACE</button>
             `,
-            "Pick a goose. A winning bet pays 3x."
+            "Choose a racer, place your bet, and watch the race. Payouts: White 2×, Golden 3×, Speedy 4× (total return, including your bet)."
         );
 
         return;
@@ -1684,47 +1914,49 @@ function startDynamicRace() {
     raceRunning = true;
 
     const positions = [0, 0, 0];
-    const racers = ["🪿", "🦢", "🐤"];
+    const racers = ["🪿 White Goose", "🦢 Golden Goose", "🐤 Speedy Goose"];
+    const baseSpeeds = [2.2, 1.9, 2.5];
+    const payouts = [2, 3, 4];
     const track = document.getElementById("dynamicRaceTrack") ||
         document.getElementById("raceTrack");
 
     let step = 0;
 
-    const timer = setInterval(() => {
+    raceTimer = setInterval(() => {
         step++;
 
         for (let i = 0; i < positions.length; i++) {
-            positions[i] += getRandom(1, 3);
+            positions[i] += Math.max(1, Math.round(baseSpeeds[i] + getRandom(-1, 2)));
         }
 
         if (track) {
             track.innerHTML = positions.map((position, index) => {
                 return `
-                    <div style="white-space:nowrap;overflow:hidden;">
-                        ${racers[index]}
-                        <span style="display:inline-block;width:${Math.min(
-                            position * 12, 260
-                        )}px;"></span> 🏁
+                    <div style="white-space:nowrap;overflow:hidden;background:#e8f5e9;color:#17351e;padding:4px;margin:3px 0;border-radius:6px;">
+                        <strong>${racers[index]}</strong>
+                        <span style="display:inline-block;width:${Math.min(position * 8, 240)}px;"></span> 🏁
                     </div>
                 `;
             }).join("");
         }
 
         if (step >= 8 || Math.max(...positions) >= 18) {
-            clearInterval(timer);
+            clearInterval(raceTimer);
+            raceTimer = null;
             raceRunning = false;
 
             const winner = positions.indexOf(Math.max(...positions));
 
             if (winner === chosen) {
-                award(amount * 3);
+                const winnings = amount * payouts[chosen];
+                award(winnings);
                 setRaceStatus(
-                    "Your goose won! You received " +
-                    money(amount * 3) + "."
+                    racers[winner] + " won! Your " + payouts[chosen] + "× payout is " +
+                    money(winnings) + ". Your original bet is included in the payout."
                 );
             } else {
                 setRaceStatus(
-                    "Goose " + (winner + 1) + " won! Better luck next race."
+                    racers[winner] + " won. Your bet was lost; try another race!"
                 );
             }
         }
@@ -2477,12 +2709,14 @@ function renderPoolInfo() {
 
 function closeGooseRace() {
     const modal = document.getElementById("gooseRaceModal");
-
     if (modal) {
         modal.classList.remove("show");
         modal.style.display = "none";
     }
-
+    if (raceTimer) {
+        clearInterval(raceTimer);
+        raceTimer = null;
+    }
     raceRunning = false;
 }
 
@@ -2955,7 +3189,20 @@ initializeMarket();
 function closeArcadeGame() {
     const modal = document.getElementById("arcadeGameModal");
     if (modal) modal.style.display = "none";
-
     stopCrashTimer();
     stopStockMarketTimer();
+    if (typeof stopPoolGame === "function") stopPoolGame();
+    if (raceTimer) {
+        clearInterval(raceTimer);
+        raceTimer = null;
+        raceRunning = false;
+    }
+}
+
+
+// Refresh the saved balance display after the page and its elements are ready.
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateBalance, { once: true });
+} else {
+    updateBalance();
 }
